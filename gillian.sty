@@ -1,0 +1,478 @@
+%!TEX root = main.tex
+
+% Gareth Smith - display box 
+  
+  \newcommand{\hbra}{
+  %\hbox to \textwidth{\vrule width0.3mm height 1.8mm depth-0.3mm
+  \hbox to \linewidth{\vrule width0.3mm height 1.8mm depth-0.3mm
+    \leaders\hrule height1.8mm depth-1.5mm\hfill
+    \vrule width0.3mm height 1.8mm depth-0.3mm}}
+\newcommand{\hket}{
+  %\hbox to \textwidth{\vrule width0.3mm height1.5mm
+  \hbox to \linewidth{\vrule width0.3mm height1.5mm
+    \leaders\hrule height0.3mm\hfill
+    \vrule width0.3mm height1.5mm}}
+  
+\newcommand{\ratio}{.375}
+\newenvironment{display}[1]{\vspace{-0.5ex}\small
+\begin{tabbing}
+    \hspace{1.5em} \= \hspace{\ratio\linewidth-1.5em} \= \hspace{1.5em} \= \kill
+    \textbf{#1}\\[-.8ex] % was -.8
+    \hbra\\[-.8ex]
+  }{\\[-.8ex]\hket
+  \end{tabbing}\vspace{-1ex}}
+
+\newcommand\doubleplus{+\kern-1.3ex+\kern0.8ex}
+
+\newcommand{\kf}{\mkern-1.5muf}
+\newcommand{\kx}[1]{\mkern-1.5mu#1}
+
+% Colors
+\definecolor{SkyBlue}{rgb}{0.20,0.39,0.64}
+\definecolor{Plum}{rgb}{0.46,0.31,0.48}
+\definecolor{Chocolate}{rgb}{0.75,0.49,0.07}
+\definecolor{Aluminium5}{rgb}{0.33,0.34,0.32}
+\definecolor{DarkGreen}{rgb}{0.2,0.5,0.2}
+\definecolor{ltblue}{rgb}{0,0.4,0.4}
+\definecolor{dkblue}{rgb}{0,0.2,0.7}
+\definecolor{dkgreen}{rgb}{0,0.4,0}
+\definecolor{dkviolet}{rgb}{0.3,0,0.5}
+\definecolor{dkred}{rgb}{0.6,0,0}
+\definecolor{talkred}{rgb}{0.69,.20,0.22}
+\definecolor{talkblue}{rgb}{0.04,0.40,0.80}
+\definecolor{talkgreen}{rgb}{0.34,.81,0.10}
+\definecolor{oldtalkblue}{rgb}{0.22,.20,0.69}
+\definecolor{greenish}{rgb}{.0,.65,.0}
+\definecolor{mygray}{gray}{0.9}
+
+% Generic Text Stuff 
+\newcommand{\etag}[1]{{\bf (#1)}}
+\newcommand{\mybullet}[0]{{\footnotesize $\bullet$}\xspace}
+\newcommand{\iftag}[0]{\underline{if}\xspace\xspace}
+\newcommand{\polish}[1]{{\color{red}#1}}
+\newcommand{\myparagraph}[1]{\medskip\noindent {\bf #1.}\hspace{1pt}}
+\newcommand{\prooflab}[1]{{{\scshape [#1]}}}
+
+% Generic Math Stuff 
+\newcommand{\darkmath}[1]{{\color{Aluminium5}#1 \, }}
+\newcommand{\tup}[1]{\langle #1 \rangle}
+\newcommand{\ptup}[1]{(#1)}
+\newcommand{\btup}[1]{[#1]}
+\newcommand{\vtup}[1]{\vert #1 \vert}
+\newcommand{\cons}[0]{:}
+\newcommand{\cat}[0]{\doubleplus}
+\newcommand\lst[1]{\overline{#1}}
+\newcommand\defeq{\triangleq}
+\newcommand\pmap[0]{\rightharpoonup}
+\newcommand\pfmap[0]{\pmap_{\mathit{fin}}}
+\newcommand\tmap[0]{\rightarrow}
+\newcommand\power[1]{\mathcal{P}(#1)}
+\newcommand\set[1]{\{#1\}}
+\newcommand\semeq{\triangleq}
+\newcommand\litlst[1]{\left[ #1 \right]}
+\newcommand\listtype[1]{#1~\sf{list}}
+\newcommand\litset[1]{\lbrace #1 \rbrace}
+\newcommand\tfunset[2]{( #1 \rightarrow #2 )}
+\newcommand\pfunset[2]{( #1 \pmap #2 )}
+\newcommand\domain[0]{{\sf dom}}
+\newcommand\codomain[0]{{\sf codom}}
+\newcommand\rng[0]{{\sf rng}}
+ \newcommand\gand[0]{\, \wedge \,}
+ \newcommand\dunion[0]{\uplus}
+\newcommand{\rep}[4]{\ensuremath{#1_#2\!\mid_{#2=#3}^{#4}}}
+\newcommand{\downcast}[1]{\lfloor #1 \rfloor}
+\newcommand{\upcast}[1]{\lceil #1 \rceil}
+
+
+% General Names
+\newcommand{\gillian}[0]{Gillian\xspace}
+\newcommand{\gil}[0]{GIL\xspace}
+
+% Literal values 
+\newcommand{\num}[0]{n}
+\newcommand{\nums}[0]{\mathcal{N}}
+\newcommand{\str}[0]{s}
+\newcommand{\strs}[0]{\mathcal{S}}
+\newcommand{\bool}[0]{b}
+\newcommand{\bools}[0]{\mathcal{B}}
+\newcommand{\loc}[0]{l}
+\newcommand{\locs}[0]{\mathcal{U}}
+\newcommand{\lx}[0]{\hat{x}}
+\newcommand{\lxs}[0]{\hat{\mathcal{X}}}
+\newcommand{\ints}[0]{\mathbb{Z}}
+\newcommand{\nats}[0]{\mathbb{N}}
+\newcommand{\true}[0]{{\sf true}}
+\newcommand{\mtrue}[0]{{\sf True}}
+\newcommand{\false}[0]{{\sf false}}
+\newcommand{\mfalse}[0]{{\sf False}}
+
+
+% Syntax
+\newcommand{\kw}[1]{\darkmath{#1}}
+\newcommand{\kwT}[1]{\darkmath{\text{#1}}\!}
+\newcommand{\cmd}[0]{{\sf cmd}}
+\newcommand{\vl}[0]{v}
+\newcommand{\vals}[0]{\mathcal{V}\mkern-1.5mu\mathit{al}}
+\newcommand{\x}[0]{x}
+\newcommand{\xs}[0]{\mathcal{X}}
+\newcommand{\e}[0]{e}
+\newcommand{\exprs}[0]{\mathcal{E}\mkern-1.5mu\mathit{xpr}}
+\newcommand{\cm}[0]{c}
+\newcommand{\cmds}[1]{\mathcal{C}\mkern-1.5mu\mathit{md}_{#1}}
+\newcommand{\actions}[0]{A}
+\newcommand{\mactions}[0]{\actions}
+\newcommand{\sactions}[0]{\actions_{S}}
+\newcommand{\f}[0]{f}
+\newcommand{\act}[0]{\alpha}
+\newcommand{\sact}[0]{a}
+\newcommand{\goto}[1]{\kw{\textsf{goto}} \, #1}
+\newcommand{\ifgoto}[2]{\kw{\textsf{ifgoto}} \, #1 \ \ #2}
+\newcommand{\return}[1]{\kw{\textsf{return}} \, #1}
+\newcommand{\fresh}[1]{\kw{\textsf{iSym}\!}_{#1}}
+\newcommand{\symb}[1]{\kw{\textsf{uSym}\!}_{#1}}
+\newcommand{\fail}[1]{\kw{\textsf{fail}} \, #1}
+\newcommand{\arguments}[0]{\kw{\textsf{arguments}}}
+\newcommand{\with}[0]{\kw{\textsf{with}}}
+\newcommand{\apply}[0]{\kw{\textsf{apply}}}
+\newcommand{\extern}[0]{\kw{\textsf{extern}}}
+\newcommand{\phinode}[1]{\kw{\textsf{phi}}(#1)}
+\newcommand{\unop}[1]{\ominus #1}
+\newcommand{\binop}[2]{#1 \oplus #2}
+\newcommand{\proc}[0]{\mathit{func}}
+\newcommand{\procs}[1]{\mathcal{F}unc_{#1}}
+\newcommand{\procedure}[3]{#1(#2) \{ #3 \}}
+\newcommand{\fid}[0]{f}
+\newcommand{\fids}[0]{\mathcal{F}}
+\newcommand{\type}[0]{\tau}
+\newcommand{\types}[0]{\mathcal{T}}
+\newcommand{\prog}[0]{\mathtt{p}}
+\newcommand{\progs}[1]{\mathcal{P}rog_{#1}}
+\newcommand{\gnot}[0]{\mathtt{not}}
+\newcommand{\vanish}[0]{\kw{\textsf{vanish}}}
+\newcommand{\pret}[0]{\textit{ret}}
+
+% States 
+\newcommand{\gstate}[0]{S}
+ \newcommand{\gsstate}[0]{\hat{S}}
+ \newcommand{\gstates}[0]{\mathbb{S}}
+\newcommand{\gval}[0]{{\sf V}}
+\newcommand{\gsval}[0]{\hat{V}}
+\newcommand{\sset}[1]{\vert #1 \vert}
+\newcommand{\gv}[0]{{\sf v}}
+
+% Parametric Semantics 
+\newcommand{\st}[0]{\sigma}
+\newcommand{\sst}[0]{\hat{\sigma}}
+\newcommand{\sto}[0]{\rho}
+\newcommand{\stos}[0]{\mathcal{S}\mkern-1mu\mathit{tore}}
+\newcommand{\skw}[1]{{\sf #1}}
+\newcommand{\outcome}[0]{o}
+\newcommand{\outcomes}[0]{\mathcal{O}}
+\newcommand{\result}[0]{r}
+\newcommand{\results}[0]{\mathcal{R}}
+\newcommand{\osucc}[0]{\mathcal{S}}
+\newcommand{\oerr}[0]{\mathcal{E}}
+\newcommand{\omiss}[0]{\mathcal{M}}
+\newcommand{\onot}[0]{\mathcal{N}}
+\newcommand{\onormal}[1]{\mathtt{N}(#1)}
+\newcommand{\ofail}[1]{\mathtt{E}(#1)}
+\newcommand{\omissx}[1]{\mathtt{M}(#1)}
+\newcommand{\cont}[0]{\mathtt{S}}
+\newcommand{\actionT}[4]{#1.\darkmath{\text{#2}}(#3) \, \rightsquigarrow #4}
+\newcommand{\colaction}[4]{#1.\darkmath{#2}(#3) \rightarrow #4}
+\newcommand{\actionnopar}[4]{#1.\darkmath{#2}#3 \rightsquigarrow #4}
+\newcommand{\action}[4]{\actionnopar{#1}{#2}{(#3)}{#4}}
+\newcommand{\brokenaction}[5]{\mbox{
+	$\begin{array}{ll}
+	#2.\darkmath{#3}(#4) \\ 
+	& \hspace*{-#1} \rightsquigarrow #5
+	\end{array}$}
+	}
+\newcommand{\caction}[4]{#1.\darkmath{#2}(#3) \rightsquigarrow #4}
+\newcommand{\ee}[2]{#1.\darkmath{\text{ee}}(#2)}
+\newcommand{\cf}[0]{\omega}
+\newcommand{\scf}[0]{\hat\omega}
+\newcommand{\cfs}[1]{\mathcal{C}\mkern-1mu\mathit{onf}_{#1}}
+\newcommand{\cs}[0]{\mathit{cs}}
+\newcommand{\css}[1]{\mathcal{C}\mkern-1.5mu\mathit{all}_{#1}}
+\newcommand{\semtrans}[5]{#4 \vdash \tup{#1} \, \rightsquigarrow_{#3} \tup{#2}^{#5}}
+\newcommand{\semtranstrans}[5]{#4 \vdash \tup{#1} \, \rightsquigarrow_{#3}^* \tup{#2}^{#5}}
+\newcommand{\fullsemtrans}[6]{#4 \vdash \tup{#1}^{#6} \, \rightsquigarrow_{#3} \tup{#2}^{#5}}
+\newcommand{\fullsemtranstrans}[6]{#4 \vdash \tup{#1}^{#6} \, \rightsquigarrow_{#3}^{*} \tup{#2}^{#5}}
+\newcommand{\gvl}[0]{v}
+\newcommand{\acomp}[2]{#2 \circ #1}
+\newcommand{\lstacomp}[2]{#2 \, \bar{\circ} \, #1}
+
+% allocator
+\newcommand{\allocator}[0]{AL}
+\newcommand{\allocators}[0]{\mathbb{AL}}
+\newcommand{\allocle}[0]{\preceq}
+\newcommand{\allocup}[0]{\curlyvee}
+\newcommand{\allocdown}[0]{\curlywedge}
+\newcommand{\allocf}[0]{\kw{\textsf{alloc}}}
+\newcommand{\arec}[0]{\xi}
+\newcommand{\sarec}[0]{\hat\xi}
+\newcommand{\alloc}[4]{#1.\kw{\textsf{alloc}}(#2)\, \rightarrow_{#4} (#3)}
+\newcommand{\allocint}[0]{\mathcal{I}_{AL}}
+
+% concrete and symbolic states 
+\newcommand{\cmemory}[0]{M}
+\newcommand{\cmemories}[0]{\mathbb{M}}
+ \newcommand{\cea}[0]{\kw{\textsf{\underline{ea}}}}
+ \newcommand{\cstateConstr}{\ensuremath{\mathit{CSC}}}
+ \newcommand{\cmem}[0]{\mu}
+ \newcommand{\freeRec}[0]{\xi}
+ \newcommand{\freeCnt}[0]{\iota}
+ \newcommand{\ceval}[2]{\llbracket #1 \rrbracket_{#2}}
+ \newcommand{\smemory}[0]{\hat{M}}
+\newcommand{\smemories}[0]{\hat{\mathbb{M}}}
+ \newcommand{\sinv}[0]{\mathit{\mathcal{W}\mkern-1muf}}
+ \newcommand{\smem}[0]{\hat{\mu}}
+ \newcommand{\sea}[0]{\hat{\kw{\textsf{\underline{ea}}}}}
+ \newcommand{\sexp}[0]{\hat{e}} 
+ \newcommand{\sexps}[0]{\hat{\mathcal{E}}\mkern-1.75mu\mathit{xpr}}
+ \newcommand{\pc}[0]{\pi}
+ \newcommand{\pcs}[0]{\Pi}
+ \newcommand{\pfr}[0]{\pc} 
+  \newcommand{\spc}[0]{\pc^s}
+   \newcommand{\spcs}[0]{\pcs^s}
+  \newcommand{\sstateConstr}{\ensuremath{\mathit{SSC}}}
+\newcommand{\ssto}[0]{\hat\sto} 
+  \newcommand{\sfreeRec}[0]{\hat\xi}
+ \newcommand{\sfreeCnt}[0]{\hat\iota}
+\newcommand{\sat}[0]{\texttt{SAT}}
+\newcommand{\unsat}[0]{\texttt{UNSAT}}
+\newcommand{\lenv}[0]{\varepsilon}
+% \newcommand{\seval}[2]{\llbracket #1 \rrbracket_{#2}}
+ \newcommand{\seval}[2]{\interp_{#2}(#1)}
+\newcommand{\sunop}[1]{\bar{\ominus}(#1)}
+\newcommand{\sbinop}[2]{\bar{\oplus}(#1, #2)}
+\newcommand{\Env}{\ensuremath{\mathtt{Env}}}
+
+% partial orders and restrictions
+\newcommand{\frestriction}[0]{\downharpoonleft}
+\newcommand{\rfun}[2]{#1\!\downharpoonleft_{#2}}
+\newcommand{\rleq}[0]{\sqsubseteq}
+\newcommand{\rel}[0]{\sim}
+
+% soundness 
+\newcommand{\soundRel}[0]{\mathit{SR}}
+\newcommand{\stRel}[0]{\sim_{s}}
+\newcommand{\vlRel}[0]{\sim_{v}}
+\newcommand{\stR}[2]{#1 \sim_{s} #2}
+\newcommand{\vlR}[3]{#1 \vdash #2 \sim_{v} #3} 
+\newcommand{\vlRe}[4]{#1 \vdash_{#4} #2 \sim_{v} #3} 
+\newcommand{\intpvrel}{\sim_{\vint}}
+\newcommand{\intpv}[2]{#1 \intpvrel #2}
+\newcommand{\intpsrel}{\sim_{\sintp}}
+\newcommand{\intps}[2]{#1 \intpsrel #2}
+\newcommand{\leqStRel}[0]{\leq_{\stRel}}
+\newcommand{\leqStR}[2]{#1 \leq #2}
+\newcommand{\semarrow}[0]{\rightsquigarrow}
+\newcommand{\ssemarrow}[0]{\rightsquigarrow^*}
+\newcommand{\rssemarrow}[0]{\rightsquigarrow^{\mbox{\scalebox{.35}{\EightAsterisk}}}}
+\newcommand{\ssemarrowfin}[0]{\rightsquigarrow^{*\!*}}
+\newcommand{\interp}[0]{\mathcal{I}}
+\newcommand{\modls}[0]{\mathcal{M}od}
+\newcommand{\lenvs}[0]{\mathcal{E}nv}
+\newcommand{\interpLift}[0]{\mathcal{L}}
+
+\newcommand{\sintp}{\mathcal{I}_\vint}
+\newcommand{\sintpe}[1]{\mathcal{I}_{#1}}
+
+%relations 
+\newcommand{\relset}[0]{\mathcal{R}}
+\newcommand{\memrelset}[0]{\mathcal{R}_{\mathbb{M}}}
+\newcommand{\strelset}[0]{\mathcal{R}_{\mathbb{S}}}
+\newcommand{\alrelset}[0]{\mathcal{R}_{\mathbb{AL}}}
+
+
+%assertions
+\newcommand{\lex}[0]{\epsilon}
+\newcommand{\lexprs}[0]{\mathcal{LE}xpr}
+\newcommand{\corePreds}[0]{\Gamma}
+\newcommand{\corePred}[0]{\gamma}
+\newcommand{\userPreds}[0]{\Delta}
+\newcommand{\userPred}[0]{\delta}
+\newcommand{\pass}[0]{p} 
+\newcommand{\qass}[0]{q}
+\newcommand{\Pass}[0]{P}
+\newcommand{\Qass}[0]{Q}
+\newcommand{\Psass}[0]{p}
+\newcommand{\Qsass}[0]{q}
+\newcommand{\spass}[0]{p}
+\newcommand{\sqass}[0]{q}
+\newcommand{\passes}[1]{\mathcal{S\mkern-1muA}_{#1}}
+\newcommand{\Psasses}[1]{\mathcal{A}_{#1}}
+\newcommand{\Passes}[1]{\mathcal{A}\mathit{srt}_{#1}}
+\newcommand{\spasses}[1]{\mathcal{A}^s_{#1}}
+\newcommand{\cPred}[1]{\corePred \langle #1 \rangle}
+\newcommand{\uPred}[1]{\userPred \langle #1 \rangle}
+\newcommand{\aPred}[2]{#1(#2)}
+\newcommand{\predicate}[3]{\kwT{pred} \, #1 (#2) :\!- #3} 
+\newcommand{\fullpredicate}[4]{\kwT{pred} \ #1 \langle#2\rangle \ \mathbf{:=} \ #3; \,  ... \, ; #4} 
+\newcommand{\pred}[0]{pred}
+\newcommand{\pdefs}[0]{\mathcal{P}\mkern-1mu\mathit{reds}}
+\newcommand{\pspecs}[0]{\mathcal{S}\mkern-1mu\mathit{pecs}}
+\newcommand{\pn}[0]{\mathit{pn}}
+\newcommand{\pns}[0]{\mathcal{P\mkern-1muN}}
+\newcommand{\predicates}[0]{\mathcal{P\mkern-1mu}red}
+\newcommand{\emp}[0]{{\sf emp}}
+\newcommand{\astar}[2]{#1 \ast #2}
+\newcommand{\abind}[2]{\backslash #1 . #2}
+\newcommand{\pval}[0]{\omega}
+\newcommand{\pvals}[1]{\Omega_{#1}}
+\newcommand{\actInterp}[0]{PI}
+\newcommand{\actInterps}[0]{\mathcal{P\mkern-1muI}}
+\newcommand{\fget}[0]{cons}
+\newcommand{\fset}[0]{prod}
+\newcommand{\fgetter}[1]{\kwT{\fget}_{#1}}
+\newcommand{\fgetterx}[1]{\kwT{get}_{#1}}
+\newcommand{\fsetterx}[1]{\kwT{set}_{#1}}
+\newcommand{\fcpgetter}[2]{\kwT{getCPred}_{#1}^{#2}}
+\newcommand{\fgetterB}[1]{\text{getB}_{#1}}
+\newcommand{\fgetterF}[1]{\text{getF}_{#1}}
+\newcommand{\fgetterX}[2]{\kwT{get}_{#1}^{#2}}
+\newcommand{\fsetterX}[2]{\kwT{set}_{#1}^{#2}}
+\newcommand{\fsetter}[1]{\kwT{\fset}_{#1}}
+\newcommand{\fcpsetter}[2]{\kwT{setCPred}_{#1}^{#2}}
+\newcommand{\Fgetter}[1]{\underline{\kw{get}}_{#1}}
+\newcommand{\Fsetter}[1]{\overline{\kwT{set}}_{#1}}
+\newcommand{\asrtInterp}[2]{\mathcal{I}_{\mathcal{A}}^{#1, #2}}
+\newcommand{\satisfies}{\vDash}
+\newcommand{\invars}{\mathrm{ins}}
+\newcommand{\vars}{\mathrm{vars}}
+
+
+\newcommand{\setInterp}[2]{\underline{set}_{#1}^{#2}}
+\newcommand{\getInterp}[2]{\underline{get}_{#1}^{#2}}
+
+\newcommand{\actionSetter}[4]{#1.\Fsetter{#2}(#3) \rightsquigarrow #4}
+\newcommand{\actionGetter}[4]{#1.\fgetter{#2}(#3) \rightsquigarrow #4}
+\newcommand{\actionGetterF}[4]{#1.\fgetterF{#2}(#3) \rightsquigarrow #4}
+\newcommand{\actionGetterX}[5]{#1.\fgetterX{#2}{#3}(#4) \rightsquigarrow #5}
+\newcommand{\actionSetterX}[5]{#1.\fsetterX{#2}{#3}(#4) \rightsquigarrow #5}
+\newcommand{\actionGetterB}[4]{#1.\fgetterB{#2}(#3) \rightsquigarrow #4}
+\newcommand{\actionSetterS}[4]{#1.\fsetter{#2}(#3) \rightsquigarrow #4}
+
+\newcommand{\actionSetterFull}[4]{#1.\Fsetter{#2}(#3) \rightsquigarrow #4}
+\newcommand{\actionGetterFull}[4]{#1.\Fgetter{#2}(#3) \rightsquigarrow #4}
+
+
+
+\newcommand{\setInterpS}[2]{set_{#1}^{#2}}
+\newcommand{\getInterpS}[2]{get_{#1}^{#2}}
+
+
+% verification
+\newcommand{\vcm}[0]{\underline{c}}
+\newcommand{\vcmds}[1]{\underline{\mathcal{C}}_{#1}}
+\newcommand{\vcall}[4]{#1 := #2(#3)_j \kwT{ with } [#4]}
+\newcommand{\vfold}[3]{\kwT{fold} \ #1(#2) \kwT{ with } [#3]}
+\newcommand{\vunfold}[2]{\kwT{unfold} \  #1(#2)}
+\newcommand{\vproc}[0]{\underline{\mathit{proc}}}
+\newcommand{\vprocs}[1]{\underline{\mathcal{P}roc}_{#1}}
+\newcommand{\vprocedure}[3]{\underline{\kw{\textsf{proc}}} \, #1(#2) \{ #3 \}}
+\newcommand{\vprog}[0]{\underline{\mathtt{p}}}
+\newcommand{\vprogs}[1]{\underline{\mathcal{P}rog}_{#1}}
+%\newcommand{\vsemtrans}[5]{#4 \vdash \tup{#1} \, \underline{\rightsquigarrow}_{#3} \tup{#2}^{#5}}
+\newcommand{\spec}[5]{\lbrace #1 \rbrace \, #2(#3) \, \lbrace #4, #5 \rbrace }
+\newcommand{\ispec}[5]{[ #1 ] \, #2(#3) \, [ #4, #5 ] }
+\newcommand{\getspec}[3]{#1.{\kwT{specs}}.#2.#3}
+\newcommand{\getpred}[3]{#1.{\kwT{preds}}.#2.#3}
+\newcommand{\getppred}[2]{#1.{\kwT{preds}}.#2}
+\newcommand{\getproc}[1]{#1.\kwT{proc}}
+\newcommand{\subst}[0]{\theta}
+\newcommand{\zsubst}[0]{[~]}
+\newcommand{\substitute}[3]{#1\!\left[#3/#2\right]}
+\newcommand{\vsemarrow}[0]{\underline{\rightsquigarrow}}
+\newcommand{\vssemarrow}[0]{\underline{\rightsquigarrow}^*}
+\newcommand{\vssemarrowfin}[0]{\underline{\rightsquigarrow}^{*\!*}}
+\newcommand{\vfullsemtrans}[6]{#4 \vdash \tup{#1}^{#6}~\underline{\rightsquigarrow}_{#3}~\tup{#2}^{#5}}
+% \DeclareDocumentCommand{\vsemtrans}{ m m o m m m }
+% {
+%  \IfNoValueTF{#3}
+%  	{#5 \vdash \tup{#1} \, \underline{\rightsquigarrow}_{#4} \tup{#2}^{#6}}
+% 	{#5 \vdash \tup{#1} \, \underline{\rightsquigarrow}_{#4}^{#3} \tup{#2}^{#6}}
+% }
+% \DeclareDocumentCommand{\rsemtrans}{ m m o m m m }
+% {
+%  \IfNoValueTF{#3}
+%  	{#5 \vdash \tup{#1} \, {\rightsquigarrow}_{#4} \tup{#2}^{#6}}
+% 	{#5 \vdash \tup{#1} \, {\rightsquigarrow}_{#4}^{#3} \tup{#2}^{#6}}
+% }
+
+%
+ \newcommand{\vpstateConstr}{\ensuremath{\mathit{PST}}}
+ \newcommand{\predsub}{{\sf p}}
+ 
+ % BiAbduction
+ \newcommand{\bistateConstr}{\ensuremath{\mathit{Bi}}}
+  \newcommand{\bisub}{{\sf bi}}
+  \newcommand{\rsucc}[1]{{\mathtt S}\langle#1\rangle}
+  \newcommand{\rfail}[1]{{\mathtt F}\langle#1\rangle}
+  \newcommand{\res}{Res}
+  \newcommand{\succActionT}[4]{#1.\darkmath{\text{#2}}(#3) \, \rightsquigarrow {\mathtt S}\langle#4\rangle}
+\newcommand{\succAction}[4]{#1.\darkmath{#2}(#3) \rightsquigarrow {\mathtt S}\langle#4\rangle}
+ \newcommand{\failActionT}[4]{#1.\darkmath{\text{#2}}(#3) \, \rightsquigarrow {\mathtt F}\langle#4\rangle}
+\newcommand{\failAction}[4]{#1.\darkmath{#2}(#3) \rightsquigarrow {\mathtt F}\langle#4\rangle}
+  
+% C
+\newcommand{\csm}{C\#minor\xspace}
+
+
+% last minute - oh my god
+\newcommand{\stcomp}{\bullet}
+\newcommand{\stzero}{{\bf 0}}
+\newcommand{\sstcomp}{\mathbin{\hat\bullet}}
+\newcommand{\sstzero}{{\hat{\bf 0}}}
+
+\newcommand{\hgv}[0]{\hat\gv}
+
+\newcommand{\vint}[0]{\lenv}
+\newcommand{\vints}[0]{\mathcal{I}_\gval}
+\newcommand{\sint}[0]{\mathcal{I}_\vint}
+\newcommand{\sInt}[1]{\mathcal{I}(#1)}
+\newcommand{\Vint}[2]{#2 \in \mathsf{dom}(#1)}
+
+\newcommand{\aF}{\mathtt{E}}
+
+\newcommand{\eex}[2]{#1.\darkmath{\text{eval}_{#2}}(-)}
+
+\newcommand{\prp}{\mathit{cp}}
+
+\newcommand{\emsg}{\mathit{msg}}
+
+\newcommand{\isfinal}{\mathsf{final}}
+\newcommand{\access}[2]{#1.\mathsf{#2}}
+\newcommand{\getstate}[1]{\access{#1}{st}}
+\newcommand{\getpc}[1]{\access{#1}{pc}}
+\newcommand{\hyp}[1]{{\bfseries (H#1)}}
+\newcommand{\sscf}[0]{\Omega}
+\newcommand{\ssscf}[0]{\hat\sscf}
+
+\newcommand{\lstxs}{\hat{\mathit{xs}}}
+\newcommand{\lstvs}{\mathit{vs}}
+\newcommand{\faction}[8]{ #1.#2(#3)_{#4} \semarrow (#5,#6)_{#7}^{#8} }
+
+\newcommand{\fcolaction}[8]{ #1.#2(#3)_{#4} \rightarrow \left\{ (#5_i,#6_i)_{#7_i}^{#8_i}|_{i=1} ^ n \right\} }
+\newcommand{\fcolactionc}[7]{ #1.#2(#3)_{#4} \rightarrow \left\{ (#5_i,#6_i)^{#7_i}|_{i=1} ^ n \right\} }
+\newcommand{\fcolactioncc}[8]{ #1.#2(#3)_{#4} \rightarrow \left\{ (#5_i, #6_i)^{#7_i}|_{i=1} ^ {#8} \right\} }
+
+\newcommand{\fcolactionx}[5]{ #1.#2(#3)_{#4} \rightarrow #5 }
+
+\newcommand{\code}[1]{{\small$\mathtt{#1}$}\xspace}
+
+\newcommand{\pvp}{\code{pvs}}
+
+\newcommand{\resfun}{\psi}
+\newcommand{\sresfun}{\hat\psi}
+\newcommand{\rsfn}[3]{\resfun(#1, #2, #3)}
+\newcommand{\srsfn}[4]{\sresfun(#1, #2, #3)_{#4}}
+
+\newcommand{\mems}{\mathsf{M}}
+\newcommand{\smems}{\hat{\mems}}
+
+\newcommand{\dtag}[1]{{\small \bfseries (#1)}}
+
+\newcommand{\csemarrowfin}[0]{\rightarrow^{*\!*}}

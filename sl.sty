@@ -1,0 +1,184 @@
+% useful default packages
+\usepackage{enumerate}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{proof}
+\usepackage{graphicx}
+\usepackage{mathpartir}
+\usepackage{xcolor}
+\usepackage{rotating}
+\usepackage{tikz}
+
+\usetikzlibrary {shapes}
+\usetikzlibrary{fit}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.markings}
+
+\pgfdeclarelayer{back}
+\pgfdeclarelayer{back2}
+\pgfsetlayers{back2,back,main}
+
+\newcommand{\pg}[1]{\begin{quote}{ ***** #1 *****}\end{quote}}
+
+\definecolor{grey}{rgb}{0.8, 0.8, 0.8}
+\definecolor{lightgrey}{rgb}{0.9, 0.9, 0.9}
+\definecolor{neonyellow}{rgb}{1, 1, 0}
+
+\newcommand{\shade}[2][grey]{\setlength{\fboxsep}{0pt}\colorbox{#1}{\ensuremath{#2}}}
+\newcommand{\highlight}[2][neonyellow]{\colorbox{#1}{#2}}
+\newcommand{\codebox}[1]{\fcolorbox{black}{lightgrey}{#1}}
+
+% Separation logic specific commands
+\newcommand{\assertion}[1]{\{ \, #1 \, \}}
+\newcommand{\predp}[2]{\mathsf{#1}(#2)}
+
+\newcommand{\bigoast}{\mathop{\mbox{\Large $\varoast$}}}
+
+\newcommand{\lstar}{\mathrel{*}}
+\newcommand{\rwand}{%
+  \mathrel{\mbox{$\hspace*{-0.03em}\mathord{-}\hspace*{-0.66em}
+  \mathord{-}\hspace*{-0.36em}\mathord{*}$\hspace*{-0.005em}}}}
+
+
+\newcommand{\expr}[1]{\mbox{$#1$}}
+\newcommand{\bexpr}[1]{\mbox{$#1$}}
+
+\newcommand{\ret}{\mathsf{ret}}
+
+\newcommand{\nil}{\mathtt{null}}
+
+\newcommand{\cell}[2]{#1 \mapsto #2}
+\newcommand{\twocell}[3]{#1 \mapsto #2, #3}
+\newcommand{\threecell}[4]{#1 \mapsto #2, #3, #4}
+
+\newcommand{\dotin}{\ \dot{\in} \ }
+
+% An environment for annotating proof outlines
+\newcommand{\exsts}[1]{\exists #1 \ldotp}
+\newcommand{\frall}[1]{\forall #1 \ldotp}
+
+\newcommand{\pplus}{\mathbin{\cdot}}
+\newenvironment{leftvruled}[1]{\begin{array}{@{}m{10pt}|l@{}}\text{\rotatebox{90}{\ {#1}\ }}&\begin{array}{@{}l@{}}}{\end{array}\end{array}}
+
+% Programming language
+
+\newcommand{\pvar}[1]{\mathtt{#1}}
+\newcommand{\pfunction}[3]{#1(#2) \, \{\,#3\,\}}
+\newcommand{\pfuncspec}[2]{#1(#2)}
+\newcommand{\psequence}[2]{#1 ;\ #2}
+\newcommand{\pifelse}[3]{\mathtt{if} \ (#1) \ #2 \ \mathtt{else} \ #3}
+\newcommand{\pwhile}[2]{\mathtt{while} \ (#1) \ #2}
+\newcommand{\passign}[2]{#1 \mathtt{\ :=\ } #2}
+\newcommand{\pmutate}[2]{[#1] \mathtt{\ :=\ } #2}
+\newcommand{\pderef}[2]{#1 \mathtt{\ :=\ } [#2]}
+\newcommand{\pfuncall}[3]{#1 \mathtt{\ :=\ } #2(#3)}
+\newcommand{\preturn}[1]{\mathtt{return} \ #1}
+\newcommand{\plocal}[1]{\mathtt{local} \ #1}
+\newcommand{\pskip}[0]{\mathtt{skip}}
+\newcommand{\palloc}[2]{#1 \mathtt{\ :=\ } \mathtt{new}(#2)}
+\newcommand{\pdealloc}[1]{\mathtt{dispose}(#1)}
+
+
+% Alternative programming languages to use in programs
+
+\newcommand{\pfunctions}[2]{\mathtt{#1}(#2) \ \{}
+\newcommand{\pfunctione}{\}}
+\newcommand{\pifelses}[1]{\mathtt{if} \ (#1) \ \{}
+\newcommand{\pifelsem}{\} \ \mathtt{else} \ \{}
+\newcommand{\pifelsee}{\}}
+\newcommand{\pwhiles}[1]{\mathtt{while} \ (#1) \ \{}
+\newcommand{\pwhilee}{\}}
+
+
+% Assertions
+
+\newcommand{\specline}[2][blue]{{\color{#1} \left\{\begin{array}{@{} l @{}} #2 \end{array}\right\}}}
+
+\newcommand{\llist}{\predp{list}}
+\newcommand{\lslist}{\predp{list'}}
+\newcommand{\llseg}{\predp{lseg}}
+\newcommand{\lseg}[3]{\predp{lseg}{#1, #2, #3}}
+\newcommand{\listseg}[1]{\llseg{#1}}
+
+\newcommand{\clseg}[3]{\predp{clseg}{#1, #2, #3}}
+\newcommand{\rclseg}[3]{\predp{rclseg}{#1, #2, #3}}
+\newcommand{\cdlseg}[5]{\predp{cdlseg}{#1, #2, #3, #4, #5}}
+\newcommand{\rcdlseg}[5]{\predp{rcdlseg}{#1, #2, #3, #4, #5}}
+\newcommand{\dlist}[3]{\predp{dlist}{#1, #2, #3}}
+\newcommand{\pframe}[1]{\predp{frame}{#1}}
+
+% list operators
+\newcommand{\concat}{\mathbin{\cdot}}
+
+
+% Operational Semantics
+
+\newcommand{\sthreadp}[2]{\left( {#1}, {#2} \right)}
+% Command
+\newcommand{\scmd}{{C}}
+% Boolean expression
+\newcommand{\bexp}{{B}}
+% Expression
+\newcommand{\vexp}{{E}}
+% Heap
+\newcommand{\hp}{h}
+% Denotational semantics
+\newcommand{\ssem}[1]{\llbracket {#1} \rrbracket}
+% Semantics of boolean expressions
+\newcommand{\bsem}[2]{\ssem{#1}_{#2}}
+% Semantics of value expressions
+\newcommand{\esem}[2]{\ssem{#1}_{#2}}
+% Transition relation
+\newcommand{\baction}{\rightsquigarrow}
+% Transition relation big step
+\newcommand{\saction}{\rightarrow}
+% Context
+\newcommand{\scontext}{\gamma}
+\newcommand{\sctx}{\scontext \vdash}
+% Fault
+\newcommand{\sfault}{\lightning}
+% Function name
+\newcommand{\procname}{f}
+
+% Set
+\newcommand{\Set}[1]{\left\{#1\right\}}
+
+\newcommand{\dom}{\mathop{\mathrm{dom}}}
+
+\newcommand{\lval}[1]{#1}
+\newcommand{\LVal}{\texttt{LVal}}
+\newcommand{\lexp}[1]{#1}
+\newcommand{\LExp}{\texttt{LExp}}
+
+\newcommand{\lvar}[1]{#1}
+
+\newcommand{\fv}[1]{\mathtt{fv}(#1)}
+
+%
+\newcommand{\storearrow}{\rightarrow}
+
+\newcommand{\triple}[3]{\vdash \left\{ \begin{array}{@{}c@{}} #1 \end{array} \middle\} \ {#2} \ \middle\{ \begin{array}{@{}c@{}}#3 \end{array} \right\}}
+
+\newcommand{\eqdef}{\stackrel{\mathrm{def}}{=}}
+%
+
+\newcommand{\updt}{\mathtt{mod}}
+
+
+\newcommand\cellsize{0.3}
+\newcommand\unitcell[2]{\draw (#1-\cellsize,#2-\cellsize) rectangle (#1+\cellsize,#2+\cellsize)}
+\newcommand\doublecell[2]{\unitcell{#1}{#2};\unitcell{#1}{#2+\cellsize*2}}
+\newcommand\triplecell[2]{\unitcell{#1}{#2};\unitcell{#1}{#2+\cellsize*2};\unitcell{#1}{#2+\cellsize*4}}
+\tikzset{
+  ptr/.style={->=stealth, line width=0.7pt},
+  o/.style={postaction={decorate, decoration={markings,
+    mark={at position 0 with {\filldraw circle[radius=0.6mm];}}}}},
+  nullptr/.style={line width=0.7pt, postaction={decorate, decoration={markings,
+    mark={at position 0.9999 with {\draw[black] (0,-1mm) -- (0,1mm);}}}}}}
+
+
+
+
+
