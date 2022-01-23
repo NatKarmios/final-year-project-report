@@ -1,23 +1,145 @@
 \chapter{Background}
-\label{cha:background}
-
+\label{sec:background}
 
 \section{The path to Separation Logic}
-
+\todo{Pinch from previous reports}
 \subsection{Hoare Logic}
 
 \subsection{Separation Logic}
 
+\section{OCaml}
 
-\section{Gillian}
+Created in 1996, OCaml~\cite{ocaml} is `an industrial-strength programming
+language supporting functional, imperative and object-oriented styles'.
+Specifically, OCaml provides the ability to make use of functional, imperative,
+and object-oriented styles. This, combined with its powerful type system,
+makes it a good fit for symbolic analysis tools. Many of Gillian's
+contemporaries, including Infer~\cite{infer},
+Verifast~\cite{verifast-paper, verifast-repo}, and Frama-C~\cite{frama-c}, are
+also written in OCaml.
 
-\section{Debugging - previous work}
+OCaml's most popular build system is Dune~\cite{dune} - it allows the easy
+compilation of multi-file OCaml programs and libraries, including dependencies
+from OPAM~\cite{opam}, OCaml's designated public library repository. Despite
+Dune's popularity, it is a fairly barebones system, quickly growing cumbersome
+when developing larger projects and, in particular, switching development
+between projects; Dune requires that OPAM dependencies are installed
+system-wide, which can lead to inconsistent builds and version conflicts. The
+answer to these concerns is esy~\cite{esy}, a package management system for
+OCaml and Reason styled after npm~\cite{npm}. Esy provides `provides a fast and
+powerful workflow for local development of opam packages without requiring
+"switches"', meaning dependencies are isolated between projects. Esy also
+provides a number of convenience features, such as defining custom commands
+that run within the OCaml project's environment.
 
+
+%% Described in Intro
+%\section{Gillian}
+%\section{Debugging - previous work}
 
 \section{Related work}
-\label{sec:related-work}
+\label{sec:background:related-work}
+
+\subsection{Infer}
 
 \subsection{Verifast}
 
+\subsection{Frama-C}
 
-\section{VSCode - debuggers and extensions}
+
+\section{VSCode and its extensions}
+
+VSCode (Visual Studio Code)~\cite{vscode} is a universally recognised text
+editor and development environment, developed by Microsoft. It currently stands
+as the most popular development worldwide, enjoying a 71\% market share
+according to Stack Overflow's 2021 developer survey
+~\cite{stack-overflow-survey-editors}.
+
+A large factor to VSCode's success is its extensive support for extensions,
+boasting over 24,000 freely-distributed extensions~\cite{vscode-popularity},
+ranging from language-specific support to general developer creature comforts
+(such as SSH support). Developing new extensions is made very accesible through
+simple JavaScript or TypeScript projects~\cite{vscode-extensions-intro}, making
+use of VSCode's well-documented API~\cite{vscode-api} to have a large degree of
+control over the editor.
+
+Whilst VSCode limits the extent to which extensions can extend the editor's UI,
+extension authors are able to make use of Webviews~\cite{vscode-webview}; an
+extension can open an editor tab that contains web content (HTML/CSS/JS) that
+the extension has complete control over, providing a method for extensions to
+fill in any gaps in VSCode's UI.
+
+\missingfigure{VSCode Webview example}
+
+\subsection{Debug Adapter Protocol}
+A common issue when adding IDE support for development tools is the sheer
+number of editors that would ideally be supported~\cite{magpiebridge}. Whilst
+VSCode has a huge market share, only supporting VSCode would neglect a
+significant portion of developers. Unfortunately, maintaining support for many
+editors at once is an unreasonably large undertaking. The \textit{Debug Adapter
+Protocol} (DAP)~\cite{dap} exists as an attempted countermeasure to this issue,
+turning the $O(m \times n)$ complexity problem of supporting many debuggers on
+many editors into a $O(m + n)$ problem; each debugger and each editor need only
+be integrated once.
+
+\missingfigure{DAP integration diagram}
+
+As discussed in \autoref{sec:intro:debugging}, the DAP's limited set of
+included commands proved a limiting factor in the development of a Gillian
+debugger. A potential solution is to make use of custom commands and events,
+which is supported both by VSCode (sending custom requests at~\cite{vscode-dap-custom-request}, receiving custom events at~\cite{vscode-dap-custom-event} and the OCaml DAP
+implementation currently used in Gillan's debugger~\cite{ocaml-dap} (where
+custom events and commands are defined similarly to those already
+provided~\cite{ocaml-dap-custom}).
+
+
+\subsection{Including OCaml code}
+
+Resulting of Ocsigen's work as part of their OCaml web framework
+~\cite{ocsigen-framework}, OCaml programs can be directly compiled into
+JavaScript using their \texttt{Js\_of\_ocaml} package~\cite{js-of-ocaml}; by
+adding a compilation flag in a project's Dune file, the relevant program can be
+compiled to a \texttt{.js} file instead of a native binary. This produced file
+doesn't need to be used as its own program; using the provided JS
+bindings~\cite{js-of-ocaml-bindings}, the resulting JS code can export
+functions and values, just like normal JS code, to be used elsewhere in a
+JavaScript project.
+
+Another option is to make use of the OCaml VSCode bindings
+~\cite{vscode-ocaml-bindings} provided by OCamlLabs'
+\texttt{vscode-ocaml-platform}~\cite{vscode-ocaml-platform, ocamllabs}; this
+way, no JavaScript need be written at all.
+
+These options allow the line between JavaScript and OCaml to be drawn wherever
+is most opportune; the extension could be written completely in JavaScript,
+requiring more attention when interacting with Gillian's debugger; the
+extension could be entirely OCaml, sacrificing more succinct integration with
+VSCode for a more unified codebase with Gillian; it is just as possible to draw
+the line somewhere inbetween, exposing the more Gillian-related OCaml code via
+functions to the JavaScript that communicates with VSCode. Additionally, both
+scenarious allow for Gillian code to be shared with the extension - however,
+with the Gillian libraries as they are, such libraries cannot be haphazardly
+included in the extension code; \texttt{Js\_of\_ocaml} transitively includes all
+OCaml dependencies, potentially leading to code that cannot be executed. As a
+concrete example to this, attempting to include Gillian's \texttt{debugAdapter}
+library results in erroring code, due to the compiler's attempt to include an
+SQLite implimentation, which it simply is not equipped to handle. Aside from
+this, the inclusion of unnecessary dependencies in JS-compiled code results in
+a hugely bloated extension - the \texttt{debugAdapter} example created a
+compiled JS file over a million lines long. The ideal scenario here is to move
+shared Gillian code to its own library within Gillian, which has as few
+dependencies as possible (ideally none), but both Gillian and the extension
+code depends on.
+
+\subsection{Putting it all together}
+
+A combination of DAP custom events and VSCode's Webviews can allow us to move
+past DAP's initial limitations, however this comes at the cost of creating an
+implementation specific to VSCode, eliminating a large benefit of using the DAP
+in the first place.
+
+A working example that tests custom DAP commands/events, Webviews and the
+inclusion of OCaml code (alongside a Gillian library) is available at
+\cite{debugger-experiment}.
+
+\section{MagpieBridge}
