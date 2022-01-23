@@ -9,28 +9,29 @@
 
 \section{OCaml}
 
-Created in 1996, OCaml~\cite{ocaml} is `an industrial-strength programming
-language supporting functional, imperative and object-oriented styles'.
-Specifically, OCaml provides the ability to make use of functional, imperative,
-and object-oriented styles. This, combined with its powerful type system,
-makes it a good fit for symbolic analysis tools. Many of Gillian's
-contemporaries, including Infer~\cite{infer},
-Verifast~\cite{verifast-paper, verifast-repo}, and Frama-C~\cite{frama-c}, are
-also written in OCaml.
+Created in 1996, \textit{OCaml}~\cite{ocaml} is `an industrial-strength
+programming language supporting functional, imperative and object-oriented
+styles'. Specifically, OCaml provides the ability to make use of functional,
+imperative, and object-oriented styles. This, combined with its powerful type
+system, makes it a good fit for symbolic analysis tools. Many of Gillian's
+contemporaries, including Infer~\cite{infer}, Verifast~\cite{verifast-paper,
+verifast-repo}, and Frama-C~\cite{frama-c}, are also written in OCaml.
 
-OCaml's most popular build system is Dune~\cite{dune} - it allows the easy
-compilation of multi-file OCaml programs and libraries, including dependencies
-from OPAM~\cite{opam}, OCaml's designated public library repository. Despite
-Dune's popularity, it is a fairly barebones system, quickly growing cumbersome
-when developing larger projects and, in particular, switching development
-between projects; Dune requires that OPAM dependencies are installed
-system-wide, which can lead to inconsistent builds and version conflicts. The
-answer to these concerns is esy~\cite{esy}, a package management system for
-OCaml and Reason styled after npm~\cite{npm}. Esy provides `provides a fast and
-powerful workflow for local development of opam packages without requiring
-"switches"', meaning dependencies are isolated between projects. Esy also
-provides a number of convenience features, such as defining custom commands
-that run within the OCaml project's environment.
+OCaml's most popular build system is \textit{Dune}~\cite{dune} - it allows the
+easy compilation of multi-file OCaml programs and libraries, including
+dependencies from \textit{OPAM}~\cite{opam}, OCaml's designated public library
+repository. Despite Dune's popularity, it is a fairly barebones system, quickly
+growing cumbersome when developing larger projects and, in particular,
+switching development between projects; Dune requires that OPAM dependencies
+are installed system-wide, which can lead to inconsistent builds and version
+conflicts. The answer to these concerns is \textit{esy}~\cite{esy}, a package
+management system for OCaml and Reason styled after \textit{npm}~\cite{npm}.
+Esy provides `provides a fast and powerful workflow for local development of
+opam packages without requiring "switches"', meaning dependencies are isolated
+between projects. Esy also provides a number of convenience features, such as
+defining custom commands that run within the OCaml project's environment, as
+well as supporting non-OPAM dependencies, e.g. OCaml sources from GitHub
+repositories (optionally at a specific commit).
 
 
 %% Described in Intro
@@ -69,7 +70,26 @@ extension can open an editor tab that contains web content (HTML/CSS/JS) that
 the extension has complete control over, providing a method for extensions to
 fill in any gaps in VSCode's UI.
 
-\missingfigure{VSCode Webview example}
+\begin{figure}
+  \center
+  \includegraphics[width=400px]{img/webview-example.png}
+  \caption{An example of a Webview created by a VSCode extension}
+  \label{fig:webview-example}
+\end{figure}
+
+
+\begin{wrapfigure}{R}{0.5\textwidth}
+  \centering
+  \vspace*{-1.6cm}
+  \includegraphics[width=200px]{img/dap-diagram.png}
+  \vspace*{-0.45cm}
+  \caption{
+    The intention of the DAP, acting as an interface between arbitrary IDEs and
+    arbitrary debuggers. From~\cite{dap}.
+  }
+  \label{fig:dap-diagram}
+  \vspace*{-1cm}
+\end{wrapfigure}
 
 \subsection{Debug Adapter Protocol}
 A common issue when adding IDE support for development tools is the sheer
@@ -82,12 +102,12 @@ turning the $O(m \times n)$ complexity problem of supporting many debuggers on
 many editors into a $O(m + n)$ problem; each debugger and each editor need only
 be integrated once.
 
-\missingfigure{DAP integration diagram}
-
 As discussed in \autoref{sec:intro:debugging}, the DAP's limited set of
 included commands proved a limiting factor in the development of a Gillian
 debugger. A potential solution is to make use of custom commands and events,
-which is supported both by VSCode (sending custom requests at~\cite{vscode-dap-custom-request}, receiving custom events at~\cite{vscode-dap-custom-event} and the OCaml DAP
+which is supported both by VSCode (sending custom requests
+at~\cite{vscode-dap-custom-request}, receiving custom events
+at~\cite{vscode-dap-custom-event} and the OCaml DAP
 implementation currently used in Gillan's debugger~\cite{ocaml-dap} (where
 custom events and commands are defined similarly to those already
 provided~\cite{ocaml-dap-custom}).
@@ -131,6 +151,13 @@ shared Gillian code to its own library within Gillian, which has as few
 dependencies as possible (ideally none), but both Gillian and the extension
 code depends on.
 
+\begin{sidewaysfigure}
+  \center
+  \includegraphics[width=650px]{img/vscode-extension-with-ocaml.png}
+  \caption{The process of including OCaml code in a VSCode extension}
+  \label{fig:vscode-extension-with-ocaml}
+\end{sidewaysfigure}
+
 \subsection{Putting it all together}
 
 A combination of DAP custom events and VSCode's Webviews can allow us to move
@@ -143,3 +170,33 @@ inclusion of OCaml code (alongside a Gillian library) is available at
 \cite{debugger-experiment}.
 
 \section{MagpieBridge}
+
+Similar to program debugging, adding support for static code analysers to IDEs
+is the amount of tools and IDEs that support must be added for. In a similar
+notion to the DAP, MagpieBridge~\cite{magpiebridge} is `a framework for
+integrating Static Analyses into IDEs and Editors with the Language Server
+Protocol'~\cite{magpiebridge-repo}. The \textit{Language Server Protocol}
+(LSP)~\cite{lsp} is another of Microsoft's creations, similar to the DAP, which
+adds an arbitrary interface bridging IDEs and language tools (syntax checkers,
+intellisense, etc.).
+
+A particular feature of MagpieBridge is its ability to serve a configuration
+webpage, in which the user can configure the static analysis in their browser
+of choice. Unfortunately, this pre-generated page can't contain any custom
+content, and can only be used for configuration - this would prohibit advanced
+debugging features from being served driectly from a MagpieBridge server.
+
+Additionally, the inclusion of MagpieBridge would involve the addition of Java
+to the language base of Gillian, increasing complexity of the project and
+potentially harming long-term usability.
+
+
+\begin{figure}
+  \noindent
+  \makebox[\textwidth]{\includegraphics[width=500px]{img/magpiebridge-goal.png}}
+  \caption{
+    The goal of MagpieBridge; bridging static analysis tools with IDEs.
+    From~\cite{magpiebridge-repo}.
+  }
+  \label{fig:webview-example}
+\end{figure}
