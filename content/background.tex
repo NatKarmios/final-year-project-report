@@ -1,11 +1,61 @@
 \chapter{Background}
 \label{sec:background}
 
-\section{The path to Separation Logic}
-\todo{Pinch from previous reports}
-\subsection{Hoare Logic}
+\section{Separation Logic}
 
-\subsection{Separation Logic}
+Proposed in 1969, Tony Hoare's \textit{Hoare Logic} provided a standardised
+means of reasoning about programs and their correctess~\cite{hoare}. The key
+principle of this logic is the Hoare Triple, denoting that if a certain
+precondition $P$ holds, and code command $C$ is run (and terminates without
+failing), then the postcondition $Q$ is guaranteed to hold. This is presented
+in the form:
+
+$$
+  \triple{P}{C}{Q}
+$$
+
+Whilst this is a strong foundation for reasoning about programs, anything more
+than the simplest of functions become hugely cumbersome to work with,
+particularly concerning operations on heap-allocated memory. In 2001, Peter
+O'Hearn and John Reynolds proposed \textit{Separation Logic} as the solution to
+this~\cite{separation-logic}. Separation Logic reasons about
+\textit{heap fragments} (sometimes called \textit{heaplets}), which represent
+sections of a theoretical computer's heap; it also provides three core features
+in addition to the standard Hoare Logic:
+
+\begin{figure}
+  \centering
+  \includegraphics[width=200px]{img/separating-conjunction.jpg}
+  \caption{
+    A visualisation of the separating conjunction.
+    From~\cite{infer-sl}.
+  }
+  \label{fig:separating-conjunction}
+\end{figure}
+
+\begin{itemize}
+  \item The \textit{heap cell assertion}, $\cell{x}{y}$, denotes that a heap
+  fragment composes of a single cell at address $x$ with value $y$.
+
+  \item The \textit{separating conjuntion}, $P \lstar Q$, states that the heap
+  fragment can be split into two disjoint (potentially empty) sub-fragments,
+  one of which satisfies $P$, and the other satisfies $Q$.
+
+  \item The \textit{Frame Rule} - a fundamental rule that allows derivations to
+  temporarily ``forget'' any unneeded logic either not concerning
+  heap-allocated memory, or concerning heap-allocated memory that isn't mutated
+  by the command(s) currently being considered. Intuitively, this states that
+  any programs that can execute on a state $P$ can also execute on a larger
+  state, $P \lstar R$. The Frame Rule is as follows:
+
+  $$
+    \inferrule[Frame]{
+      \triple{P}{C}{Q} \quad \mathtt{mod}(C) \cap \mathtt{fv}(R) =
+      \emptyset}{\triple{P \lstar R}{C}{Q \lstar R}
+    }
+  $$
+\end{itemize}
+
 
 \section{OCaml}
 
@@ -27,7 +77,7 @@ are installed system-wide, which can lead to inconsistent builds and version
 conflicts. The answer to these concerns is \textit{esy}~\cite{esy}, a package
 management system for OCaml and Reason styled after \textit{npm}~\cite{npm}.
 Esy provides `provides a fast and powerful workflow for local development of
-opam packages without requiring "switches"', meaning dependencies are isolated
+opam packages without requiring ``switches''', meaning dependencies are isolated
 between projects. Esy also provides a number of convenience features, such as
 defining custom commands that run within the OCaml project's environment, as
 well as supporting non-OPAM dependencies, e.g. OCaml sources from GitHub
@@ -178,7 +228,8 @@ integrating Static Analyses into IDEs and Editors with the Language Server
 Protocol'~\cite{magpiebridge-repo}. The \textit{Language Server Protocol}
 (LSP)~\cite{lsp} is another of Microsoft's creations, similar to the DAP, which
 adds an arbitrary interface bridging IDEs and language tools (syntax checkers,
-intellisense, etc.).
+intellisense, etc.). As an example, MagpieBridge has provided an fully
+functional integration for Infer~\cite{infer-ide}.
 
 A particular feature of MagpieBridge is its ability to serve a configuration
 webpage, in which the user can configure the static analysis in their browser
