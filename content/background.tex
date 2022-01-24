@@ -8,7 +8,7 @@ means of reasoning about programs and their correctess~\cite{hoare}. The key
 principle of this logic is the Hoare Triple, denoting that if a certain
 precondition $P$ holds, and code command $C$ is run (and terminates without
 failing), then the postcondition $Q$ is guaranteed to hold. This is presented
-in the form:
+in the form of a \textit{Hoare triple}, like so:
 
 $$
   \triple{P}{C}{Q}
@@ -93,9 +93,59 @@ repositories (optionally at a specific commit).
 
 \subsection{Infer}
 
-\subsection{Verifast}
+Facebook's \textit{Infer}~\cite{infer, infer-site} is a static analysis tool
+for Java and C/C++/Objective-C, designed to use bi-abduction to provide users
+with a list of potential bugs, crashes, and sources of poor performance.
+Similarly to Gillian, Infer is written in OCaml, and works by compiling source
+code to an intermediate representation. In contrast, Infer wholly focuses on
+automated compositional testing, and refines this process to a state in which
+it can easily be used in industry, whilst also including more general analysis
+for concerns such as security and concurrency; it sacrifices depth of analysis
+to result in a lightweight tool that gives developer-friendly feedback.
+
+Infer doesn't require the a full program in order to perform anaylsis, as it
+only needs to construct Hoare triples for one function at a time. This,
+combined with its ability to reuse existing results from unchanged functions to
+only consider modified code, makes for a fast and hugely scalable static
+analysis tool, used as part of Facebook's code quality pipeline for all
+modifications to the Android and iOS apps for Facebook, Facebook Messenger,
+Instagram, and others services~\cite{infer-about}.
+
+\subsection{VeriFast}
+
+\textit{VeriFast}~\cite{verifast-paper, verifast-repo} `is a prototype
+verification tool for single-threaded and multithreaded C and Java programs'.
+VeriFast performs verification similar to Gillian, working on functions with
+developer-defined pre- and post-conditions, also using an intermediate
+representation to do so.
+
+Until recent work Gillian by Matthew Ho~\cite{gillian-debugging-2021},
+VeriFast's clear-cut advantage was its functioning debugger, and succinct,
+immediate error reporting; as found in previous comparisons
+~\cite{gillian-logging-2020}, upon attempting to verify an invalid program,
+VeriFast will directly output its reasoning for the error, and the line number
+responsible. While this is certainly more direct than Gillian's old method of
+trawling through log files, VeriFast's error messages were often vague, and
+with no produced logs to refer to for more detail, such errors often remained
+cryptic.
+
+However, VeriFast remains ahead of Gillian's debugging capabilities - whilst
+Matthew's work from 2021 markedly closed the gap between the two tools (and
+provided more specific and helpful error reporting, as well as some ease-of-use
+features such as debugging specific functions), the DAP's limitations on
+Gillian debugging left for some sorely missed features, such as the VeriFast
+debugger's ability to jump to any previously executed command, and visually
+show when resources allocated on the heap are freed. As of the beginning of
+this project, the ability to select execution branch when debugging is absent
+from both Gillian and VeriFast.
 
 \subsection{Frama-C}
+
+Is Frama-C worth mentioning? The only separation logic -based tooling I can
+find for it is one of its older plugins, Jessie, which is no longer maintained
+and currently declared potentially incompatible with more recent versions of
+Frama-C.
+\todo{Decide whether Frama-C is worth talking about}
 
 
 \section{VSCode and its extensions}
