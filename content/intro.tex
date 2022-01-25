@@ -43,11 +43,11 @@ analysis:
   \item \emph{Full verification}: developers annotate functions with pre- and
   post-conditions, loop invariants, and proof tactics, in the style of
   separation logic; Gillian then symbolically executes the functions with
-  preconditions intact to see if the postconditions hold.
+  pre-conditions intact to see if the post-conditions hold.
 
   \item \emph{Automatic compositional testing}. Similarly to Facebook's
   Infer\cite{infer, infer-site}, developers submit a program without any
-  preconditions, postconditions, or any other logical annotations, and,
+  pre-conditions, post-conditions, or any other logical annotations, and,
   through bi-abduction\cite{bi-abduction}, Gillian will respond with
   separation logic-style specifications for that programs behaviour, up
   to a specified bound.

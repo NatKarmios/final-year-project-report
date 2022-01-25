@@ -4,10 +4,10 @@
 \section{Separation Logic}
 
 Proposed in 1969, Tony Hoare's \textit{Hoare Logic} provided a standardised
-means of reasoning about programs and their correctess~\cite{hoare}. The key
+means of reasoning about programs and their correctness~\cite{hoare}. The key
 principle of this logic is the Hoare Triple, denoting that if a certain
-precondition $P$ holds, and code command $C$ is run (and terminates without
-failing), then the postcondition $Q$ is guaranteed to hold. This is presented
+pre-condition $P$ holds, and code command $C$ is run (and terminates without
+failing), then the post-condition $Q$ is guaranteed to hold. This is presented
 in the form of a \textit{Hoare triple}, like so:
 
 $$
@@ -37,7 +37,7 @@ in addition to the standard Hoare Logic:
   \item The \textit{heap cell assertion}, $\cell{x}{y}$, denotes that a heap
   fragment composes of a single cell at address $x$ with value $y$.
 
-  \item The \textit{separating conjuntion}, $P \lstar Q$, states that the heap
+  \item The \textit{separating conjunction}, $P \lstar Q$, states that the heap
   fragment can be split into two disjoint (potentially empty) sub-fragments,
   one of which satisfies $P$, and the other satisfies $Q$.
 
@@ -64,13 +64,13 @@ programming language supporting functional, imperative and object-oriented
 styles'. Specifically, OCaml provides the ability to make use of functional,
 imperative, and object-oriented styles. This, combined with its powerful type
 system, makes it a good fit for symbolic analysis tools. Many of Gillian's
-contemporaries, including Infer~\cite{infer}, Verifast~\cite{verifast-paper,
+contemporaries, including Infer~\cite{infer}, VeriFast~\cite{verifast-paper,
 verifast-repo}, and Frama-C~\cite{frama-c}, are also written in OCaml.
 
 OCaml's most popular build system is \textit{Dune}~\cite{dune} - it allows the
 easy compilation of multi-file OCaml programs and libraries, including
 dependencies from \textit{OPAM}~\cite{opam}, OCaml's designated public library
-repository. Despite Dune's popularity, it is a fairly barebones system, quickly
+repository. Despite Dune's popularity, it is a fairly bare-bones system, quickly
 growing cumbersome when developing larger projects and, in particular,
 switching development between projects; Dune requires that OPAM dependencies
 are installed system-wide, which can lead to inconsistent builds and version
@@ -103,7 +103,7 @@ it can easily be used in industry, whilst also including more general analysis
 for concerns such as security and concurrency; it sacrifices depth of analysis
 to result in a lightweight tool that gives developer-friendly feedback.
 
-Infer doesn't require the a full program in order to perform anaylsis, as it
+Infer doesn't require the a full program in order to perform analysis, as it
 only needs to construct Hoare triples for one function at a time. This,
 combined with its ability to reuse existing results from unchanged functions to
 only consider modified code, makes for a fast and hugely scalable static
@@ -114,7 +114,7 @@ Instagram, and others services~\cite{infer-about}.
 \subsection{VeriFast}
 
 \textit{VeriFast}~\cite{verifast-paper, verifast-repo} `is a prototype
-verification tool for single-threaded and multithreaded C and Java programs'.
+verification tool for single-threaded and multi-threaded C and Java programs'.
 VeriFast performs verification similar to Gillian, working on functions with
 developer-defined pre- and post-conditions, also using an intermediate
 representation to do so.
@@ -159,7 +159,7 @@ according to Stack Overflow's 2021 developer survey
 A large factor to VSCode's success is its extensive support for extensions,
 boasting over 24,000 freely-distributed extensions~\cite{vscode-popularity},
 ranging from language-specific support to general developer creature comforts
-(such as SSH support). Developing new extensions is made very accesible through
+(such as SSH support). Developing new extensions is made very accessible through
 simple JavaScript or TypeScript projects~\cite{vscode-extensions-intro}, making
 use of VSCode's well-documented API~\cite{vscode-api} to have a large degree of
 control over the editor.
@@ -235,15 +235,15 @@ is most opportune; the extension could be written completely in JavaScript,
 requiring more attention when interacting with Gillian's debugger; the
 extension could be entirely OCaml, sacrificing more succinct integration with
 VSCode for a more unified codebase with Gillian; it is just as possible to draw
-the line somewhere inbetween, exposing the more Gillian-related OCaml code via
+the line somewhere in-between, exposing the more Gillian-related OCaml code via
 functions to the JavaScript that communicates with VSCode. Additionally, both
-scenarious allow for Gillian code to be shared with the extension - however,
+scenarios allow for Gillian code to be shared with the extension - however,
 with the Gillian libraries as they are, such libraries cannot be haphazardly
 included in the extension code; \texttt{Js\_of\_ocaml} transitively includes all
 OCaml dependencies, potentially leading to code that cannot be executed. As a
 concrete example to this, attempting to include Gillian's \texttt{debugAdapter}
 library results in erroring code, due to the compiler's attempt to include an
-SQLite implimentation, which it simply is not equipped to handle. Aside from
+SQLite implementation, which it simply is not equipped to handle. Aside from
 this, the inclusion of unnecessary dependencies in JS-compiled code results in
 a hugely bloated extension - the \texttt{debugAdapter} example created a
 compiled JS file over a million lines long. The ideal scenario here is to move
@@ -286,7 +286,7 @@ A particular feature of MagpieBridge is its ability to serve a configuration
 webpage, in which the user can configure the static analysis in their browser
 of choice. Unfortunately, this pre-generated page can't contain any custom
 content, and can only be used for configuration - this would prohibit advanced
-debugging features from being served driectly from a MagpieBridge server.
+debugging features from being served directly from a MagpieBridge server.
 
 Additionally, the inclusion of MagpieBridge would involve the addition of Java
 to the language base of Gillian, increasing complexity of the project and
