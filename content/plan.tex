@@ -5,21 +5,27 @@
 
 \section{Improving the debugging experience}
 
-The plan for improving Gillian's debugger more or less follows on from the evaluation of the previous one~\cite{gillian-debugging-2021}.
+The plan for improving Gillian's debugger more or less follows on from the
+evaluation of the previous one~\cite{gillian-debugging-2021}. Here are some
+primary objectives for this project; of course, these are subject to change as
+work continues:
 
-\subsection{Building a custom debugging UI}
+\begin{itemize}
 
-As stated in \autoref{sec:intro}, the DAP doesn't have the command
-set necessary for debugging symbolic execution. We can, however, use a
-combination of Webviews and custom DAP requests / events to supplement the
-existing debugging UI, as outlined in \autoref{sec:vscode}.
+  \item As stated in \autoref{sec:intro}, the DAP doesn't have the command set
+        necessary for debugging symbolic execution. We can, however, use a
+        combination of Webviews and custom DAP requests / events to supplement
+        the existing debugging UI, as outlined in \autoref{sec:vscode}; this
+        will be a necessity to develop many of the other features on this list.
 
-\subsection{Selecting symbolic execution branches}
-
-A prime missing feature as the debugger stands is the ability for users to
-select branches of execution when debugging. Currently, the debugger runs
-through the problem top-to-bottom, dealing with each branch in turn. Ideally,
-users will able to select which branch to go down when given a choice.
+  \item A prime missing feature as the debugger stands is the ability for users
+        to select branches of execution when debugging. Currently, the debugger
+        runs through the problem top-to-bottom, dealing with each branch in
+        turn. Ideally, users will able to select which branch to go down when
+        given a choice. As a bare minimum, this should be implemented for
+        if-else statements; ideally, this should be extended to cover switch
+        statements, as well as any other branching statements in the target
+        languages supported.
 
 \begin{figure}
   \noindent
@@ -30,48 +36,44 @@ users will able to select which branch to go down when given a choice.
   \label{fig:branch-selection-mockup}
 \end{figure}
 
-As a bare minimum, this should be implemented for if-else statements; ideally,
-this should be extended to cover switch statements, as well as any other
-branching statements in the target languages supported.
-
 % Maybe run an HTTP server when debugging to serve the extra info and controls?
 
+  % Thanks sacha!
+  \item A desired feature is the ability to step through Gillian's unification
+        process, which stands as one of the pain points of the current user
+        experience; a large share of verification errors occur when unifying
+        against either the pre-condition of a called function, or the
+        post-condition of the current function. In the presence of several
+        specifications, the process of identifying which specs \textit{should}
+        be unifying (but aren't) often takes a significant amount of time and
+        thought, when a bespoke interface would greatly streamline this process.
 
-\subsection{Improving error message coverage}
+        In particular, unification is performed following tree-shaped
+        \textit{unification plans}; the ability to step through and visualise
+        progress in these plans would immediately give the developer a far
+        better idea of a unification error's cause.
 
-Whilst the Gillian debugger's coverage of error messages is mostly complete, it
-is currently unable to give error messages for memory leaks, as debugging
-unification is not supported. Rectifying this is one of the goals of this
-project.
+  \item As stated in the evaluation of the previous project, the debugger is
+        entirely focused on symbolic execution errors. To turn Gillian's
+        debugger into a tool that can be comfortably used by real developers,
+        having the debugger encompass more error types should be worked towards.
 
-The debugger also does not yet support lifting JavaScript memory errors; this
-should be achievable, as missing resource errors are the only form of memory
-error for JavaScript.
+  \item A natural extension of being able to select branches of execution is a
+        full tree visualisation of execution paths, allowing developers to jump
+        forwards or backwards (or 'sideways', in a sense) to any step of
+        execution.
 
-As stated in the evaluation of the previous project, the debugger is entirely
-focused on symbolic execution errors. To turn Gillian's debugger into a tool
-that can be comfortably used by real developers, having the debugger encompass
-more error types should be worked towards.
+  \item Potentially, small details such as showing resources that have been
+        freed, à la VeriFast, could be implemented; this purely depends on
+        available time, and what would and wouldn't be deemed useful by
+        Gillian's primary developers and users.
 
+  \item A potential goal for this project is implementing Gillian debugging for
+        the Rust programming language~\cite{rust}. This is not a certainty, as
+        it depends both on how much time is available, and on the progress of
+        another final year project taking place in parallel with this one.
 
-\subsection{Miscellaneous quality-of-life features}
-
-There are a number of niceties that can be achieved in this project. A natural
-extension of being able to select branches of execution is a full tree
-visualisation of execution paths, allowing developers to jump forwards or
-backwards (or 'sideways', in a sense) to any step of execution. Potentially,
-small details such as showing resources that have been freed, à la VeriFast,
-could be implemented; this purely depends on available time, and what would and
-wouldn't be deemed useful by Gillian's primary developers and users.
-
-
-\section{Gillian-Rust}
-% What am I doing with Rust? Just implementing a debugger component for it?
-
-A potential goal for this project is implementing Gillian debugging for the
-Rust programming language~\cite{rust}. This is not a certainty, as it depends
-both on how much time is available, and on the progress of another final year
-project taking place in parallel with this one.
+\end{itemize}
 
 \section{Rough project timeline}
 
@@ -80,10 +82,10 @@ project taking place in parallel with this one.
 \begin{flushleft}
 \begin{tabular}{@{\,}r <{\hskip 2pt} !{\vertline} >{\raggedright\arraybackslash}p{13cm}}
 
-  March & Implement debugging unification                      \newline \\
-  April & Implement custom debugging UI for VSCode \newline
+  March & Implement stepping through unification plans         \newline \\
+  April & Implement custom debugging UI for VSCode             \newline
           Including branching execution and tree visualisation \newline \\
-  May   & Implement quality-of-life changes \newline
+  May   & Implement quality-of-life changes                    \newline
           Implement Rust debugging (if possible)               \newline \\
   June  & Finish implementation, finalize report               \newline \\
   
