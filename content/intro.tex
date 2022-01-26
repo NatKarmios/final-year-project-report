@@ -1,3 +1,5 @@
+%!TEX root = ../main.tex
+
 \chapter{Introduction}
 \label{sec:intro}
 
@@ -22,17 +24,14 @@ scenario by hand.
 
 %\section{Gillian}
 
-Enter Gillian. Created by Imperial College London's Verified Software group, it
+Enter Gillian~\cite{gillian-santos,gillian-part1,gillian-part2,gillian-techrep}. Created by Imperial College London's Verified Software group, it
 is a platform for the development of symbolic analysis tools. Compared to
 related projects, Gillian has two advantages.
-
-Firstly, Gillian is \textit{parametric} on the target language's memory model;
-if provided with a compiler from a language to GIL (a simple, Gillian-specific
-GOTO language) and an implementation of the language's memory model (in OCaml),
-then Gillian can do all the heavy lifting and perform symbolic analysis on that
-language in various ways~\cite{gillian-part1}.
-
-Which raises Gillian's second advantage; it supports three methods of symbolic
+Firstly, it is \textit{parametric} on the target language's (TL) memory model;
+if provided with a compiler from a TL to GIL (a simple, Gillian-specific
+GOTO language) and an implementation of the TL's memory model (in OCaml),
+then Gillian can do all the heavy lifting and perform symbolic analysis on programs written in that
+TL in various ways~\cite{gillian-part1}. This brings to front Gillian's second advantage; it supports three methods of symbolic
 analysis:
 \begin{itemize}
   \item \emph{Whole program symbolic testing}, in which developers write a
@@ -53,8 +52,6 @@ analysis:
   to a specified bound.
 \end{itemize}
 
-Note that this project focuses on the \textit{full verification} aspect of
-Gillian.
 
 %\section{Debugging}
 %\label{sec:intro:debugging}
@@ -63,29 +60,29 @@ Whilst symbolic analysis tools have clear benefits when proving program
 correctness, the adoption of symbolic methods in industry remains limited; a
 strong factor to this end is the lack of IDE support for
 developers~\cite{magpiebridge}.
-
-In addition, in the specific case of Gillian, upon failure of full
-verification, a user would have to sift through a multi-megabyte log file to
+%
+In addition, in the specific case of Gillian, upon failure of any of its analyses, 
+a user has to sift through a multi-megabyte log file to
 find the offending piece of GIL code; deducing both the cause of the error and
-the location of the problems in the original target language code would take an
+the location of the problems in the original TL code would take an
 unreasonable amount of work and understanding~\cite{gillian-debugging-2021}.
 
 To assuage these issues, significant work has gone into developing a debugger
 for Gillian's verification process, as well as improving its error reporting.
-This debugger makes use of the DAP (debug adapter protocol) to provide a
-debugger than can be dropped into any IDE that supports it, with little-to-no
+This undertaking, in its current state, makes use of the DAP (debug adapter protocol) 
+to provide a debugger than can be dropped into any IDE that supports it, with little-to-no
 integration required with any specific IDE. Whilst this debugger is a huge
 improvement to the user experience of Gillian, the DAP only provides a limited
 amount of functionality, primarily designed for debugging concrete execution.
 The decision had been taken to work within these limitations, producing a
-debugger that can successfully step over, into and out of (GIL, wisl, or
+debugger that can successfully step over, into and out of (GIL, WISL, or
 JavaScript) code. An unfortunate consequence of this decision is that a number
 of much desired features could not be provided, such as `the ability to choose
 which branch to go down on a conditional statement' and `better visualisations
 of the current execution tree'~\cite[p.~49]{gillian-debugging-2021}.
 
 The decision to use the DAP instead of a custom solution was made, quite
-reasonably so, due to `the short time frame of a Master’s project'. Standing on
+reasonably so, due to `the short timeframe of a Master's project'. Standing on
 the shoulders of previous work to this end, this project aims to take Gillian's
 debugging tools beyond the limitations of the DAP, and provide an experience
-befitting real users, rather than experimental scenarios.
+befitting real users, rather than experimental scenarios. 
