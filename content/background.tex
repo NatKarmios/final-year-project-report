@@ -1,3 +1,5 @@
+%!TEX root = ../main.tex
+
 \chapter{Background}
 \label{sec:background}
 
@@ -8,8 +10,7 @@ means of reasoning about programs and their correctness~\cite{hoare}. The key
 principle of this logic is the Hoare Triple, denoting that if a certain
 pre-condition $P$ holds, and code command $C$ is run (and terminates without
 failing), then the post-condition $Q$ is guaranteed to hold. This is presented
-in the form of a \textit{Hoare triple}, like so:
-
+in the form of a \textit{Hoare triple}:
 $$
   \triple{P}{C}{Q}
 $$
@@ -23,7 +24,7 @@ this~\cite{separation-logic}. Separation Logic reasons about
 sections of a theoretical computer's heap; it also provides three core features
 in addition to the standard Hoare Logic:
 
-\begin{figure}
+\begin{figure}[!b]
   \centering
   \includegraphics[width=200px]{img/separating-conjunction.jpg}
   \caption{
@@ -39,7 +40,7 @@ in addition to the standard Hoare Logic:
 
   \item The \textit{separating conjunction}, $P \lstar Q$, states that the heap
   fragment can be split into two disjoint (potentially empty) sub-fragments,
-  one of which satisfies $P$, and the other satisfies $Q$.
+  one of which satisfies $P$, and the other satisfies~$Q$.
 
   \item The \textit{Frame Rule} - a fundamental rule that allows derivations to
   temporarily ``forget'' any unneeded logic either not concerning
@@ -56,6 +57,7 @@ in addition to the standard Hoare Logic:
   $$
 \end{itemize}
 
+\polish{PM: Sentence about how SL has served as a basis for various tools and success stories, from academia to industry---SmallFoot, Abductor, Infer, Verifast, Gillian---this links well with the upcoming tools. Not sure about VeriFast.}
 
 \section{OCaml}
 
@@ -253,7 +255,7 @@ code depends on.
 
 \begin{sidewaysfigure}
   \center
-  \includegraphics[width=650px]{img/vscode-extension-with-ocaml.png}
+  \includegraphics[width=0.8\textwidth]{img/vscode-extension-with-ocaml.png}
   \caption{The process of including OCaml code in a VSCode extension}
   \label{fig:vscode-extension-with-ocaml}
 \end{sidewaysfigure}
@@ -294,8 +296,8 @@ potentially harming long-term usability.
 
 
 \begin{figure}
-  \noindent
-  \makebox[\textwidth]{\includegraphics[width=500px]{img/magpiebridge-goal.png}}
+  \centering
+  \includegraphics[width=\textwidth]{img/magpiebridge-goal.png}
   \caption{
     The goal of MagpieBridge; bridging static analysis tools with IDEs.
     From~\cite{magpiebridge-repo}.
