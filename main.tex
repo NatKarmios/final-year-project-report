@@ -15,7 +15,7 @@
 \usepackage{graphicx}
 \usepackage{array, booktabs}
 \usepackage{listings}
-\usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{textcomp}
 \usepackage{wrapfig}
 \usepackage[colorinlistoftodos]{todonotes}
@@ -27,6 +27,42 @@
 
 \setlength{\parindent}{0em}
 \setlength{\parskip}{1em}
+
+% Formatting for code listings
+\lstdefinestyle{code}{
+    commentstyle=\color{ForestGreen},
+    keywordstyle=\color{Blue},
+    stringstyle=\color{OliveGreen},
+    basicstyle=\ttfamily\small,
+    showstringspaces=false,
+    upquote=true,
+    numbers=left,
+    numberstyle=\scriptsize\color{Gray},
+    frame=lines
+}
+\lstdefinestyle{code-inline}{
+    commentstyle=\color{ForestGreen},
+    keywordstyle=\color{Blue},
+    stringstyle=\color{OliveGreen},
+    basicstyle=\ttfamily\small,
+    showstringspaces=false,
+    upquote=true,
+    numberstyle=\scriptsize\color{Gray},
+    xleftmargin=\parindent
+}
+\lstdefinestyle{terminal}{
+    basicstyle=\ttfamily\footnotesize,
+    showstringspaces=false,
+    upquote=true,
+    frame=lines
+}
+\lstdefinestyle{terminal-inline}{
+    basicstyle=\ttfamily\small,
+    showstringspaces=false,
+    language=bash,
+    upquote=true,
+    xleftmargin=\parindent,
+}
 
 \title{Interim Report - Gillian Debugging}
 \author{Nat Karmios}
