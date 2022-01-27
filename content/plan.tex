@@ -3,36 +3,35 @@
 \chapter{Project plan}
 \label{cha:plan}
 
-A rough timeline of the project is as follows:
+The goals of the project, together with a rough timeline, are as follows:
 
 \newcommand{\vertline}{\color{black}\makebox[0pt]{\textbullet}\hskip-0.5pt\vrule width 1pt\hspace{\labelsep}}
 
 \begin{flushleft}
 \begin{tabular}{@{\,}r <{\hskip 2pt} !{\vertline} >{\raggedright\arraybackslash}p{13cm}}
 
-  December 2021 & - Familiarise with previous project work           \newline
-                  - Begin preliminary research on VSCode and its API,
-                  and the DAP                                        \newline \\
+  December 2021 & Familiarise with previous project work           \newline
+                  Begin preliminary research on VSCode and its API,
+                  as well as the DAP                                 \newline \\
   January 2022  & $\longleftarrow$ \textit{Current time}             \newline
-                  - Read up on VSCode extensions, webviews, and the
-                  compilation of OCaml code to JavaScript            \newline
-                  - Complete an initial experiment with these
+                  Read up on VSCode extensions, webviews, and
+                  OCaml-to-JavaScript compilation            \newline
+                  Complete an initial experiment with these
                   findings                                           \newline
-                  - Compile research, complete interim report        \newline \\
-  February & - Deep dive into Gillian debugging \& unification
-             codebase                                                \newline \\
-  March    & - Implement stepping through unification plans          \newline \\
-  April    & - Implement custom debugging UI for VSCode, including
+                  Compile background research, complete interim report        \newline \\
+  February & Deep dive into Gillian codebase, with focus on 
+             debugging and unification                                                \newline \\
+  March    & Implement stepping through unification plans          \newline \\
+  April    & Implement custom debugging UI for VSCode, including
              branching execution and tree visualisation              \newline
-             - Add error lifting support for JavaScript debugging    \newline \\
-  May      & - Implement quality-of-life changes                     \newline
-             - Implement Rust debugging (if possible)                \newline \\
-  June     & - Finish implementation, finalize report                \newline \\
-
+             Add error lifting support for JavaScript debugging    \newline \\
+  May      & Implement quality-of-life changes                     \newline
+             Implement Rust debugging (if possible)                \newline \\
+  June     & Finish implementation, finalise report                 
 \end{tabular}
 \end{flushleft}
 
-Some extra details for parts of the plan:
+Further, additional details concerning some parts of the plan are as follows:
 
 \begin{itemize}
   \item The research concerning VSCode and its webviews and extensions, the
@@ -43,16 +42,16 @@ Some extra details for parts of the plan:
         Gillian's unification process, which stands as one of the pain points
         of the current user experience; a large share of verification errors
         occur when unifying against either the pre-condition of a called
-        function, or the post-condition of the current function. In the
+        function, the post-condition of the current function, or the folding of a predicate. In the
         presence of several specifications, the process of identifying which
-        specs \textit{should} be unifying (but aren't) often takes a
+        specification or predicate definition \textit{should} be unifying (but isn't) often takes a
         significant amount of time and thought, when a bespoke interface would
         greatly streamline this process.
 
         In particular, unification is performed following tree-shaped
         \textit{unification plans}; the ability to step through and visualise
         progress in these plans would immediately give the developer a far
-        better idea of a unification error's cause.
+        better idea of the cause of a given unification error.
 
   \item The `quality-of-life' features penned in for later in the project
         represent small tweaks or features that the Gillian team (or any
@@ -60,7 +59,35 @@ Some extra details for parts of the plan:
         to implement them.
 
   \item Implementing a Rust debugger depends on the progress made in another
-        final year project running parallel to this one; its inclusion is not
+        final-year project running parallel to this one; its inclusion is not
         guaranteed, but it is also not necessary to the success of this project.
 
 \end{itemize}
+
+\section{Evaluation Plan} 
+
+The measure of success for this project comes down to three factors:
+
+\myparagraph{Evaluating against tools}
+As it stands, VeriFast is Gillian's closest competitor; once the project is
+completed, Gillian's debugger will be re-compared against VeriFast to see which
+has the more usable debugging experience, and why. Another comparison worth
+considering is Infer; given its widespread use in industry, the pursuit of
+pushing Gillian's ease of use and clarity of error reporting to be comparible
+to that of Facebook's tool is a worthy goal.
+
+\myparagraph{Evaluating against examples}
+This is a more personal form of evaluation; before embarking on this project,
+the author of this project sat the course on Scalable Software Verification (a.k.a.~Separation Logic); common challenges set in this course were to create lemmas,
+pre-/post-conditions, loop invariants, etc. that are appropriate for particular
+programs, and to verify their correctness. A good measure of Gillian's progress
+would be to attempt to use it to aid with solving such challenges. 
+This part of the evaluation would ideally involve usability feedback from the members of the Verified Software group, as well as some of the students who sat the Separation Logic course.
+
+\myparagraph{Pushing the debugger's limits}
+The final frontier, as it were---upon completion of this project's
+implementation, the debugger ought to be pushed to its limits, exploring the
+`corners' of the debugger and what it can accomplish. This will be both a good
+test of the debugger's capabilities, and a good indication of what future work
+may be needed.
+

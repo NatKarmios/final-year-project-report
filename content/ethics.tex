@@ -4,8 +4,8 @@
 \label{cha:ethics}
 
 As Gillian's nature is to verify a program's correctness, a natural consequence of Gillian is the discovery of bugs in applications, particularly memory-related bugs.
-This was evident when Gillian was used to verify parts of AWS's encryption SDK in both C and JavaScript, which led to the discovery of 5 total bugs, two of which were noteworthy security vulnerabilities (one in C, one in JS)\cite{gillian-part2}.
-This is often the case with memory-related bugs; Microsoft has reported that across their products, over the course of 2006 to 2018, consistently around 70\% of addressed security vulnerabilities concerned memory safety\cite{microsoft-memory-bugs}.
+This was evident when Gillian was used to verify parts of AWS's encryption SDK in both C and JavaScript, which led to the discovery of 5 total bugs, two of which were security vulnerabilities (one in C, one in JS)~\cite{gillian-part2}.
+This is often the case with memory-related bugs; Microsoft has reported that across their products, over the course of 2006 to 2018, consistently around 70\% of addressed security vulnerabilities concerned memory safety~\cite{microsoft-memory-bugs}.
 Thus, there exists the possibility of malicious parties using Gillian to uncover security vulnerabilities by finding bugs in an organisation's code and its management of memory.
 
 However, such an eventuality would be highly unlikely, as the malicious party would have to:
