@@ -229,6 +229,413 @@ is absent from both Gillian and VeriFast.
 
 
 \section{Gillian}
+\label{sec:background:gillian}
+
+Gillian is a platform for program analysis based on separation logic, whose
+goal is to be extendable to as many programming languages as possible - this
+shines through in Gillian's core ideology, which is to remove the burden of
+reasoning about analyses from the user, and have them focus only on their
+chosen target language's memory mode, reducing both workload and required
+understanding from the user. As stated in \autoref{sec:intro}, one of
+Gillian's biggest selling points is its parametricity on the target language's
+memory model.
+
+Gillian is currently implemented in three target languages: a simple While
+language (WISL), as well as JavaScript and C. Gillian's three modes of program
+analysis were outlined in \autoref{sec:intro}, but they each deserve an explanation in more detail. Note that automatic compositional testing is not explained in further detail as it is outside the scope of this project.
+
+\subsection{Whole program symbolic testing}
+
+This mode of analysis invites developers to write unit tests that involve the
+inclusion of \textit{symbolic values}, i.e. values that represent a range of
+concrete ones. During execution, a symbolic interpreter keeps track of the
+constraints on symbolic values that must hold for the program to be in the
+current state.
+
+The following C programs outline some of the nuances of working with symbolic
+values.
+
+\begin{lstlisting}[caption={Symbolic execution - basic example}, style=code, language=C]
+int main(void) {
+  int x = symb_int();
+  if (x < 0) {
+    printf("OK");
+  } else {
+    ASSERT(false);
+  }
+  return 0;
+}
+\end{lstlisting}
+
+When executing line \texttt{2}, the interpreter creates a symbolic integer $x$,
+and assigns it to the program variable \texttt{x}. At the \texttt{if} statement
+at line \texttt{3}, both branches are considered, constraining the symbolic
+value as necessary; the constraint for the `true' branch is \texttt{$\x < 0$}
+whereas for the 'false' branch, it is \texttt{$\lnot (x < 0)$}. The former will
+successfully execute, but the latter branch will fail due to the unsatisyiable
+assertion; this indicates that the code fails when $x$ is non-negative.
+
+\begin{lstlisting}[caption={Symbolic execution - non-executed branches}, style=code, language=C]
+int main(void) {
+  int x = symb_int();
+  if (x < 0 && x > 10) {
+    ASSERT(false);
+  } else {
+    printf("OK");
+  }
+  return 0;
+}
+\end{lstlisting}
+
+If a branch would constrain symbolic values to the point where no concrete values exist in its range (e.g. in this program, with $x$ being less than 0 \textit{and} greater than 10), then that branch will not be execited - this makes intuitive sense as such a situation is impossible.
+
+While assert statements can be used to pinpoint if the execution ended up in an undesirable branch, as in the example above, they are more commonly used in conjunction with assume statements to prove correctness properties of code. Assume statements extend the path condition with a given constraint. Take, for example, the following program:
+
+\begin{lstlisting}[caption={Symbolic execution - assume and assert}, style=code, language=C]
+int main(void) {
+  int x = symb_int();
+  int y = symb_int();
+  ASSUME(x > 0 && y > 0);
+  int z = x + y;
+  ASSERT(z > 0);
+  return 0;
+}
+\end{lstlisting}
+
+This example shows how assert statements are most commonly used - in tandom with assume statements, to prove properties of the code to be correct; the constraints on symbolic variables can be extended manually using these assume statements. Here, we make the assertion that the sum of two positive numbers is also positive, which passes symboilic execution.
+
+\begin{lstlisting}[caption={Symbolic execution - termination when unsatisfiable}, style=code, language=C]
+int main(void) {
+  int x = symb_int();
+  ASSUME(x < 0 && x > 10);
+  ASSERT(false);
+  return 0;
+}
+\end{lstlisting}
+
+Somewhat counter-intuitively, if execution is halted by the symbolic value
+constraints becoming unsatisfiable, the test passes; this captures a sense of
+a program being vacuously correct - code can't cause an error if it can never
+be executed concretely.
+
+When considering code with loops, Gillian will unroll said loops up to a given bound; whilst this gives a reasonable assurance of correctness, it is not a full guarantee of correct code. This is emblematic of path explosion - a core difficulty surrounding symboilic execution - where the amount of possible execution branches grows exponentially. This decision was made as the risk of missed failure paths is small enough to make the performance gain worthwhile.
+
+Of course, the more interesting (or useful) cases are where the test fails; consider this example:
+
+\begin{lstlisting}[caption={Symbolic execution - assertion failure}, style=code, language=C]
+#include <gillian-c/gillian-c.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+int main(void) {
+  int x = symb_int();
+  int y = symb_int();
+  if (x < 0) {
+    ASSERT(false);
+  } else {
+    if (y < 0) {
+      ASSERT(false);
+    } else {
+      return 0;
+    }
+  }
+}
+\end{lstlisting}
+
+This program can fail in the `true' branch of either if-statement; the only succeeding path occurs when both $x$ and $y$ are negative. This is the output given by Gillian:
+
+\begin{lstlisting}[numbers=none, style=terminal, caption={Symbolic execution - assertion failure (Gillian output)}]
+Assert failed with argument ({{ "int", 0. }} == {{"int", 1.}}).
+Failing Model:
+  [ (#x: {{"int", #lvar1}}), (#lvar1: -1.), (#y: {{"int", #lvar0}}) ]
+Assert failed with argument ({{ "int", 0. }} == {{"int", 1.}}).
+Failing Model:
+  [ (#lvar0: 0.),
+    (#lvar1: -1.),
+    (#x: {{ "int", #lvar0 }}),
+    (#y: {{ "int", #lvar1 }}) ]
+\end{lstlisting}
+
+The cause of verification failure is not particularly obvious. This output is
+trying to convey that it has found two failing paths, and has given a variable
+configuration that leads to each; the \texttt{Assert failed with argument}
+statement is the specific reason that the path fails, in this case describing
+how it expects \texttt{true} to be passed to an assert stament, but instead it received \texttt{false}. With some observation, it can be understood that the first failure case occurs when $x$ is assigned -1, and the second when $y$ is assigned -1, each causing the respective if-staement to evaluate to true.
+
+This form of error reporting is one of Gillian's weak points; while it is very
+good at finding such errors, its attempts at communicating them to the
+developer could use improvement; even a simple program case such as this was
+not entirely obvious to understand, so attempting to apply this to a larger
+program would be cubersome at best.
+
+\subsection{Full verification}
+
+Gillian's full verification is based upon principles of separation logic. When
+moving from simple program state to more complex ideas such as data structures,
+it becomes helpful to define predicates as shorthand for certain conditions.
+For example, we can define the predicate \texttt{list(x, $\alpha$)}, expressing
+a linked list whose address is stored in program variable \texttt{x},
+containing the same elements as the mathematical list $\alpha$. This predicate
+is described recursively, as either the empty list $\epsilon$, or a binary cell
+containing the head of the list and a pointer to the remainder of the list. The
+\texttt{list} predicate is as follows:
+\begin{align*}
+  \llist{\pvar{x}, \alpha} =\; &(\alpha \doteq \epsilon \ast \pvar{x} \doteq \nil)~\lor\\
+  & (\exists b, \beta \ldotp \alpha \doteq (b : \beta) \lstar \exists y \ldotp \twocell{\pvar{x}}{b}{y} \ast \llist{y, \beta})
+\end{align*}
+
+Note that the separating conjunction ($\lstar$) specifies that
+$\twocell{\pvar{x}}{b}{y}$ is disjoint from $\llist{y, \beta}$, therefore the
+list is acyclic.
+
+An additional predicate can also prove useful when reasoning about lists; the
+list segment, which is similar to the list predicate, but specifies the address
+at which the list segment ends; the linked list may continue, but that is out
+of the scope of the predicate:
+\begin{align*}
+  \lseg{\pvar{x}}{\pvar{y}}{\alpha} =\; &(\alpha \doteq \epsilon \ast \pvar{x} \doteq \pvar{y})~\lor\\
+  &(\exists b, \beta \ldotp \alpha \doteq (b : \beta) \ast \exists z \ldotp \twocell{\pvar{x}}{b}{z} \lstar \lseg{z}{\pvar{y}}{\beta})
+\end{align*}
+
+To test Gillian's verification, consider this list lengh function, written in WISL:
+
+\begin{lstlisting}[numbers=none, caption={Verification example - list length in WISL}, style=code]
+{ list(x, #alpha) }
+function llen(x) {
+  y := x;
+  n := 0;
+  while (not (y = null)) {
+    y := [y+1];
+    n := n+1;
+  };
+  return n
+}
+{ list(x, #alpha) * (ret == len(#alpha)) }
+\end{lstlisting}
+
+This is the standard iterative method of counting a linked list. The pre- and post-conditions state that, given a list at \texttt{x} with contents \texttt{\#alpha}, the list remains unchanged at \texttt{x}, and the function returns the length of \texttt{\#alpha}.
+
+Note that the list / list segment predicates must be defined in order to be used:
+
+\begin{lstlisting}[caption={List predicates in WISL}, style=code, numbers=none]
+predicate list(+x, alpha) {
+    (alpha == nil) * (x == null);
+    (alpha == #b :: #beta) * (x -> #b, #y) * list(#y, #beta)
+}
+
+predicate lseg(+x, +y, alpha) {
+  (alpha == nil) * (x == y);
+  (alpha == #b :: #beta) * (x -> #b, #z) * lseg(#z, y, #beta)
+}
+\end{lstlisting}
+
+We must also define the following lemma, stating that if a list segment
+terminates with $\nil$, then it is equivalent to a full list:
+\begin{align*}
+  \lseg{\pvar{x}}{\nil}{\alpha} \iff \llist{\pvar{x}, \alpha}
+\end{align*}
+
+Note that Gillian allows the user to prove specified lemmas using a series of logical commands, making use of unfolding, folding, auxiliary assertions, and application of lemmas.
+
+\begin{lstlisting}[caption={List lemma in WISL}, style=code, numbers=none]
+lemma lseg_to_list {
+  statement:
+    forall x, alpha.
+      lseg(x, null, alpha) |- list(x, alpha)
+
+  proof:
+    unfold lseg(x, null, alpha);
+    if (x = null) {
+      fold list(x, alpha)
+    } else {
+      assert {exists: #z, #beta} (x + 1 -> #z) * lseg(#z, null, #beta);
+      apply lseg_to_list(#z, #beta);
+      fold list(x, alpha)
+    }
+}
+\end{lstlisting}
+
+...and we can see that Gillian approves:
+
+\begin{lstlisting}[style=code, numbers=none, caption={List lemma in WISL - Gillian output}]
+Verifying lemma lseg_to_list... Success
+\end{lstlisting}
+
+We also require a lemma to describe appending to a list segment:
+\begin{align*}
+    \lseg{\pvar{x}}{\pvar{y}}{\alpha} \lstar \twocell{\pvar{y}}{a}{\pvar{z}} \iff \lseg{\pvar{x}}{\pvar{z}}{(\alpha \dot [a])}
+\end{align*}
+
+\begin{lstlisting}[style=code, numbers=none, caption={List segment lemma in WISL}]
+lemma lseg_append {
+  statement:
+    forall x, y, alpha, a, z.
+      lseg(x, y, alpha) * (y -> a, z) |- lseg(x, z, alpha @ [a])
+}
+\end{lstlisting}
+
+At last, the program is ready for verification. Upon first attempt, we are met with an error:
+\begin{lstlisting}[style=code, numbers=none, caption={Attempted verification - no loop invariant}]
+wisl.exe: internal error, uncaught exception:
+          Failure("While loop without invariant in Verification mode!")
+\end{lstlisting}
+
+When verifying, Gillian requires the user to provide a loop invariant, rather
+than settling for unrolling, in order to provide a full guarantee. The correct
+invariant captures progress through the function by tracking the segment of the
+list that's already been counted and the remaining portion of the list that has
+yet to be counted:
+\begin{align*}
+    \exists \alpha_1, \alpha_2 \ldotp (\alpha \doteq (\alpha_1 \dot \alpha_2)) \lstar \lseg{\pvar{x}}{\pvar{y}}{\alpha_1} \lstar (\pvar{n} \doteq | \alpha_1 |) \lstar \llist{\pvar{y}, \alpha_2}
+\end{align*}
+
+\begin{lstlisting}[style=code, numbers=none, caption={WISL list length - loop invariant}]
+  ...
+  [[ invariant {exists: #alpha1, #alpha2} (#alpha == #alpha1 @ #alpha2) * lseg(#x, y, #alpha1) * (n == len #alpha1) * list(y, #alpha2) ]];
+  while (not (y = null)) {
+    ...
+  }
+  ...
+\end{lstlisting}
+
+Upon attempting verification again, Gillian presents us with this:
+\begin{lstlisting}[style=code, numbers=none, caption={Verification: WISL list length error - precondition not met}]
+wisl.exe: internal error, uncaught exception:
+          Failure("WARNING: Failed to unify against the precondition of
+          procedure llen_loop0\nSTATE:\n  SPEC VARS: #alpha, #alpha1, #alpha2,
+          #x\n  HEAP:\n    {\n(_\$l_6, (1 i+ _lvar_31)) -> _lvar_33\n(_\$l_6,
+          _lvar_31) -> _lvar_32\n}\n  STORE:\n    (gvar0: {{ ALoc _\$l_6,
+          (BinOp: (1 i+ _lvar_31)) }})\n    (gvar1: {{ ALoc _\$l_6, (BinOp: (1
+          i+ _lvar_31)), LVar _lvar_33 }})\n    (gvar2: (BinOp: (1 i+ (l-len
+          #alpha1))))\n    (n: (BinOp: (1 i+ (l-len #alpha1))))\n    (y: LVar
+          _lvar_33)\n  \n  PURE FORMULAE:\n    (_lvar_y == {{_\$l_6,
+          _lvar_31}})\n    (#alpha == l+ (#alpha1, {{_lvar_32}},
+          _lvar_29))\n    (#alpha2 == l+ ({{_lvar_32}}, _lvar_29))\n
+          (_lvar_30 == _\$l_6)\n  \n  TYPING ENVIRONMENT:\n    (_lvar_29:
+          List)\n    (_lvar_y: List)\n    (#alpha: List)\n    (#alpha2:
+          List)\n    (#alpha1: List)\n    (_lvar_30: Obj)\n    (_lvar_31:
+          Int)\n  PREDICATES:\n    list(_lvar_33, _lvar_29)\n    lseg(#x,
+          {{_\$l_6, _lvar_31}}, #alpha1)\n  ")
+\end{lstlisting}
+
+The error message provided is vague, referencing some imaginary function
+\texttt{llen\_loop0}, followed by a slew of logical veriable information unfit
+for human understanding. The key to deciphering this is the knowledge that
+Gillian internally compiles while loops to functions, and this unification
+failure indicates that the loop invariant could not be re-established. To
+understand why, we must peruse the logs, at the last executed command:
+\begin{lstlisting}[style=code, numbers=none, caption={Loop invariant failure - Gillian log file}]
+------------------------------------------------------
+--llen_loop0: 6--
+TIME: 0.641458
+CMD: loopretvar__ := "llen_loop0"(n, y) use_subst [invariant_spec - #alpha: #alpha,
+                                                   #x: #x]
+BRANCHING: 1
+
+SPEC VARS: #alpha, #alpha1, #alpha2, #x
+HEAP:
+  {
+(_$l_6, (1 i+ _lvar_31)) -> _lvar_33
+(_$l_6, _lvar_31) -> _lvar_32
+}
+STORE:
+  (gvar0: {{ ALoc _\$l_6, (BinOp: (1 i+ _lvar_31)) }})
+  (gvar1: {{ ALoc _\$l_6, (BinOp: (1 i+ _lvar_31)), LVar _lvar_33 }})
+  (gvar2: (BinOp: (1 i+ (l-len #alpha1))))
+  (n: (BinOp: (1 i+ (l-len #alpha1))))
+  (y: LVar _lvar_33)
+
+PURE FORMULAE:
+  (_lvar_y == {{_\$l_6, _lvar_31}})
+  (#alpha == l+ (#alpha1, {{_lvar_32}}, _lvar_29))
+  (#alpha2 == l+ ({{_lvar_32}}, _lvar_29))
+  (_lvar_30 == _\$l_6)
+
+TYPING ENVIRONMENT:
+  (_lvar_29: List)
+  (_lvar_y: List)
+  (#alpha: List)
+  (#alpha2: List)
+  (#alpha1: List)
+  (_lvar_30: Obj)
+  (_lvar_31: Int)
+PREDICATES:
+  list(_lvar_33, _lvar_29)
+  lseg(#x, {{_\$l_6, _lvar_31}}, #alpha1)
+
+------------------------------------------------------
+\end{lstlisting}
+
+
+This shows that the last executed command was at the end of the loop's internal
+function, calling itself to move to the next iteration; this further confirms
+that the problem was with re-establishing the loop invariant. From
+\texttt{lseg(\#x, \{\{\_\$l\_6, \_lvar\_32\}\}, \#alpha1)}, we can see that Gillian
+is aware of a list containing $\alpha_1$, but if we inspect our loop invariant,
+we need to establish a list segment containing $(\alpha_1 \dot [b])$. This is
+where our lemma, \texttt{lseg\_append}, comes into play; we insert the lemma
+into our loop:
+\begin{lstlisting}[style=code, numbers=none, caption={Applying \texttt{lseg\_append}}]
+  ...
+  while (not (y = null)) {
+    [[ assert {exists: #y, #b, #t} (y == #y) * (#y -> #b, #t) ]];
+    y := [y+1];
+    n := n+1;
+    [[ apply lseg_append(#x, #y, #alpha1, #b, #t) ]]
+  }
+  ...
+\end{lstlisting}
+
+Notice the inclusion of an assertion; this is used to establish names for the logical variables that we wish to use in the lemma application. With that in place, we return to attempt verification again:
+
+\begin{lstlisting}[style=code, numbers=none, caption={WISL list length - list / list segment error}]
+Obtaining specs to verify...
+Obtaining lemmas to verify...
+Obtained 4 symbolic tests in total
+Running symbolic tests: 0.090932
+Verifying lemma lseg_to_list... Success
+Verifying lemma lseg_append... Success
+Verifying one spec of procedure llen... Failure
+Verifying one spec of procedure llen_loop0... Success
+There were failures: 0.874831
+\end{lstlisting}
+
+Failure once more. Referring to the logs once again reveals a problem at the final hurdle, when returning from \texttt{llen()}:
+
+\begin{lstlisting}[numbers=none, caption={WISL list length - list / list segment error, Gillian log file}]
+------------------------------------------------------
+...
+CMD: return
+...
+PREDICATES:
+  lseg(#x, null, #alpha1)
+
+------------------------------------------------------
+\end{lstlisting}
+
+Gillian knows about a list segment, but our post-condition requires a list; perfect timing for the \texttt{lseg\_to\_list} lemma:
+
+\begin{lstlisting}[style=code, numbers=none, caption={Applying \texttt{lseg\_to\_list}}]
+  ...
+  [[ apply lseg_to_list(x, #alpha) ]];
+  return n;
+\end{lstlisting}
+
+Verification is attempted a final time. Success at last!
+
+\begin{lstlisting}[style=code, numbers=none, caption={Verification: WISL list length success}]
+Obtaining specs to verify...
+Obtaining lemmas to verify...
+Obtained 4 symbolic tests in total
+Running symbolic tests: 0.093763
+Verifying lemma lseg_to_list... Success
+Verifying lemma lseg_append... Success
+Verifying one spec of procedure llen... Success
+Verifying one spec of procedure llen_loop0... Success
+All specs succeeded: 0.699979
+\end{lstlisting}
+
+Working through this process shows that, while Gillian is very capable at its purpose of proving correctness of programs, the roundabout debugging process is unreasonably awkward for real-world use. Even for a small example such as this, the user not only requires a strong understanding of separation logic, but also knowledge of Gillian's underlying semantics, and how it converts target languages to GIL.
 
 \section{Engineering resources and tools}
 \label{sec:background:engineering-tools}
