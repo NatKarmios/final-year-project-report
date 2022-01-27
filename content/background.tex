@@ -242,7 +242,24 @@ memory model.
 
 Gillian is currently instantiated to three target languages: a simple While
 language (WISL), as well as JavaScript and C. Gillian's three modes of program
-analysis were outlined in \autoref{sec:intro}, but they each deserve an explanation in more detail. Note that automatic compositional testing is not explained in further detail as it is outside the scope of this project.
+analysis were outlined in \autoref{sec:intro}, but they each deserve an
+explanation in more detail. Note that automatic compositional testing is not
+explained in further detail as it is outside the scope of this project.
+
+\subsection{WISL - memory model and syntax}
+WISL is a simple while language used for experimental and educational purposes. Its memory model consists of blocks, each of which is uniquely identified by a location, and contains two components: a list of memory cells, mapping numerical offsets to values stored on the heap, and a natural-number bound, specifying the memory block's size.  WISL can track negative resource, originating when allocating or deallocating. For allocation, the negative information originates from the fact that a freshly allocated block of a given size must not have offsets beyond that size; this is captured by the bound. For deallocation, the negative information is that only entire blocks can be deleted, and is captured by the fact that a memory block can either map to a list of cells or a dedicated freed symbol.
+
+The WISL syntax comprises the following statements:
+\begin{itemize}
+  \item \texttt{x := e}, which assigns the value of the expression \texttt{x} to the variable \texttt{x} in the store;
+  \item \texttt{x := new(n)}, which allocates a new block consisting of \texttt{n} cells, setting its bound to n;
+  \item \texttt{delete(x)}, which deallocates the block of memory at location given by \texttt{x}, and only works if \texttt{x} points to the first cell of the block and the bounds are known;
+  \item \texttt{x := [e]}, which assigns the value contained in the memory cell at location \texttt{e} to the variable \texttt{x} in the store;
+  \item \texttt{[e1] := e2}, which stores the value corresponding to \texttt{e2} in the memory cell at location \texttt{e1};
+  \item \texttt{skip}, which does nothing;
+  \item \texttt{while (b) \{stmt\}}, which executes the statement \texttt{stmt} while \texttt{b} is true; and
+  \item \texttt{if (b) \{stmt1\} else \{stmt2\}}, which executes the statement \texttt{stmt1} if \texttt{b} is true, and otherwise it executes \texttt{stmt2}.
+\end{itemize}
 
 \subsection{Whole-program symbolic testing}
 
