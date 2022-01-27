@@ -81,7 +81,7 @@ also using an intermediate representation to do so. Figures
 VeriFast handles a small Java program that deliberately dereferences a null
 pointer.
 
-\begin{figure}
+\begin{figure}[!b]
     \centering
     \begin{lstlisting}[language=Java,
         style=code,
@@ -101,7 +101,7 @@ class VerifastTest \{
     \label{fig:verifast-example}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[!b]
     \centering
     \begin{lstlisting}[style=terminal,
         xleftmargin=0.05\textwidth,
@@ -183,18 +183,18 @@ VeriFast's case) and a clear cause of the error.
 
 \subsection{Reaching beyond separation logic}
 
-Currently, Infer is not limited to using separation logic -based techniques for
+Currently, Infer is not limited to using separation-logic-based techniques for
 bug finding, developing checks that make use of various other program analysis
 in order to broaden the scope of errors that Infer can report, through the use
-of \textbf{abstract interpretations}; this entails the exploration of all
+of \textbf{abstract interpretations} (AI); this entails the exploration of all
 possible states of a program through a series of over-approximations (a deeper
 understanding is outside the scope of this project).
 
-A strong source of inspiration for Infer's abstract interpretation techniques is
+A strong source of inspiration for Infer's AI techniques is
 \textbf{Frama-C}~\cite{frama-c-paper, frama-c-site}, `a source code analysis
 platform that aims at conducting verification of industrial-size C programs'; a
 noteworthy feature of Frama-C is its debugger-esque graphical interfaces
-available for certain analyses.
+available for certain~analyses.
 
 
 \subsection{Debugging}
@@ -230,11 +230,11 @@ is absent from both Gillian and VeriFast.
 
 \section{Gillian}
 
-\section{Engieneering resources and tools}
+\section{Engineering resources and tools}
 \label{sec:background:engineering-tools}
 
-Due to the nature of the project, some research into the language and tools that
-are (or could/will be) used in Gillian was worthwhile.
+The nature of the project required research into the language and tools that
+are/could be/will be used in the current/further development of Gillian.
 
 \subsection{Building OCaml projects}
 
