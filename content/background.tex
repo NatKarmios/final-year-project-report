@@ -143,12 +143,16 @@ show when resources allocated on the heap are freed. As of the beginning of
 this project, the ability to select execution branch when debugging is absent
 from both Gillian and VeriFast.
 
-\myparagraph{Frama-C}
-Is Frama-C worth mentioning? The only separation-logic-based tooling I can
-find for it is one of its older plugins, Jessie, which is no longer maintained
-and currently declared potentially incompatible with more recent versions of
-Frama-C.
-\todo{Decide whether Frama-C is worth talking about}
+%\subsection{Frama-C}
+
+%Is Frama-C worth mentioning? The only separation-logic-based tooling I can
+%find for it is one of its older plugins, Jessie, which is no longer maintained
+%and currently declared potentially incompatible with more recent versions of
+%Frama-C.
+
+%\subsection{McFly}
+
+\todo{Talk about Frama-C and McFly?}
 
 
 \section{VSCode and its extensions}
@@ -275,13 +279,13 @@ inclusion of OCaml code (alongside a Gillian library) is available at
 \section{MagpieBridge}
 
 Similarly to program debugging, adding support for static code analysers to IDEs
-is the amount of tools and IDEs that support must be added for. In a similar
-notion to the DAP, MagpieBridge~\cite{magpiebridge} is `a framework for
+is limited by the amount of tools and IDEs that support must be added for. In a
+similar notion to the DAP, MagpieBridge~\cite{magpiebridge} is `a framework for
 integrating Static Analyses into IDEs and Editors with the Language Server
 Protocol'~\cite{magpiebridge-repo}. The \textit{Language Server Protocol}
 (LSP)~\cite{lsp} is another of Microsoft's creations, similar to the DAP, which
 adds an arbitrary interface bridging IDEs and language tools (syntax checkers,
-intellisense, etc.). As an example, MagpieBridge has provided fully
+intellisense, etc.). As an example, MagpieBridge has a provided fully
 functional integration for~Infer~\cite{infer-ide}.
 
 A particular feature of MagpieBridge is its ability to serve a configuration
