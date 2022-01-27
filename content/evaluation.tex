@@ -1,21 +1,27 @@
 \chapter{Evaluation plan}
 \label{cha:eval}
 
-Surpassing Gillian as it currently stands largely equates to completing the
-core goals set out in the project plan. With a reasonable effort, this project
-will make a tangible difference to Gillian's usability.
+The measure of success for this project comes down to three factors:
 
-When considering to related work, a primary point of comparison is VeriFast, as
-it also implements a debugger for full program verification. Gillian's
-debugging capabilities have already caught up tremendously with VeriFast, so
-this project should give the former an ample opportunity to overtake the latter.
-After completion of the project, Gillian's standing with VeriFast will be
-reassessed.
+\myparagraph{Evaluating against tools}
+As it stands, VeriFast is Gillian's closest competitor; once the project is
+completed, Gillian's debugger will be re-compared against VeriFast to see which
+has the more usable debugging experience, and why. Another comparison worth
+considering is Infer; given its widespread use in industry, the pursuit of
+pushing Gillian's ease of use and clarity of error reporting to be comparible
+to that of Facebook's tool is a worthy goal.
 
-Of particular interest to Professor Gardner is bringing Gillian to a position
-where it can be used as part of her course on separation logic, taught at
-Imperial College London~\cite{sl-course}. Using Gillian for educational
-purposes could be a good stepping stone to bringing it to developers in
-industry; whether or not it can serve this purpose is down to how Garder, and
-potentially some student testers, find the debuggers capabilities and
-usability, once the project is completed.
+\myparagraph{Evaluating against examples}
+This is a more personal form of evaluation; before embarking on this project,
+the author of this project sat Professor Philippa Gardner's course on
+separation logic; common challenges set in this course were to create lemmas,
+pre-/post-conditions, loop invariants, etc. that are appropriate for particular
+programs, and to verify their correctness. A good measure of Gillian's progress
+would be to attempty to use it to aid with solving such challenges.
+
+\myparagraph{Pushing the debugger's limits}
+The final frontier, as it were - upon completion of this project's
+implementation, the debugger ought to be pushed to its limits, exploring the
+`corners' of the debugger and what it can accomplish. This will be both a good
+test of the debugger's capabilities, and a good indication of what future work
+may be needed.
