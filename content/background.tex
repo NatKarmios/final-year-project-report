@@ -3,14 +3,15 @@
 \chapter{Background}
 \label{sec:background}
 
-\section{Separation Logic}
+\section{Separation Logic - theory and tooling}
+\label{sec:background:sl-and-tools}
 
 Proposed in 1969, Tony Hoare's \textit{Hoare Logic} provided a standardised
 means of reasoning about programs and their correctness~\cite{hoare}. The key
 principle of this logic is the Hoare Triple, denoting that if a certain
 pre-condition $P$ holds, and code command $C$ is run (and terminates without
 failing), then the post-condition $Q$ is guaranteed to hold. This is presented
-in the form of a \textit{Hoare triple}:
+in the form of a \textit{H ffoare triple}:
 $$
   \triple{P}{C}{Q}
 $$
@@ -57,17 +58,192 @@ in addition to the standard Hoare Logic:
   $$
 \end{itemize}
 
-\polish{PM: Sentence about how SL has served as a basis for various tools and success stories, from academia to industry---SmallFoot, Abductor, Infer, Verifast, Gillian---this links well with the upcoming tools. Not sure about VeriFast.}
 
-\section{OCaml}
+Separation logic made its first foray into automatic analysis tools with the
+creation of \textbf{Smallfoot}~\cite{smallfoot-paper, smallfoot-site}. It works
+on a small while language with static objects, requiring pre- and
+post-conditions and loop invariants, and has the ability to reason about simple
+data structures such as lists and trees.
+
+The utility of separation in tooling was expanded with the development of
+bi-abudction techniques; bi-abduction is a method of symbolic program analysis
+that can automatically infer the pre- and post-condition of functions.
+\textbf{SpaceInvader} was introduced with the ability to infer some loop
+invariants in small C code, with \textbf{Abductor} later added to introduce
+bi-abduction to the toolset~\cite{abductor}.
+
+2011 saw the intrudoction of \textbf{VeriFast}~\cite{verifast-paper,
+  verifast-repo}, `a prototype verification tool for single-threaded and
+multi-threaded C and Java programs'. VeriFast performs verification similar to
+Gillian, working on functions with developer-defined pre- and post-conditions,
+also using an intermediate representation to do so. Figures
+\autoref{fig:verifast-example} and \autoref{fig:verifast-example-output} show how
+VeriFast handles a small Java program that deliberately dereferences a null
+pointer.
+
+\begin{figure}
+    \centering
+    \begin{lstlisting}[language=Java,
+        style=code,
+        xleftmargin=0.2\textwidth,
+        xrightmargin=0.2\textwidth]
+class VerifastTest \{
+    int nullDeref()
+        //@ requires true;
+        //@ ensures 0 <= result;
+    \{
+        String str = null;
+        return str.length();
+    \}
+\}
+    \end{lstlisting}
+    \caption{\texttt{VerifastTest.java}}
+    \label{fig:verifast-example}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{lstlisting}[style=terminal,
+        xleftmargin=0.05\textwidth,
+        xrightmargin=0.05\textwidth]
+> verifast ./VerifastTest.java
+./VerifastTest.java
+./VerifastTest.java(7,20-26): Target of method call might be null.
+    \end{lstlisting}
+    \caption{Output from analysing \texttt{VerifastTest.java}}
+    \label{fig:verifast-example-output}
+\end{figure}
+
+In industry, probably the most prominent use of a tool built on separation logic is Facebook's \textbf{Infer}~\cite{infer, infer-site}; it's a static analysis
+tool for Java and C/C++/Objective-C, designed to use bi-abduction to provide
+users with a list of potential bugs, crashes, and sources of poor performance.
+Similarly to Gillian, Infer is written in OCaml, and works by compiling source
+code to an intermediate representation. In contrast, Infer wholly focuses on
+automated compositional testing, and refines this process to a state in which
+it can easily be used in industry, whilst also including more general analysis
+for concerns such as security and concurrency; it sacrifices depth of analysis
+to result in a lightweight tool that gives developer-friendly feedback.
+Infer doesn't require the a full program in order to perform analysis, as it
+only needs to construct Hoare triples for one function at a time. This,
+combined with its ability to reuse existing results from unchanged functions and
+only consider modified code, makes for a fast and hugely scalable static
+analysis tool, used as part of Facebook's code quality pipeline for all
+modifications to the Android and iOS apps for Facebook, Facebook Messenger,
+Instagram, and others services~\cite{infer-about}. Infer outputs discovered
+errors and warnings to a file in CSV, whilst directly outputting the most
+severe. \autoref{fig:infer-example} and \autoref{fig:infer-example-output} show
+a short example of running Infer on a similar function to what was tested with
+VeriFist.
+
+\begin{figure}
+    \centering
+    \begin{lstlisting}[language=Java,
+        style=code,
+        xleftmargin=0.2\textwidth,
+        xrightmargin=0.2\textwidth]
+class InferTest \{
+    // Deliberately call a method on a null pointer
+    int nullDeref() \{
+        String str = null;
+        return str.length();
+    \}
+\}
+    \end{lstlisting}
+    \caption{\texttt{InferTest.java}}
+    \label{fig:infer-example}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{lstlisting}[style=terminal,
+        xleftmargin=0.05\textwidth,
+        xrightmargin=0.05\textwidth]
+> infer -- javac ./InferTest.java
+Starting analysis (Infer v0.5.0)
+
+... (skipping some lines) ...
+
+Found 1 issue
+InferTest.java:5: error: NULL_DEREFERENCE
+  object str last assigned on line 4 could be null and is
+  dereferenced at line 5.
+  3.       int nullDeref() \{
+  4.           String str = null;
+  5. >         return str.length();
+  6.       \}
+  7.   \}
+    \end{lstlisting}
+    \caption{Output from analysing \texttt{InferTest.java}}
+    \label{fig:infer-example-output}
+\end{figure}
+
+Both VeriFast and Infer produce clear and direct feedback about the null
+dereference error, providing line numbers (and even column numbers, in
+VeriFast's case) and a clear cause of the error.
+
+\subsection{Reaching beyond separation logic}
+
+Currently, Infer is not limited to using separation logic -based techniques for
+bug finding, developing checks that make use of various other program analysis
+in order to broaden the scope of errors that Infer can report, through the use
+of \textbf{abstract interpretations}; this entails the exploration of all
+possible states of a program through a series of over-approximations (a deeper
+understanding is outside the scope of this project).
+
+A strong source of inspiration for Infer's abstract interpretation techniques is
+\textbf{Frama-C}~\cite{frama-c-paper, frama-c-site}, `a source code analysis
+platform that aims at conducting verification of industrial-size C programs'; a
+noteworthy feature of Frama-C is its debugger-esque graphical interfaces
+available for certain analyses.
+
+
+\subsection{Debugging}
+
+Whilst the depth of analyses via separation logic has increased over the years,
+clarity of error reporting remains difficult to maintain. Until recent work on
+Gillian by Matthew Ho~\cite{gillian-debugging-2021}, VeriFast's clear-cut
+advantage over similar tools was its functioning debugger, and succinct,
+immediate error reporting; as found in previous
+comparisons~\cite{gillian-logging-2020}, upon attempting to verify an invalid
+program, VeriFast will directly output its reasoning for the error, and the line
+number responsible. VeriFast remains ahead of Gillian's debugging capabilities -
+whilst the work of Ho from 2021 markedly closed the gap between the two tools
+(and provided more specific and helpful error reporting, in Gillian, as well as
+some ease-of-use features such as debugging specific functions), the DAP's
+limitations on Gillian debugging left for some sorely missed features, such as
+the VeriFast debugger's ability to jump to any symbolic execution step, and
+visually show when resources allocated on the heap are freed. As of the
+beginning of this project, the ability to select execution branch when debugging
+is absent from both Gillian and VeriFast.
+\autoref{fig:verifast-debugging-example} shows VeriFast's debugging interface.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.75\textwidth]{img/verifast-debugging-example.png}
+  \caption{
+    An example of VeriFast's debugging interface, using the program from
+    \autoref{fig:verifast-example}
+  }
+  \label{fig:verifast-debugging-example}
+\end{figure}
+
+
+\section{Gillian}
+
+\section{Engieneering resources and tools}
+\label{sec:background:engineering-tools}
+
+Due to the nature of the project, some research into the language and tools that
+are (or could/will be) used in Gillian was worthwhile.
+
+\subsection{Building OCaml projects}
 
 Created in 1996, \textit{OCaml}~\cite{ocaml} is `an industrial-strength
 programming language supporting functional, imperative and object-oriented
 styles'. Specifically, OCaml provides the ability to make use of functional,
 imperative, and object-oriented styles. This, combined with its powerful type
 system, makes it a good fit for symbolic analysis tools. Many of Gillian's
-contemporaries, including Infer~\cite{infer}, VeriFast~\cite{verifast-paper,
-verifast-repo}, and Frama-C~\cite{frama-c}, are also written in OCaml.
+contemporaries, including Infer, VeriFast and Frama-C, are also written in OCaml.
 
 OCaml's most popular build system is \textit{Dune}~\cite{dune} - it allows the
 easy compilation of multi-file OCaml programs and libraries, including
@@ -85,77 +261,11 @@ defining custom commands that run within the OCaml project's environment, as
 well as supporting non-OPAM dependencies, e.g. OCaml sources from GitHub
 repositories (optionally at a specific commit).
 
-
-%% Described in Intro
-%\section{Gillian}
-%\section{Debugging - previous work}
-
-\section{Related Tools}
-\label{sec:background:related-work}
-
-We consider several closely related tools, namely Infer, Verifast, and Frama-C, and outline their error-reporting and debugging capabilities.
-
-\myparagraph{Infer}
-Facebook's \textit{Infer}~\cite{infer, infer-site} is a static analysis tool
-for Java and C/C++/Objective-C, designed to use bi-abduction to provide users
-with a list of potential bugs, crashes, and sources of poor performance.
-Similarly to Gillian, Infer is written in OCaml, and works by compiling source
-code to an intermediate representation. In contrast, Infer wholly focuses on
-automated compositional testing, and refines this process to a state in which
-it can easily be used in industry, whilst also including more general analysis
-for concerns such as security and concurrency; it sacrifices depth of analysis
-to result in a lightweight tool that gives developer-friendly feedback.
-
-Infer doesn't require the a full program in order to perform analysis, as it
-only needs to construct Hoare triples for one function at a time. This,
-combined with its ability to reuse existing results from unchanged functions to
-only consider modified code, makes for a fast and hugely scalable static
-analysis tool, used as part of Facebook's code quality pipeline for all
-modifications to the Android and iOS apps for Facebook, Facebook Messenger,
-Instagram, and others services~\cite{infer-about}.
-
-\polish{How is its debugging and error reporting?}
-
-\myparagraph{VeriFast}
-\textit{VeriFast}~\cite{verifast-paper, verifast-repo} `is a prototype
-verification tool for single-threaded and multi-threaded C and Java programs'.
-VeriFast performs verification similar to Gillian, working on functions with
-developer-defined pre- and post-conditions, also using an intermediate
-representation to do so.
-
-Until recent work Gillian by Matthew Ho~\cite{gillian-debugging-2021},
-VeriFast's clear-cut advantage was its functioning debugger, and succinct,
-immediate error reporting; as found in previous comparisons
-~\cite{gillian-logging-2020}, upon attempting to verify an invalid program,
-VeriFast will directly output its reasoning for the error, and the line number
-responsible. While this is certainly more direct than Gillian's old method of
-trawling through log files, VeriFast's error messages were often vague, and
-with no produced logs to refer to for more detail, such errors often remained
-cryptic.
-
-However, VeriFast remains ahead of Gillian's debugging capabilities - whilst
-the work of Ho from 2021 markedly closed the gap between the two tools (and
-provided more specific and helpful error reporting, as well as some ease-of-use
-features such as debugging specific functions), the DAP's limitations on
-Gillian debugging left for some sorely missed features, such as the VeriFast
-debugger's ability to jump to any previously executed command, and visually
-show when resources allocated on the heap are freed. As of the beginning of
-this project, the ability to select execution branch when debugging is absent
-from both Gillian and VeriFast.
-
-%\subsection{Frama-C}
-
-%Is Frama-C worth mentioning? The only separation-logic-based tooling I can
-%find for it is one of its older plugins, Jessie, which is no longer maintained
-%and currently declared potentially incompatible with more recent versions of
-%Frama-C.
-
-%\subsection{McFly}
-
-\todo{Talk about Frama-C and McFly?}
+Knowledge of these build systems will become paramount when introducing the
+somewhat foreign element that is a VSCode extension.
 
 
-\section{VSCode and its extensions}
+\subsection{VSCode and its extensions}
 \label{sec:vscode}
 
 VSCode (Visual Studio Code)~\cite{vscode} is a universally recognised text
@@ -184,8 +294,6 @@ fill in any gaps in VSCode's UI.
   \caption{An example of a Webview created by a VSCode extension}
   \label{fig:webview-example}
 \end{figure}
-
-
 
 
 \myparagraph{Debug Adapter Protocol}
@@ -218,7 +326,6 @@ at~\cite{vscode-dap-custom-event} and the OCaml DAP
 implementation currently used in Gillan's debugger~\cite{ocaml-dap} (where
 custom events and commands are defined similarly to those already
 provided~\cite{ocaml-dap-custom}).
-
 
 
 \myparagraph{Inclusion of OCaml code}
@@ -255,8 +362,8 @@ this, the inclusion of unnecessary dependencies in JS-compiled code results in
 a hugely bloated extension - the \texttt{debugAdapter} example created a
 compiled JS file over a million lines long. The ideal scenario here is to move
 shared Gillian code to its own library within Gillian, which has as few
-dependencies as possible (ideally none), but on which both Gillian and the extension
-code would then depend.
+dependencies as possible (ideally none), but on which both Gillian and the
+extension code would then depend.
 
 \begin{sidewaysfigure}
   \center
@@ -276,7 +383,7 @@ A working example that tests custom DAP commands/events, Webviews and the
 inclusion of OCaml code (alongside a Gillian library) is available at
 \cite{debugger-experiment}.
 
-\section{MagpieBridge}
+\subsection{MagpieBridge}
 
 Similarly to program debugging, adding support for static code analysers to IDEs
 is limited by the amount of tools and IDEs that support must be added for. In a

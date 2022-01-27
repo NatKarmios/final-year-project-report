@@ -3,108 +3,64 @@
 \chapter{Project plan}
 \label{cha:plan}
 
-The plan of this project for improving Gillian's debugger 
-more or less follows on from the
-evaluation of the previous one~\cite{gillian-debugging-2021}. Here are some
-primary objectives, which, of course, are subject to change as the
-work continues:
-
-\begin{itemize}
-
-  \item As stated in \autoref{sec:intro}, the DAP doesn't have the command set
-        necessary for debugging symbolic execution. We can, however, use a
-        combination of Webviews and custom DAP requests/events to supplement
-        the existing debugging UI, as outlined in \autoref{sec:vscode}; this
-        will be a necessity to develop many of the other features on this list.
-
-  \item A prime missing feature as the debugger stands is the ability for users
-        to select branches of execution when debugging. Currently, the debugger
-        runs through the problem top-to-bottom, dealing with each branch in
-        turn. Ideally, users will able to select which branch to go down when
-        given a choice. As a bare minimum, this should be implemented for
-        if-else statements and predicate unfolding; ideally, this should be 
-        extended to cover switch statements, as well as any other branching 
-        statements in the target languages.
-
-\begin{figure}
-  \noindent
-    \includegraphics[width=\textwidth]{img/branch-selection-mockup.png}
-  \caption{A mock-up of a potential UI flow for selecting execution branch.}
-  \label{fig:branch-selection-mockup}
-\end{figure}
-
-% Maybe run an HTTP server when debugging to serve the extra info and controls?
-
-  % Thanks sacha!
-  \item A desired feature is the ability to step through Gillian's unification
-        process, which stands as one of the pain points of the current user
-        experience; a large share of verification errors occur when unifying
-        against either the pre-condition of a called function, or the
-        post-condition of the current function. In the presence of several
-        specifications, the process of identifying which specs \textit{should}
-        be unifying (but aren't) often takes a significant amount of time and
-        thought, when a bespoke interface would greatly streamline this process.
-
-        In particular, unification is performed following tree-shaped
-        \textit{unification plans}; the ability to step through and visualise
-        progress in these plans would immediately give the developer a far
-        better idea of a unification error's cause.
-
-  \item As stated in the evaluation of the previous project, the debugger is
-        entirely focused on symbolic execution errors. To turn Gillian's
-        debugger into a tool that can be comfortably used by real developers,
-        having the debugger encompass more error types should be worked towards.
-
-  \item A natural extension of being able to select branches of execution is a
-        full tree visualisation of execution paths, allowing developers to jump
-        forwards or backwards (or 'sideways', in a sense) to any step of
-        execution.
-
-  \item Potentially, small details such as showing resources that have been
-        freed, à la VeriFast, could be implemented; this purely depends on
-        available time, and what would and wouldn't be deemed useful by
-        Gillian's primary developers and users.
-
-  \item A potential goal for this project is implementing Gillian debugging for
-        the Rust programming language~\cite{rust}. This is not a certainty, as
-        it depends both on how much time is available, and on the progress of
-        another final-year project taking place in parallel with this one.
-
-\end{itemize}
-
-\myparagraph{Timeline} The rough project timeline is currently as follows:
+A rough timeline of the project is as follows:
 
 \newcommand{\vertline}{\color{black}\makebox[0pt]{\textbullet}\hskip-0.5pt\vrule width 1pt\hspace{\labelsep}}
 
 \begin{flushleft}
 \begin{tabular}{@{\,}r <{\hskip 2pt} !{\vertline} >{\raggedright\arraybackslash}p{13cm}}
 
-  March & Implement stepping through unification plans         \newline \\
-  April & Implement custom debugging UI for VSCode             \newline
-          Including branching execution and tree visualisation \newline \\
-  May   & Implement quality-of-life changes                    \newline
-          Implement Rust debugging (if possible)               \newline \\
-  June  & Finish implementation, finalize report               \newline \\
-  
+  December 2021 & - Familiarise with previous project work           \newline
+                  - Begin preliminary research on VSCode and its API,
+                  and the DAP                                        \newline \\
+  January 2022  & $\longleftarrow$ \textit{Current time}             \newline
+                  - Read up on VSCode extensions, webviews, and the
+                  compilation of OCaml code to JavaScript            \newline
+                  - Complete an initial experiment with these
+                  findings                                           \newline
+                  - Compile research, complete interim report        \newline \\
+  February & - Deep dive into Gillian debugging \& unification
+             codebase                                                \newline \\
+  March    & - Implement stepping through unification plans          \newline \\
+  April    & - Implement custom debugging UI for VSCode, including
+             branching execution and tree visualisation              \newline
+             - Add error lifting support for JavaScript debugging    \newline \\
+  May      & - Implement quality-of-life changes                     \newline
+             - Implement Rust debugging (if possible)                \newline \\
+  June     & - Finish implementation, finalize report                \newline \\
+
 \end{tabular}
 \end{flushleft}
 
-\section{Evaluation plan}
+Some extra details for parts of the plan:
 
-Surpassing Gillian as it currently stands largely equates to completing the
-core goals set out in the project plan. With a reasonable effort, this project
-will make a tangible difference to Gillian's~usability.
+\begin{itemize}
+  \item The research concerning VSCode and its webviews and extensions, the
+        DAP, and OCaml to JS compilation has already been completed; this
+        serves the basis for \autoref{sec:background:engineering-tools}.
 
-When considering related work, a primary point of comparison is VeriFast, as
-it also implements a debugger for full program verification. Gillian's
-debugging capabilities have already caught up tremendously with VeriFast, so
-this project should give the former an ample opportunity to overtake the latter.
-After completion of the project, Gillian's standing with VeriFast will be
-reassessed.
+  \item \textbf{Unification}. A desired feature is the ability to step through
+        Gillian's unification process, which stands as one of the pain points
+        of the current user experience; a large share of verification errors
+        occur when unifying against either the pre-condition of a called
+        function, or the post-condition of the current function. In the
+        presence of several specifications, the process of identifying which
+        specs \textit{should} be unifying (but aren't) often takes a
+        significant amount of time and thought, when a bespoke interface would
+        greatly streamline this process.
 
-Of particular interest to the Verified Software Group is bringing Gillian to a position
-where it can be used as part of the course on Scalable Software Verification, taught at
-Imperial College London~\cite{sl-course}. Using Gillian for educational
-purposes could be a good stepping stone to bringing it to developers in
-industry; whether or not it can serve this purpose is down to how the testers (from the Verified Software group and potentially some students), find the debugger's capabilities and
-usability, once the project is completed.
+        In particular, unification is performed following tree-shaped
+        \textit{unification plans}; the ability to step through and visualise
+        progress in these plans would immediately give the developer a far
+        better idea of a unification error's cause.
+
+  \item The `quality-of-life' features penned in for later in the project
+        represent small tweaks or features that the Gillian team (or any
+        testers) think would be useful additions, provided there is ample time
+        to implement them.
+
+  \item Implementing a Rust debugger depends on the progress made in another
+        final year project running parallel to this one; its inclusion is not
+        guaranteed, but it is also not necessary to the success of this project.
+
+\end{itemize}
