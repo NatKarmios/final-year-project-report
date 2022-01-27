@@ -240,17 +240,17 @@ understanding from the user. As stated in \autoref{sec:intro}, one of
 Gillian's biggest selling points is its parametricity on the target language's
 memory model.
 
-Gillian is currently implemented in three target languages: a simple While
+Gillian is currently instantiated to three target languages: a simple While
 language (WISL), as well as JavaScript and C. Gillian's three modes of program
 analysis were outlined in \autoref{sec:intro}, but they each deserve an explanation in more detail. Note that automatic compositional testing is not explained in further detail as it is outside the scope of this project.
 
-\subsection{Whole program symbolic testing}
+\subsection{Whole-program symbolic testing}
 
 This mode of analysis invites developers to write unit tests that involve the
 inclusion of \textit{symbolic values}, i.e. values that represent a range of
 concrete ones. During execution, a symbolic interpreter keeps track of the
 constraints on symbolic values that must hold for the program to be in the
-current state.
+current~state.
 
 The following C programs outline some of the nuances of working with symbolic
 values.
@@ -491,7 +491,8 @@ yet to be counted:
 
 \begin{lstlisting}[style=code, numbers=none, caption={WISL list length - loop invariant}]
   ...
-  [[ invariant {exists: #alpha1, #alpha2} (#alpha == #alpha1 @ #alpha2) * lseg(#x, y, #alpha1) * (n == len #alpha1) * list(y, #alpha2) ]];
+  [[ invariant {exists: #alpha1, #alpha2} (#alpha == #alpha1 @ #alpha2) * 
+     lseg(#x, y, #alpha1) * (n == len #alpha1) * list(y, #alpha2)         ]];
   while (not (y = null)) {
     ...
   }
@@ -528,8 +529,8 @@ understand why, we must peruse the logs, at the last executed command:
 ------------------------------------------------------
 --llen_loop0: 6--
 TIME: 0.641458
-CMD: loopretvar__ := "llen_loop0"(n, y) use_subst [invariant_spec - #alpha: #alpha,
-                                                   #x: #x]
+CMD: loopretvar__ := "llen_loop0"(n, y) 
+       use_subst [invariant_spec - #alpha: #alpha, #x: #x]
 BRANCHING: 1
 
 SPEC VARS: #alpha, #alpha1, #alpha2, #x
@@ -602,7 +603,7 @@ There were failures: 0.874831
 
 Failure once more. Referring to the logs once again reveals a problem at the final hurdle, when returning from \texttt{llen()}:
 
-\begin{lstlisting}[numbers=none, caption={WISL list length - list / list segment error, Gillian log file}]
+\begin{lstlisting}[numbers=none, style=code, caption={WISL list length - list / list segment error, Gillian log file}]
 ------------------------------------------------------
 ...
 CMD: return
