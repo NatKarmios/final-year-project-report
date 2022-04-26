@@ -1,0 +1,20 @@
+name: build
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: xu-cheng/latex-action@v2
+        with:
+          root_file: main.tex
+          latexmk_shell_escape: true
+          args: -pdf -file-line-error -interaction=nonstopmode -f
+        continue-on-error: true
+      - run: |
+          curl -F file=@main.pdf -F "initial_comment=$(git log -1 --pretty="%an: %B")" -F channels=${{ secrets.SLACK_CHANNEL_ID }} -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" https://slack.com/api/files.upload
