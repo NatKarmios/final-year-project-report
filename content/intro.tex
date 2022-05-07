@@ -1,7 +1,6 @@
 %!TEX root = ../main.tex
 
-\chapter{Introduction}
-\label{sec:intro}
+\chapter{Introduction}\label{sec:intro}
 
 % Why is Gillian necessary?
 
@@ -18,7 +17,7 @@ it needs to?
 Symbolic analysis tools are becoming an increasingly promising choice as
 research and development into a plethora of projects continue (some of which
 are discussed in \autoref{sec:background:sl-and-tools}). The benefit of using
-symbolic methods over ones dependent on concrete execution (i.e. unit tests) is
+symbolic methods over ones dependent on concrete execution (i.e.\ unit tests) is
 that they cover all possible states of execution without needing to specify each
 scenario by hand.
 
@@ -71,17 +70,18 @@ unreasonable amount of work and understanding~\cite{gillian-debugging-2021}.
 
 To assuage these issues, significant work has gone into developing a debugger
 for Gillian's verification process, as well as improving its error reporting.
-This undertaking, in its current state, makes use of the DAP (debug adapter protocol) 
-to provide a debugger than can be dropped into any IDE that supports it, with little-to-no
-integration required with any specific IDE. Whilst this debugger is a huge
-improvement to the user experience of Gillian, the DAP only provides a limited
-amount of functionality, primarily designed for debugging concrete execution.
-The decision had been taken to work within these limitations, producing a
-debugger that can successfully step over, into and out of (GIL, WISL, or
-JavaScript) code. An unfortunate consequence of this decision is that a number
-of much desired features could not be provided, such as `the ability to choose
-which branch to go down on a conditional statement' and `better visualisations
-of the current execution tree'~\cite[p.~49]{gillian-debugging-2021}.
+This undertaking, in its current state, makes use of the DAP (debug adapter
+protocol) to provide a debugger than can be dropped into any IDE that supports
+it, with little-to-no integration required with any specific IDE.\@ Whilst this
+debugger is a huge improvement to the user experience of Gillian, the DAP only
+provides a limited amount of functionality, primarily designed for debugging
+concrete execution.\@ The decision had been taken to work within these
+limitations, producing a debugger that can successfully step over, into and out
+of (GIL, WISL, or JavaScript) code. An unfortunate consequence of this decision
+is that a number of much desired features could not be provided, such as `the
+ability to choose which branch to go down on a conditional statement' and
+`better visualisations of the current execution tree'
+~\cite[p.~49]{gillian-debugging-2021}.
 
 The decision to use the DAP instead of a custom solution was made, quite
 reasonably so, due to `the short timeframe of a Master's project'. Standing on

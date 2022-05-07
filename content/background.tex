@@ -1,10 +1,10 @@
 %!TEX root = ../main.tex
+%chktex-file 26
+%chktex-file 36
 
-\chapter{Background}
-\label{sec:background}
+\chapter{Background}\label{sec:background}
 
-\section{Separation Logic - theory and tooling}
-\label{sec:background:sl-and-tools}
+\section{Separation Logic --- theory and tooling}\label{sec:background:sl-and-tools}
 
 Proposed in 1969, Tony Hoare's \textit{Hoare Logic} provided a standardised
 means of reasoning about programs and their correctness~\cite{hoare}. The key
@@ -12,9 +12,9 @@ principle of this logic is the Hoare Triple, denoting that if a certain
 pre-condition $P$ holds, and code command $C$ is run (and terminates without
 failing), then the post-condition $Q$ is guaranteed to hold. This is presented
 in the form of a \textit{H ffoare triple}:
-$$
+\[
   \triple{P}{C}{Q}
-$$
+\]
 
 Whilst this is a strong foundation for reasoning about programs, anything more
 than the simplest of functions become hugely cumbersome to work with,
@@ -31,8 +31,7 @@ in addition to the standard Hoare Logic:
   \caption{
     A visualisation of the separating conjunction.
     From~\cite{infer-sl}.
-  }
-  \label{fig:separating-conjunction}
+  }\label{fig:separating-conjunction}
 \end{figure}
 
 \begin{itemize}
@@ -43,19 +42,19 @@ in addition to the standard Hoare Logic:
   fragment can be split into two disjoint (potentially empty) sub-fragments,
   one of which satisfies $P$, and the other satisfies~$Q$.
 
-  \item The \textit{Frame Rule} - a fundamental rule that allows derivations to
-  temporarily ``forget'' any unneeded logic either not concerning
+  \item The \textit{Frame Rule} --- a fundamental rule that allows derivations
+  to temporarily ``forget'' any unneeded logic either not concerning
   heap-allocated memory, or concerning heap-allocated memory that isn't mutated
   by the command(s) currently being considered. Intuitively, this states that
   any programs that can execute on a state $P$ can also execute on a larger
   state, $P \lstar R$. The Frame Rule is as follows:
 
-  $$
+  \[
     \inferrule[Frame]{
-      \triple{P}{C}{Q} \quad \mathtt{mod}(C) \cap \mathtt{fv}(R) =
+      \triple{P}{C}{Q} \quad \mathtt{mod}(C) \cap \mathtt{fv}(R) =  %chktex 35
       \emptyset}{\triple{P \lstar R}{C}{Q \lstar R}
     }
-  $$
+  \]
 \end{itemize}
 
 
@@ -97,8 +96,7 @@ class VerifastTest \{
     \}
 \}
     \end{lstlisting}
-    \caption{\texttt{VerifastTest.java}}
-    \label{fig:verifast-example}
+    \caption{\texttt{VerifastTest.java}}\label{fig:verifast-example}
 \end{figure}
 
 \begin{figure}[!b]
@@ -110,8 +108,7 @@ class VerifastTest \{
 ./VerifastTest.java
 ./VerifastTest.java(7,20-26): Target of method call might be null.
     \end{lstlisting}
-    \caption{Output from analysing \texttt{VerifastTest.java}}
-    \label{fig:verifast-example-output}
+    \caption{Output from analysing \texttt{VerifastTest.java}}\label{fig:verifast-example-output}
 \end{figure}
 
 In industry, probably the most prominent use of a tool built on separation logic is Facebook's \textbf{Infer}~\cite{infer, infer-site}; it's a static analysis
@@ -149,8 +146,7 @@ class InferTest \{
     \}
 \}
     \end{lstlisting}
-    \caption{\texttt{InferTest.java}}
-    \label{fig:infer-example}
+    \caption{\texttt{InferTest.java}}\label{fig:infer-example}
 \end{figure}
 
 \begin{figure}
@@ -173,8 +169,7 @@ InferTest.java:5: error: NULL_DEREFERENCE
   6.       \}
   7.   \}
     \end{lstlisting}
-    \caption{Output from analysing \texttt{InferTest.java}}
-    \label{fig:infer-example-output}
+    \caption{Output from analysing \texttt{InferTest.java}}\label{fig:infer-example-output}
 \end{figure}
 
 Both VeriFast and Infer produce clear and direct feedback about the null
@@ -206,13 +201,13 @@ advantage over similar tools was its functioning debugger, and succinct,
 immediate error reporting; as found in previous
 comparisons~\cite{gillian-logging-2020}, upon attempting to verify an invalid
 program, VeriFast will directly output its reasoning for the error, and the line
-number responsible. VeriFast remains ahead of Gillian's debugging capabilities -
-whilst the work of Ho from 2021 markedly closed the gap between the two tools
-(and provided more specific and helpful error reporting, in Gillian, as well as
-some ease-of-use features such as debugging specific functions), the DAP's
-limitations on Gillian debugging left for some sorely missed features, such as
-the VeriFast debugger's ability to jump to any symbolic execution step, and
-visually show when resources allocated on the heap are freed. As of the
+number responsible. VeriFast remains ahead of Gillian's debugging capabilities
+--- whilst the work of Ho from 2021 markedly closed the gap between the two
+tools (and provided more specific and helpful error reporting, in Gillian, as
+well as some ease-of-use features such as debugging specific functions),
+the DAP's limitations on Gillian debugging left for some sorely missed features,
+such as the VeriFast debugger's ability to jump to any symbolic execution step,
+and visually show when resources allocated on the heap are freed. As of the
 beginning of this project, the ability to select execution branch when debugging
 is absent from both Gillian and VeriFast.
 \autoref{fig:verifast-debugging-example} shows VeriFast's debugging interface.
@@ -223,16 +218,14 @@ is absent from both Gillian and VeriFast.
   \caption{
     An example of VeriFast's debugging interface, using the program from
     \autoref{fig:verifast-example}
-  }
-  \label{fig:verifast-debugging-example}
+  }\label{fig:verifast-debugging-example}
 \end{figure}
 
 
-\section{Gillian}
-\label{sec:background:gillian}
+\section{Gillian}\label{sec:background:gillian}
 
 Gillian is a platform for program analysis based on separation logic, whose
-goal is to be extendable to as many programming languages as possible - this
+goal is to be extendable to as many programming languages as possible --- this
 shines through in Gillian's core ideology, which is to remove the burden of
 reasoning about analyses from the user, and have them focus only on their
 chosen target language's memory mode, reducing both workload and required
@@ -246,7 +239,7 @@ analysis were outlined in \autoref{sec:intro}, but they each deserve an
 explanation in more detail. Note that automatic compositional testing is not
 explained in further detail as it is outside the scope of this project.
 
-\subsection{WISL - memory model and syntax}
+\subsection{WISL --- memory model and syntax}
 WISL is a simple while language used for experimental and educational purposes. Its memory model consists of blocks, each of which is uniquely identified by a location, and contains two components: a list of memory cells, mapping numerical offsets to values stored on the heap, and a natural-number bound, specifying the memory block's size.  WISL can track negative resource, originating when allocating or deallocating. For allocation, the negative information originates from the fact that a freshly allocated block of a given size must not have offsets beyond that size; this is captured by the bound. For deallocation, the negative information is that only entire blocks can be deleted, and is captured by the fact that a memory block can either map to a list of cells or a dedicated freed symbol.
 
 The WISL syntax comprises the following statements:
@@ -264,7 +257,7 @@ The WISL syntax comprises the following statements:
 \subsection{Whole-program symbolic testing}
 
 This mode of analysis invites developers to write unit tests that involve the
-inclusion of \textit{symbolic values}, i.e. values that represent a range of
+inclusion of \textit{symbolic values}, i.e.\ values that represent a range of
 concrete ones. During execution, a symbolic interpreter keeps track of the
 constraints on symbolic values that must hold for the program to be in the
 current~state.
@@ -288,7 +281,7 @@ When executing line \texttt{2}, the interpreter creates a symbolic integer $x$,
 and assigns it to the program variable \texttt{x}. At the \texttt{if} statement
 at line \texttt{3}, both branches are considered, constraining the symbolic
 value as necessary; the constraint for the `true' branch is \texttt{$\x < 0$}
-whereas for the 'false' branch, it is \texttt{$\lnot (x < 0)$}. The former will
+whereas for the `false' branch, it is \texttt{$\lnot (x < 0)$}. The former will
 successfully execute, but the latter branch will fail due to the unsatisyiable
 assertion; this indicates that the code fails when $x$ is non-negative.
 
@@ -304,9 +297,16 @@ int main(void) {
 }
 \end{lstlisting}
 
-If a branch would constrain symbolic values to the point where no concrete values exist in its range (e.g. in this program, with $x$ being less than 0 \textit{and} greater than 10), then that branch will not be execited - this makes intuitive sense as such a situation is impossible.
+If a branch would constrain symbolic values to the point where no concrete
+values exist in its range (e.g.\ in this program, with $x$ being less than 0
+\textit{and} greater than 10), then that branch will not be execited --- this
+makes intuitive sense as such a situation is impossible.
 
-While assert statements can be used to pinpoint if the execution ended up in an undesirable branch, as in the example above, they are more commonly used in conjunction with assume statements to prove correctness properties of code. Assume statements extend the path condition with a given constraint. Take, for example, the following program:
+While assert statements can be used to pinpoint if the execution ended up in an
+undesirable branch, as in the example above, they are more commonly used in
+conjunction with assume statements to prove correctness properties of code.
+Assume statements extend the path condition with a given constraint. Take, for
+example, the following program:
 
 \begin{lstlisting}[caption={Symbolic execution - assume and assert}, style=code, language=C]
 int main(void) {
@@ -319,7 +319,11 @@ int main(void) {
 }
 \end{lstlisting}
 
-This example shows how assert statements are most commonly used - in tandom with assume statements, to prove properties of the code to be correct; the constraints on symbolic variables can be extended manually using these assume statements. Here, we make the assertion that the sum of two positive numbers is also positive, which passes symboilic execution.
+This example shows how assert statements are most commonly used --- in tandem
+with assume statements, to prove properties of the code to be correct; the
+constraints on symbolic variables can be extended manually using these assume
+statements. Here, we make the assertion that the sum of two positive numbers is
+also positive, which passes symboilic execution.
 
 \begin{lstlisting}[caption={Symbolic execution - termination when unsatisfiable}, style=code, language=C]
 int main(void) {
@@ -332,12 +336,18 @@ int main(void) {
 
 Somewhat counter-intuitively, if execution is halted by the symbolic value
 constraints becoming unsatisfiable, the test passes; this captures a sense of
-a program being vacuously correct - code can't cause an error if it can never
+a program being vacuously correct --- code can't cause an error if it can never
 be executed concretely.
 
-When considering code with loops, Gillian will unroll said loops up to a given bound; whilst this gives a reasonable assurance of correctness, it is not a full guarantee of correct code. This is emblematic of path explosion - a core difficulty surrounding symboilic execution - where the amount of possible execution branches grows exponentially. This decision was made as the risk of missed failure paths is small enough to make the performance gain worthwhile.
+When considering code with loops, Gillian will unroll said loops up to a given
+bound; whilst this gives a reasonable assurance of correctness, it is not a full
+guarantee of correct code. This is emblematic of path explosion --- a core
+difficulty surrounding symboilic execution --- where the amount of possible
+execution branches grows exponentially. This decision was made as the risk of
+missed failure paths is small enough to make the performance gain worthwhile.
 
-Of course, the more interesting (or useful) cases are where the test fails; consider this example:
+Of course, the more interesting (or useful) cases are where the test fails;
+consider this example:
 
 \begin{lstlisting}[caption={Symbolic execution - assertion failure}, style=code, language=C]
 #include <gillian-c/gillian-c.h>
@@ -359,7 +369,9 @@ int main(void) {
 }
 \end{lstlisting}
 
-This program can fail in the `true' branch of either if-statement; the only succeeding path occurs when both $x$ and $y$ are negative. This is the output given by Gillian:
+This program can fail in the `true' branch of either if-statement; the only
+succeeding path occurs when both $x$ and $y$ are negative. This is the output
+given by Gillian:
 
 \begin{lstlisting}[numbers=none, style=terminal, caption={Symbolic execution - assertion failure (Gillian output)}]
 Assert failed with argument ({{ "int", 0. }} == {{"int", 1.}}).
@@ -377,7 +389,10 @@ The cause of verification failure is not particularly obvious. This output is
 trying to convey that it has found two failing paths, and has given a variable
 configuration that leads to each; the \texttt{Assert failed with argument}
 statement is the specific reason that the path fails, in this case describing
-how it expects \texttt{true} to be passed to an assert stament, but instead it received \texttt{false}. With some observation, it can be understood that the first failure case occurs when $x$ is assigned -1, and the second when $y$ is assigned -1, each causing the respective if-staement to evaluate to true.
+how it expects \texttt{true} to be passed to an assert stament, but instead it
+received \texttt{false}. With some observation, it can be understood that the
+first failure case occurs when $x$ is assigned -1, and the second when $y$ is
+assigned -1, each causing the respective if-staement to evaluate to true.
 
 This form of error reporting is one of Gillian's weak points; while it is very
 good at finding such errors, its attempts at communicating them to the
@@ -414,7 +429,7 @@ of the scope of the predicate:
   &(\exists b, \beta \ldotp \alpha \doteq (b : \beta) \ast \exists z \ldotp \twocell{\pvar{x}}{b}{z} \lstar \lseg{z}{\pvar{y}}{\beta})
 \end{align*}
 
-To test Gillian's verification, consider this list lengh function, written in WISL:
+To test Gillian's verification, consider this list lengh function, written in WISL:\@
 
 \begin{lstlisting}[numbers=none, caption={Verification example - list length in WISL}, style=code]
 { list(x, #alpha) }
@@ -430,7 +445,10 @@ function llen(x) {
 { list(x, #alpha) * (ret == len(#alpha)) }
 \end{lstlisting}
 
-This is the standard iterative method of counting a linked list. The pre- and post-conditions state that, given a list at \texttt{x} with contents \texttt{\#alpha}, the list remains unchanged at \texttt{x}, and the function returns the length of \texttt{\#alpha}.
+This is the standard iterative method of counting a linked list. The pre- and
+post-conditions state that, given a list at \texttt{x} with contents
+\texttt{\#alpha}, the list remains unchanged at \texttt{x}, and the function
+returns the length of \texttt{\#alpha}.
 
 Note that the list / list segment predicates must be defined in order to be used:
 
@@ -452,7 +470,9 @@ terminates with $\nil$, then it is equivalent to a full list:
   \lseg{\pvar{x}}{\nil}{\alpha} \iff \llist{\pvar{x}, \alpha}
 \end{align*}
 
-Note that Gillian allows the user to prove specified lemmas using a series of logical commands, making use of unfolding, folding, auxiliary assertions, and application of lemmas.
+Note that Gillian allows the user to prove specified lemmas using a series of
+logical commands, making use of unfolding, folding, auxiliary assertions, and
+application of lemmas.
 
 \begin{lstlisting}[caption={List lemma in WISL}, style=code, numbers=none]
 lemma lseg_to_list {
@@ -472,7 +492,7 @@ lemma lseg_to_list {
 }
 \end{lstlisting}
 
-...and we can see that Gillian approves:
+\ldots and we can see that Gillian approves:
 
 \begin{lstlisting}[style=code, numbers=none, caption={List lemma in WISL - Gillian output}]
 Verifying lemma lseg_to_list... Success
@@ -604,7 +624,9 @@ into our loop:
   ...
 \end{lstlisting}
 
-Notice the inclusion of an assertion; this is used to establish names for the logical variables that we wish to use in the lemma application. With that in place, we return to attempt verification again:
+Notice the inclusion of an assertion; this is used to establish names for the
+logical variables that we wish to use in the lemma application. With that in
+place, we return to attempt verification again:
 
 \begin{lstlisting}[style=code, numbers=none, caption={WISL list length - list / list segment error}]
 Obtaining specs to verify...
@@ -618,7 +640,8 @@ Verifying one spec of procedure llen_loop0... Success
 There were failures: 0.874831
 \end{lstlisting}
 
-Failure once more. Referring to the logs once again reveals a problem at the final hurdle, when returning from \texttt{llen()}:
+Failure once more. Referring to the logs once again reveals a problem at the
+final hurdle, when returning from \texttt{llen()}:
 
 \begin{lstlisting}[numbers=none, style=code, caption={WISL list length - list / list segment error, Gillian log file}]
 ------------------------------------------------------
@@ -631,7 +654,8 @@ PREDICATES:
 ------------------------------------------------------
 \end{lstlisting}
 
-Gillian knows about a list segment, but our post-condition requires a list; perfect timing for the \texttt{lseg\_to\_list} lemma:
+Gillian knows about a list segment, but our post-condition requires a list;
+perfect timing for the \texttt{lseg\_to\_list} lemma:
 
 \begin{lstlisting}[style=code, numbers=none, caption={Applying \texttt{lseg\_to\_list}}]
   ...
@@ -653,10 +677,14 @@ Verifying one spec of procedure llen_loop0... Success
 All specs succeeded: 0.699979
 \end{lstlisting}
 
-Working through this process shows that, while Gillian is very capable at its purpose of proving correctness of programs, the roundabout debugging process is unreasonably awkward for real-world use. Even for a small example such as this, the user not only requires a strong understanding of separation logic, but also knowledge of Gillian's underlying semantics, and how it converts target languages to GIL.
+Working through this process shows that, while Gillian is very capable at its
+purpose of proving correctness of programs, the roundabout debugging process is
+unreasonably awkward for real-world use. Even for a small example such as this,
+the user not only requires a strong understanding of separation logic, but also
+knowledge of Gillian's underlying semantics, and how it converts target
+languages to GIL.\@
 
-\section{Engineering resources and tools}
-\label{sec:background:engineering-tools}
+\section{Engineering resources and tools}\label{sec:background:engineering-tools}
 
 The nature of the project required research into the language and tools that
 are/could be/will be used in the current/further development of Gillian.
@@ -670,7 +698,7 @@ imperative, and object-oriented styles. This, combined with its powerful type
 system, makes it a good fit for symbolic analysis tools. Many of Gillian's
 contemporaries, including Infer, VeriFast and Frama-C, are also written in OCaml.
 
-OCaml's most popular build system is \textit{Dune}~\cite{dune} - it allows the
+OCaml's most popular build system is \textit{Dune}~\cite{dune} --- it allows the
 easy compilation of multi-file OCaml programs and libraries, including
 dependencies from \textit{OPAM}~\cite{opam}, OCaml's designated public library
 repository. Despite Dune's popularity, it is a fairly bare-bones system, quickly
@@ -680,7 +708,7 @@ are installed system-wide, which can lead to inconsistent builds and version
 conflicts. The answer to these concerns is \textit{esy}~\cite{esy}, a package
 management system for OCaml and Reason styled after \textit{npm}~\cite{npm}.
 Esy provides `provides a fast and powerful workflow for local development of
-opam packages without requiring ``switches''', meaning dependencies are isolated
+opam packages without requiring ``switches''\,', meaning dependencies are isolated
 between projects. Esy also provides a number of convenience features, such as
 defining custom commands that run within the OCaml project's environment, as
 well as supporting non-OPAM dependencies, e.g. OCaml sources from GitHub
@@ -690,8 +718,7 @@ Knowledge of these build systems will become paramount when introducing the
 somewhat foreign element that is a VSCode extension.
 
 
-\subsection{VSCode and its extensions}
-\label{sec:vscode}
+\subsection{VSCode and its extensions}\label{sec:vscode}
 
 VSCode (Visual Studio Code)~\cite{vscode} is a universally recognised text
 editor and development environment, developed by Microsoft. It currently stands
@@ -711,13 +738,12 @@ Whilst VSCode limits the extent to which extensions can extend the editor's UI,
 extension authors are able to make use of Webviews~\cite{vscode-webview}; an
 extension can open an editor tab that contains web content (HTML/CSS/JS) that
 the extension has complete control over, providing a method for extensions to
-fill in any gaps in VSCode's UI.
+fill in any gaps in VSCode's UI.\@
 
 \begin{figure}
-  \center
+  \center{}
   \includegraphics[width=400px]{img/webview-example.png}
-  \caption{An example of a Webview created by a VSCode extension}
-  \label{fig:webview-example}
+  \caption{An example of a Webview created by a VSCode extension}\label{fig:webview-example}
 \end{figure}
 
 
@@ -736,19 +762,17 @@ be integrated once.
   \centering
   \includegraphics[width=0.5\textwidth]{img/dap-diagram.png}
   \caption{
-    DAP: an interface between arbitrary IDEs and
+    DAP:\@ an interface between arbitrary IDEs and
     arbitrary debuggers~\cite{dap}.
-  }
-  \label{fig:dap-diagram}
+  }\label{fig:dap-diagram}
 \end{figure}
 
 As discussed in \autoref{sec:intro}, the DAP's limited set of
 included commands proved a limiting factor in the development of a Gillian
 debugger. A potential solution is to make use of custom commands and events,
-which is supported both by VSCode (sending custom requests
-at~\cite{vscode-dap-custom-request}, receiving custom events
-at~\cite{vscode-dap-custom-event} and the OCaml DAP
-implementation currently used in Gillan's debugger~\cite{ocaml-dap} (where
+which is supported both by
+VSCode~\cite{vscode-dap-custom-request, vscode-dap-custom-event} and the OCaml
+DAP implementation currently used in Gillan's debugger~\cite{ocaml-dap} (where
 custom events and commands are defined similarly to those already
 provided~\cite{ocaml-dap-custom}).
 
@@ -784,29 +808,27 @@ concrete example to this, attempting to include Gillian's \texttt{debugAdapter}
 library results in erroring code, due to the compiler's attempt to include an
 SQLite implementation, which it simply is not equipped to handle. Aside from
 this, the inclusion of unnecessary dependencies in JS-compiled code results in
-a hugely bloated extension - the \texttt{debugAdapter} example created a
+a hugely bloated extension --- the \texttt{debugAdapter} example created a
 compiled JS file over a million lines long. The ideal scenario here is to move
 shared Gillian code to its own library within Gillian, which has as few
 dependencies as possible (ideally none), but on which both Gillian and the
 extension code would then depend.
 
 \begin{sidewaysfigure}
-  \center
+  \center{}
   \includegraphics[width=0.8\textwidth]{img/vscode-extension-with-ocaml.png}
-  \caption{The process of including OCaml code in a VSCode extension}
-  \label{fig:vscode-extension-with-ocaml}
+  \caption{The process of including OCaml code in a VSCode extension}\label{fig:vscode-extension-with-ocaml}
 \end{sidewaysfigure}
 
-\myparagraph{Putting it all together}
-\label{sec:background:extending-dap}
+\myparagraph{Putting it all together}\label{sec:background:extending-dap}
 A combination of DAP custom events and VSCode's Webviews could allow us to move
 past DAP's initial limitations. This, however, comes at the cost of creating an
 implementation specific to VSCode, eliminating a large benefit of using the DAP
 in the first place.
 
 A working example that tests custom DAP commands/events, Webviews and the
-inclusion of OCaml code (alongside a Gillian library) is available at
-\cite{debugger-experiment}.
+inclusion of OCaml code (alongside a Gillian library) is available
+at~\cite{debugger-experiment}.
 
 \subsection{MagpieBridge}
 
@@ -823,7 +845,7 @@ functional integration for~Infer~\cite{infer-ide}.
 A particular feature of MagpieBridge is its ability to serve a configuration
 webpage, in which the user can configure the static analysis in their browser
 of choice. Unfortunately, this pre-generated page can't contain any custom
-content, and can only be used for configuration - this would prohibit advanced
+content, and can only be used for configuration --- this would prohibit advanced
 debugging features from being served directly from a MagpieBridge server.
 
 Additionally, the inclusion of MagpieBridge would involve the addition of Java
@@ -837,6 +859,5 @@ potentially harming long-term usability.
   \caption{
     The goal of MagpieBridge; bridging static analysis tools with IDEs.
     From~\cite{magpiebridge-repo}.
-  }
-  \label{fig:magpiebridge-goal}
+  }\label{fig:magpiebridge-goal}
 \end{figure}
