@@ -223,6 +223,9 @@ is absent from both Gillian and VeriFast.
 
 \section{Gillian}\label{sec:background:gillian}
 
+\todo{Check and rewrite if necessary}
+\polish{Some of this section has been wholly copied from a previous report; identify and replace this!}
+
 Gillian is a platform for program analysis based on separation logic, whose
 goal is to be extendable to as many programming languages as possible --- this
 shines through in Gillian's core ideology, which is to remove the burden of
@@ -428,11 +431,12 @@ of the scope of the predicate:
   &(\exists b, \beta \ldotp \alpha \doteq (b : \beta) \ast \exists z \ldotp \twocell{\pvar{x}}{b}{z} \lstar \lseg{z}{\pvar{y}}{\beta})
 \end{align*}
 
-To test Gillian's verification, consider this list lengh function, written in WISL:\@
+To test Gillian's verification, consider this iterative list length function,
+written in WISL:\@
 
 \begin{lstlisting}[numbers=none, caption={Verification example - list length in WISL}, style=code]
 { list(x, #alpha) }
-function llen(x) {
+function llen_iter(x) {
   y := x;
   n := 0;
   while (not (y = null)) {
@@ -451,7 +455,7 @@ returns the length of \texttt{\#alpha}.
 
 Note that the list / list segment predicates must be defined in order to be used:
 
-\begin{lstlisting}[caption={List predicates in WISL}, style=code, numbers=none]
+\begin{lstlisting}[caption={List predicates in WISL\label{lst:list-predicate}}, style=code, numbers=none]
 predicate list(+x, alpha) {
     (alpha == nil) * (x == null);
     (alpha == #b :: #beta) * (x -> #b, #y) * list(#y, #beta)
@@ -539,33 +543,34 @@ Upon attempting verification again, Gillian presents us with this:
 \begin{lstlisting}[style=code, numbers=none, caption={Verification: WISL list length error - precondition not met}]
 wisl.exe: internal error, uncaught exception:
           Failure("WARNING: Failed to unify against the precondition of
-          procedure llen_loop0\nSTATE:\n  SPEC VARS: #alpha, #alpha1, #alpha2,
-          #x\n  HEAP:\n    {\n(_\$l_6, (1 i+ _lvar_31)) -> _lvar_33\n(_\$l_6,
-          _lvar_31) -> _lvar_32\n}\n  STORE:\n    (gvar0: {{ ALoc _\$l_6,
-          (BinOp: (1 i+ _lvar_31)) }})\n    (gvar1: {{ ALoc _\$l_6, (BinOp: (1
-          i+ _lvar_31)), LVar _lvar_33 }})\n    (gvar2: (BinOp: (1 i+ (l-len
-          #alpha1))))\n    (n: (BinOp: (1 i+ (l-len #alpha1))))\n    (y: LVar
-          _lvar_33)\n  \n  PURE FORMULAE:\n    (_lvar_y == {{_\$l_6,
-          _lvar_31}})\n    (#alpha == l+ (#alpha1, {{_lvar_32}},
-          _lvar_29))\n    (#alpha2 == l+ ({{_lvar_32}}, _lvar_29))\n
-          (_lvar_30 == _\$l_6)\n  \n  TYPING ENVIRONMENT:\n    (_lvar_29:
-          List)\n    (_lvar_y: List)\n    (#alpha: List)\n    (#alpha2:
-          List)\n    (#alpha1: List)\n    (_lvar_30: Obj)\n    (_lvar_31:
-          Int)\n  PREDICATES:\n    list(_lvar_33, _lvar_29)\n    lseg(#x,
-          {{_\$l_6, _lvar_31}}, #alpha1)\n  ")
+          procedure llen_iter_loop0\nSTATE:\n  SPEC VARS: #alpha, #alpha1,
+          #alpha2, #x\n  HEAP:\n    {\n(_\$l_6, (1 i+ _lvar_31))
+          ->_lvar_33\n(_\$l_6, _lvar_31) -> _lvar_32\n}\n  STORE:\n    
+          (gvar0: {{ ALoc _\$l_6, (BinOp: (1 i+ _lvar_31)) }})\n    (gvar1:
+          {{ ALoc _\$l_6, (BinOp: (1 i+ _lvar_31)), LVar _lvar_33 }})\n    
+          (gvar2: (BinOp: (1 i+ (l-len #alpha1))))\n    (n: (BinOp: (1 i+
+          (l-len #alpha1))))\n    (y: LVar _lvar_33)\n  \n  
+          PURE FORMULAE:\n    (_lvar_y == {{_\$l_6, _lvar_31}})\n    
+          (#alpha == l+ (#alpha1, {{_lvar_32}}, _lvar_29))\n    (#alpha2 
+          == l+ ({{_lvar_32}}, _lvar_29))\n  (_lvar_30 == _\$l_6)\n  
+          \n  TYPING ENVIRONMENT:\n    (_lvar_29: List)\n    (_lvar_y:
+          List)\n    (#alpha: List)\n    (#alpha2: List)\n    (#alpha1:
+          List)\n    (_lvar_30: Obj)\n    (_lvar_31: Int)\n  PREDICATES:\n    
+          list(_lvar_33, _lvar_29)\n    lseg(#x, {{_\$l_6, _lvar_31}}, 
+          #alpha1)\n  ")
 \end{lstlisting}
 
 The error message provided is vague, referencing some imaginary function
-\texttt{llen\_loop0}, followed by a slew of logical veriable information unfit
-for human understanding. The key to deciphering this is the knowledge that
+\texttt{llen\_iter\_loop0}, followed by a slew of logical veriable information
+unfit for human understanding. The key to deciphering this is the knowledge that
 Gillian internally compiles while loops to functions, and this unification
 failure indicates that the loop invariant could not be re-established. To
 understand why, we must peruse the logs, at the last executed command:
 \begin{lstlisting}[style=code, numbers=none, caption={Loop invariant failure - Gillian log file}]
 ------------------------------------------------------
---llen_loop0: 6--
-TIME: 0.641458
-CMD: loopretvar__ := "llen_loop0"(n, y) 
+--llen_iter_loop0: 6--
+TIME: 0.532037
+CMD: loopretvar__ := "llen_iter_loop0"(n, y) 
        use_subst [invariant_spec - #alpha: #alpha, #x: #x]
 BRANCHING: 1
 
@@ -631,16 +636,16 @@ place, we return to attempt verification again:
 Obtaining specs to verify...
 Obtaining lemmas to verify...
 Obtained 4 symbolic tests in total
-Running symbolic tests: 0.090932
+Running symbolic tests: 0.083106
 Verifying lemma lseg_to_list... Success
 Verifying lemma lseg_append... Success
-Verifying one spec of procedure llen... Failure
-Verifying one spec of procedure llen_loop0... Success
+Verifying one spec of procedure llen_iter... Failure
+Verifying one spec of procedure llen_iter_loop0... Success
 There were failures: 0.874831
 \end{lstlisting}
 
 Failure once more. Referring to the logs once again reveals a problem at the
-final hurdle, when returning from \texttt{llen()}:
+final hurdle, when returning from \texttt{llen\_iter()}:
 
 \begin{lstlisting}[numbers=none, style=code, caption={WISL list length - list / list segment error, Gillian log file}]
 ------------------------------------------------------
@@ -668,12 +673,12 @@ Verification is attempted a final time. Success at last!
 Obtaining specs to verify...
 Obtaining lemmas to verify...
 Obtained 4 symbolic tests in total
-Running symbolic tests: 0.093763
+Running symbolic tests: 0.082395
 Verifying lemma lseg_to_list... Success
 Verifying lemma lseg_append... Success
-Verifying one spec of procedure llen... Success
-Verifying one spec of procedure llen_loop0... Success
-All specs succeeded: 0.699979
+Verifying one spec of procedure llen_iter... Success
+Verifying one spec of procedure llen_iter_loop0... Success
+All specs succeeded: 0.601923
 \end{lstlisting}
 
 Working through this process shows that, while Gillian is very capable at its
