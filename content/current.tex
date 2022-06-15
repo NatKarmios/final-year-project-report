@@ -1,4 +1,5 @@
 %!TEX root = ../main.tex
+%chktex-file 36
 
 \chapter{The Current State of Gillian}\label{sec:current}
 
@@ -25,7 +26,7 @@ the state against the definition of the predicate) can be delegated to a
 subproblem, dubbed \textbf{folding}.
 
 \begin{lstlisting}[caption={
-  The recursince list length function, in WISL
+  The recursive list length function, in WISL
   \label{lst:llen-rec}}, style=code, numbers=none]
   predicate list(+x, alpha) {
       (alpha == nil) * (x == null);
