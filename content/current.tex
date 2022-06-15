@@ -3,6 +3,11 @@
 
 \chapter{The Current State of Gillian}\label{sec:current}
 
+The continuation of work on Gillian and its debugger requires a deep
+understanding of their driving principles and implementation details.
+These aspects, as well as their shortcomings in the current state of Gillian,
+are outlined here.
+
 \section{Symbolic Execution with Unification}\label{sec:current:symex}
 
 \todo{Describe SybmEx in more detail?}
@@ -27,11 +32,19 @@ subproblem, dubbed \textbf{folding}.
 
 \begin{lstlisting}[caption={
   The recursive list length function, in WISL
-  \label{lst:llen-rec}}, style=code, numbers=none]
-  predicate list(+x, alpha) {
-      (alpha == nil) * (x == null);
-      (alpha == #b :: #beta) * (x -> #b, #y) * list(#y, #beta)
+  \label{lst:llen-rec}}, style=code]
+  { (x == #x) * list(#x, #alpha) }
+  function llen(x) {
+      if (x = null) {
+          n := 0
+      } else {
+          t := [x+1];
+          n := llen(t);
+          n := n + 1
+      };
+      return n
   }
+  { list(#x, #alpha) * (ret == len(#alpha)) }
 \end{lstlisting}
 
 \begin{figure}
@@ -49,9 +62,9 @@ unification plan comprises of:
 \begin{itemize}
   \item Assert that the logical variable \texttt{\#alpha} is a list
   \item Assert that the program variable \texttt{ret} is set to the list of
-  \texttt{\#alpha}
+        \texttt{\#alpha}
   \item Assert that the program variable \texttt{x} points to a linked list,
-  whose contents are equal to \texttt{\#alpha}
+        whose contents are equal to \texttt{\#alpha}
 \end{itemize}
 The first two assertions are readily available in the predicate state, however
 the final assertion has no direct match; the only instance of the \texttt{list}
