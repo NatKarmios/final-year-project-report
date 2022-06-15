@@ -3,7 +3,72 @@
 \chapter{The Current State of Gillian}\label{sec:current}
 
 \section{Symbolic Execution with Unification}\label{sec:current:symex}
-\todo{Write section}
+
+\todo{Describe SybmEx in more detail?}
+
+While symbolic execution is an essential component of program verification, it
+alone is not sufficient for applying separation logic when reasoning about a
+program. The `gotcha' step that bridges symbolic exection to separation logic is
+the process of \textbf{unification}, where a symbolic state is matched against a
+particular condition in separation logic. Gillian does this by transforming the
+relevant condition into a \textbf{unification plan} (or \textbf{UP}), where each
+step is an assertion that the current state must be matched against, potentially
+after finding appropriate substitutions.
+
+It's worth noting that Gillian has a notion of a \textit{predicate state} in
+addition to symbolic state, where the former is an extension of the latter that
+includes predicates. This becomes integral to the unification process when
+considering logic that contain predicates, as predicates can be defined
+recursively, and thus cannot be considered in pure separation logic. This way,
+the act of building a predicate from its component parts (in practice, unifying
+the state against the definition of the predicate) can be delegated to a
+subproblem, dubbed \textbf{folding}.
+
+\begin{lstlisting}[caption={
+  The recursince list length function, in WISL
+  \label{lst:llen-rec}}, style=code, numbers=none]
+  predicate list(+x, alpha) {
+      (alpha == nil) * (x == null);
+      (alpha == #b :: #beta) * (x -> #b, #y) * list(#y, #beta)
+  }
+\end{lstlisting}
+
+\begin{figure}
+  \center{}
+  \includegraphics[width=0.8\textwidth]{img/unify-example.png}
+  \caption{
+    An example of unification --- the postcondition of \texttt{llen}'s non-empty
+    case --- including a fold}\label{fig:unify-example}
+\end{figure}
+
+\autoref{fig:unify-example} outlines the process of unifying the recursive list
+length function, \texttt{llen} (\autoref{lst:llen-rec}), which makes use of the
+\texttt{list} predicate (see \autoref{lst:list-predicate}). The top-level
+unification plan comprises of:
+\begin{itemize}
+  \item Assert that the logical variable \texttt{\#alpha} is a list
+  \item Assert that the program variable \texttt{ret} is set to the list of
+  \texttt{\#alpha}
+  \item Assert that the program variable \texttt{x} points to a linked list,
+  whose contents are equal to \texttt{\#alpha}
+\end{itemize}
+The first two assertions are readily available in the predicate state, however
+the final assertion has no direct match; the only instance of the \texttt{list}
+predicate in our state is for the tail of the given list. Therefore, since
+Gillian is attempting to unify a predicate assertion, it attempts a fold.
+Here, two different unifications are considered; one for the \texttt{list}
+predicate's empty case, and one for its non-empty case. The empty case
+unification fails; this is trivially true, as in \texttt{llen}'s non-empty case,
+\texttt{x} cannot be \texttt{null}. The remaining unification, after a number of
+assertions that build up the \texttt{list} predicate's non-empty case,
+eventually succeeds, proving that \texttt{list(\#x, \#alpha)} holds for this
+predicate state. As that was the final top-level assertion, the overall
+unification has now succeeded.
+
+This process of unification is one of the core pillars of Gillian's
+functionality, yet it remained unrepresented by the debugger available prior to
+this project.
+
 
 \section{The Gillian Interpreter}\label{sec:current:interpreter}
 \todo{Write section}
