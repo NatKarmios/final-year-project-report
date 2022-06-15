@@ -122,7 +122,60 @@ debugging process, and no control outside of when to execute the next step.
 
 
 \section{Symbolic Trace and the Logging Structure}\label{sec:current:trace}
-\todo{Write section}
+
+Originally, the log reports made to a file were the only way to debug
+verification. This changed when, in a previous project, Radu Lacraru
+~\cite{gillian-logging-2020} provided mechanisms for making more detailed
+reports to an SQLite database for later querying. While this opens the door for
+more structured logging, and a trace that more closely matches Gillian's
+symbolic execution and unification processes, this is not used to its fullest
+potential in the current debugging implementation.
+
+\begin{lstlisting}[caption={
+  The \texttt{Report.t} type
+  \label{lst:report-type}}, style=code, numbers=none]
+  (* report.ml *)
+
+  type t = {
+    id : ReportId.t;
+    title : string;
+    elapsed_time : float;
+    previous : ReportId.t option;
+    parent : ReportId.t option;
+    content : Loggable.t;
+    severity : severity;
+    type_ : string;
+  }
+\end{lstlisting}
+
+Of particular note is the \texttt{Report.t} type's (\autoref{lst:report-type})
+\texttt{content} field, which is used to store various information in JSON
+format, which can then be parsed straight back into the relevant data structure
+and used when querying logs; the specific data structure stored is dictated by
+the \texttt{type\_} field, which is set to one of a set of preset strings
+(\autoref{lst:loggingconstants}).
+
+While \texttt{Report.t} supports references to a \texttt{parent} and
+\texttt{previous} report, these were not utilised in log querying whatsoever,
+instead relying on the \texttt{elapsed\_time} field to deduce which reports
+preceded and succeeded others. The current logging structure, shown in
+\autoref{fig:log-structure-current}, is merely a consequence of when and where
+in Gillian's code that logging was performed, rather than being backed by
+principled decisions. Note that the `assertion' reports did not in fact exist
+prior to this project, but are shown where they would be if added before log
+restructuring.
+
+\begin{sidewaysfigure}
+  \center{}
+  \includegraphics[width=0.95\textwidth]{img/log-structure-current.png}
+  \caption{The original reporting structure for Gillian debugging, with added 
+    `assertion' reports}\label{fig:log-structure-current}
+\end{sidewaysfigure}
+
+While the current logging structure is of no meaningful use, the logging
+mechanisms provided serve as a very strong foundation for further improvements
+to Gillian debugging.
+
 
 \section{Debug Adapter}\label{sec:current:dap}
 \todo{Write section}

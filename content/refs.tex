@@ -1,7 +1,9 @@
 \chapter{References}\label{cha:refs}
 
 \makeatletter
+\let\oldchapter=\chapter{}
 \renewcommand{\chapter}{\@gobbletwo}
 \makeatother
 \bibliographystyle{acm}
 \bibliography{refs}
+\let\chapter=\oldchapter{}
