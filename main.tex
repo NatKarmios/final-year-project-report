@@ -77,6 +77,33 @@
 
 \input{title/title.tex}
 
+\begin{abstract}
+This project improves upon previous work to provide debugging functionality to
+Gillian, a multi-language real-world program analysis platform built by the
+Verified Software group at Imperial College London, parametric on the memory
+model of a target language.
+The existing solution is restricted to linear, step-by-step execution by its
+adherence to the Debug Adapter Protocol, but by reconfiguring Gillian's log
+trace structure, implementing branched execution, extending the DAP, and
+implementing a custom UI via webview, a rich debugging interface for debugging
+Gillian program verification has been implemented.
+This interface, created for Visual Studio Code, allows debugging symbolic
+execution down specific execution paths at the user's command, as well as
+providing detail about the unification process.
+\end{abstract}
+
+\renewcommand{\abstractname}{Acknowledgements}
+\begin{abstract}
+My thanks go to Sacha Ayoun and Petar Maksimović, for being keen eyes and
+guiding hands throughout the course of the project.
+
+I'd also like to thank Professor Philippa Gardner, whose teaching and project
+proposals formed the academic path I walk, to this project and beyond.
+
+Finally, I give my gratitude to Douglas, who has been an eternally patient rock
+at my side.
+\end{abstract}
+
 \listoftodos{}
 \tableofcontents
 
