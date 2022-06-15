@@ -85,7 +85,41 @@ this project.
 
 
 \section{The Gillian Interpreter}\label{sec:current:interpreter}
-\todo{Write section}
+
+Taking a single symbolic execution step in Gillian's interpreter follows
+the general process of:
+\begin{itemize}
+  \item Pop the first symbolic state configuration from the stack. If the stack
+        is empty, then execution has finished, and the execution result is
+        returned.
+  \item Perform the action required by that configuration --- usually executing
+        the next command in the program.
+  \item Push any new state configurations to the stack. There can be multiple
+        new states, for example, when symbolic execution branches at an if/else
+        statement.
+\end{itemize}
+
+In previous work, this process was extended to not simply perform symbolic
+execution to completion immediately, but instead, provide a continuation
+function (\texttt{cont\_func}; see \autoref{lst:contfunc-type-original}) ---
+essentially a thunk that, once called, executes a single symbolic execution
+step, returning the result of that step, and a new \texttt{cont\_func} to
+execute the next one; the original behaviour of running to completion can be
+recreated by repeatedly executing the given thunks until the \texttt{Finished}
+case is returned.
+
+\begin{lstlisting}[caption={
+  The original \texttt{cont\_func} type
+  \label{lst:contfunc-type-original}}, style=code, numbers=none]
+  type 'a cont_func =
+  | Finished of 'a list
+  | Continue of (cconf_t list * (unit -> 'a cont_func))
+\end{lstlisting}
+
+While this meets the basic needs of step-by-step execution for a debugger, it
+proves to be a fairly blunt instrument, giving minimal information to the
+debugging process, and no control outside of when to execute the next step.
+
 
 \section{Symbolic Trace and the Logging Structure}\label{sec:current:trace}
 \todo{Write section}
