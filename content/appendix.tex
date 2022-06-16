@@ -36,7 +36,11 @@ type cconf_t =
     loop_ids : string list;
     branch_count : int;
   }
-| ConfFinish of { flag : Flag.t; ret_val : state_vt; final_state : state_t }
+| ConfFinish of {
+    flag : Flag.t;
+    ret_val : state_vt;
+    final_state : state_t
+  }
     (** Equal to Conf cont + the id of the required spec *)
 | ConfSusp of {
     spec_id : string;
@@ -48,4 +52,433 @@ type cconf_t =
     loop_ids : string list;
     branch_count : int;
   }
+\end{lstlisting}
+
+\begin{lstlisting}[caption={
+  The \texttt{Loggable} module
+  \label{lst:loggable}}, style=code]
+(** Module specifying functions required for a type to be loggable *)
+module type S = sig
+  (** Type to be logged *)
+  type t [@@deriving yojson]
+
+  (** Pretty printer for the type *)
+  val pp : Format.formatter -> t -> unit
+end
+
+(* Type for a module which specifies functions required for a type to be loggable *)
+type 'a unpacked = (module S with type t = 'a)
+
+(** Type storing the functions required to log the specified type and the
+    actual content to be logged *)
+type t = L : ('a unpacked * 'a) -> t
+
+(** Calls the pretty print function of a loggable on its content *)
+let pp (loggable : t) (formatter : Format.formatter) =
+  match loggable with
+  | L (t, content) ->
+      let (module T) = t in
+      T.pp formatter content
+
+(** Converts a loggable to Yojson *)
+let loggable_to_yojson = function
+  | L (t, content) ->
+      let (module T) = t in
+      T.to_yojson content
+
+(** Returns a loggable, given the required functions and content *)
+let make
+    (type a)
+    (pp : Format.formatter -> a -> unit)
+    (of_yojson : Yojson.Safe.t -> (a, string) result)
+    (to_yojson : a -> Yojson.Safe.t)
+    (content : a) : t =
+  let module M = struct
+    type t = a
+
+    let pp = pp
+    let of_yojson = of_yojson
+    let to_yojson = to_yojson
+  end in
+  L ((module M), content)
+
+(** Returns a loggable given a string to be logged *)
+let make_string (s : string) : t =
+  let pp = Fmt.string in
+  let of_yojson yojson =
+    match yojson with
+    | `String s -> Ok s
+    | _ -> Error "Cannot parse yojson to a string"
+  in
+  let to_yojson s = `String s in
+  make pp of_yojson to_yojson s
+\end{lstlisting}
+
+\begin{lstlisting}[caption={
+  Exerpt from the \texttt{Logging} module, showing the new functions for
+  controlling the parent and previous report IDs
+  \label{lst:logging-parent-previous}}, style=code]
+let set_previous = ReportBuilder.set_previous
+let get_parent = ReportBuilder.get_parent
+let set_parent = ReportBuilder.set_parent
+let release_parent = ReportBuilder.release_parent
+
+let with_parent_id id f =
+  match id with
+  | None -> f ()
+  | Some id -> (
+      set_parent id;
+      let result =
+        try Ok (f ())
+        with e ->
+          Printf.printf "Original Backtrace:\n%s" (Printexc.get_backtrace ());
+          Error e
+      in
+      release_parent (Some id);
+      match result with
+      | Ok ok -> ok
+      | Error e -> raise e)
+
+let with_parent ?title ?(lvl = Mode.Normal) ?severity loggable type_ f =
+  let id =
+    Option.bind loggable (fun loggable ->
+        log_specific lvl ?title ?severity loggable type_)
+  in
+  with_parent_id id f
+\end{lstlisting}
+
+\begin{lstlisting}[caption={
+  The \texttt{ReportBuilder} module, including new functions for manually
+  controlling the parent and previous report IDs
+  \label{lst:reportbuilder}}, style=code]
+let previous : ReportId.t option ref = ref None
+let parents : ReportId.t Stack.t = Stack.create ()
+
+let make
+    ?title
+    ~(content : Loggable.t)
+    ~(type_ : string)
+    ?(severity = Report.Log)
+    () =
+  let title =
+    match title with
+    | None -> type_
+    | Some title -> title
+  in
+  let report : Report.t =
+    {
+      id = ReportId.next ();
+      title;
+      elapsed_time = Sys.time ();
+      previous = !previous;
+      parent = Stack.top_opt parents;
+      content;
+      severity;
+      type_;
+    }
+  in
+  previous := Some report.id;
+  report
+
+let set_previous = function
+  | None -> ()
+  | Some _ as id -> previous := id
+
+let get_parent () = Stack.top_opt parents
+
+let set_parent id =
+  previous := None;
+  Stack.push id parents
+
+let release_parent = function
+  | None -> ()
+  | Some rid as id_opt ->
+      let parent_id = Stack.pop parents in
+      assert (ReportId.equal rid parent_id);
+      previous := id_opt
+
+let start_phase level ?title ?severity () =
+  if Mode.should_log level then (
+    let report =
+      make ?title
+        ~content:(Loggable.make_string "*** Phase ***")
+        ~type_:LoggingConstants.ContentType.phase ?severity ()
+    in
+    set_parent report.id;
+    Some report)
+  else None
+
+let end_phase = release_parent
+let get_cur_parent_id () = Stack.top_opt parents
+\end{lstlisting}
+
+\begin{lstlisting}[caption={
+  Logging types for the interpreter, inside the \texttt{GInterpreter} module
+  \label{lst:interpreter-logging}}, style=code]
+module Logging = struct
+  let pp_str_list = Fmt.(brackets (list ~sep:comma string))
+
+  module ConfigReport = struct
+    type t = {
+      proc_line : int;
+      time : float;
+      cmd : string;
+      callstack : CallStack.t;
+      annot : Annot.t;
+      branching : int;
+      state : state_t;
+      branch_case : branch_case option;
+    }
+    [@@deriving yojson, make]
+
+    let pp
+        state_printer
+        fmt
+        {
+          proc_line = i;
+          time;
+          cmd;
+          callstack = cs;
+          annot;
+          branching;
+          state;
+          _;
+        } =
+      Fmt.pf fmt
+        "@[------------------------------------------------------@\n\
+         --%s: %i--@\n\
+         TIME: %f@\n\
+         CMD: %s@\n\
+         PROCS: %a@\n\
+         LOOPS: %a ++ %a@\n\
+         BRANCHING: %d@\n\
+         @\n\
+         %a@\n\
+         ------------------------------------------------------@]\n"
+        (CallStack.get_cur_proc_id cs)
+        i time cmd pp_str_list
+        (CallStack.get_cur_procs cs)
+        pp_str_list
+        (Annot.get_loop_info annot)
+        pp_str_list
+        (CallStack.get_loop_ids cs)
+        branching state_printer state
+
+    let to_loggable state_printer =
+      L.Loggable.make (pp state_printer) of_yojson to_yojson
+
+    let log state_printer report =
+      L.normal_specific
+        (to_loggable state_printer report)
+        L.LoggingConstants.ContentType.cmd
+  end
+
+  module CmdResult = struct
+    type t = {
+      callstack : CallStack.t;
+      proc_body_index : int;
+      state : state_t option;
+      errors : err_t list;
+      branch_case : branch_case option;
+    }
+    [@@deriving yojson]
+
+    let pp fmt cmd_step =
+      (* TODO: Cmd step should contain all things in a configuration
+               print the same contents as log_configuration *)
+      CallStack.pp fmt cmd_step.callstack
+
+    let to_loggable = L.Loggable.make pp of_yojson to_yojson
+    let log type_ report = L.normal_specific (to_loggable report) type_
+
+    open L.LoggingConstants.ContentType
+
+    let log_result = log cmd_result
+    let log_init = log proc_init
+    let log_step = log cmd_step
+  end
+
+  module AnnotatedAction = struct
+    type t = { annot : Annot.t; action_name : string } [@@deriving yojson]
+
+    let pp fmt annotated_action =
+      let origin_loc = Annot.get_origin_loc annotated_action.annot in
+      Fmt.pf fmt "Executing action '%s' at %a" annotated_action.action_name
+        (Fmt.option ~none:(Fmt.any "none") Location.pp)
+        origin_loc
+
+    let to_loggable = L.Loggable.make pp of_yojson to_yojson
+
+    let log report =
+      L.normal_specific (to_loggable report)
+        L.LoggingConstants.ContentType.annotated_action
+  end
+
+  let log_configuration
+      (cmd : Annot.t * int Cmd.t)
+      (state : State.t)
+      (cs : CallStack.t)
+      (i : int)
+      (b_counter : int)
+      (branch_case : branch_case option) : L.ReportId.t option =
+    let annot, cmd = cmd in
+    let state_printer =
+      match !Config.pbn with
+      | false -> State.pp
+      | true ->
+          let pvars, lvars, locs =
+            (Cmd.pvars cmd, Cmd.lvars cmd, Cmd.locs cmd)
+          in
+          State.pp_by_need pvars lvars locs
+    in
+    ConfigReport.log state_printer
+      (ConfigReport.make ~proc_line:i ~time:(Sys.time ())
+         ~cmd:(Fmt.to_to_string Cmd.pp_indexed cmd)
+         ~callstack:cs ~annot ~branching:b_counter ~state ?branch_case ())
+
+  let print_lconfiguration (lcmd : LCmd.t) (state : State.t) : unit =
+    L.normal (fun m ->
+        m
+          "@[------------------------------------------------------@\n\
+           TIME: %f@\n\
+           LCMD: %a@\n\
+           @\n\
+           %a@\n\
+           ------------------------------------------------------@]@\n"
+          (Sys.time ()) LCmd.pp lcmd State.pp state)
+
+  let pp_err = ExecErr.pp Val.pp State.pp_err
+  let pp_single_result ft res = ExecRes.pp State.pp Val.pp pp_err ft res
+
+  (** Configuration pretty-printer *)
+  let pp_result (ft : Format.formatter) (reslt : result_t list) : unit =
+    let open Fmt in
+    let pp_one ft (i, res) =
+      pf ft "RESULT: %d.@\n%a" i pp_single_result res
+    in
+    (iter_bindings List.iteri pp_one) ft reslt
+end
+\end{lstlisting}
+
+\begin{lstlisting}[caption={
+  Logging types for unification, inside the \texttt{Unifier} module
+  \label{lst:unifier-logging}}, style=code]
+  module Logging = struct
+    let pp_variants : (string * Expr.t option) Fmt.t =
+      Fmt.pair ~sep:Fmt.comma Fmt.string (Fmt.option Expr.pp)
+
+    let pp_astate fmt astate =
+      let state, preds, _, variants = astate in
+      Fmt.pf fmt "%a@\nPREDS:@\n%a@\nVARIANTS:@\n%a@\n" State.pp state Preds.pp
+        preds
+        (Fmt.hashtbl ~sep:Fmt.semi pp_variants)
+        variants
+
+    let pp_astate_by_need (pvars : SS.t) (lvars : SS.t) (locs : SS.t) fmt astate
+        =
+      let state, preds, _, variants = astate in
+      Fmt.pf fmt "%a@\n@\nPREDS:@\n%a@\nVARIANTS:@\n%a@\n"
+        (State.pp_by_need pvars lvars locs)
+        state Preds.pp preds
+        (Fmt.hashtbl ~sep:Fmt.semi pp_variants)
+        variants
+
+    module AstateRec = struct
+      type t = { state : state_t; preds : preds_t; variants : variants_t }
+      [@@deriving yojson]
+
+      let from (state, preds, _, variants) = { state; preds; variants }
+
+      let pp_custom pp_astate fmt { state; preds; variants } =
+        pp_astate fmt (state, preds, (), variants)
+
+      let pp = pp_custom pp_astate
+    end
+
+    module AssertionReport = struct
+      type t = { step : UP.step; subst : ESubst.t; astate : AstateRec.t }
+      [@@deriving yojson]
+
+      let pp_custom pp_astate pp_subst fmt { step; subst; astate } =
+        Fmt.pf fmt
+          "Unify assertion: @[<h>%a@]@\nSubst:@\n%a@\n@[<v 2>STATE:@\n%a@]"
+          UP.step_pp step pp_subst subst
+          (AstateRec.pp_custom pp_astate)
+          astate
+
+      let to_loggable pp_astate pp_subst =
+        L.Loggable.make (pp_custom pp_astate pp_subst) of_yojson to_yojson
+    end
+
+    module UnifyReport = struct
+      type t = {
+        astate : AstateRec.t;
+        subst : ESubst.t;
+        up : UP.t;
+        unify_kind : unify_kind;
+      }
+      [@@deriving yojson]
+
+      let pp fmt _ = Fmt.pf fmt "Unifier.unify: about to unify UP."
+      let to_loggable = L.Loggable.make pp of_yojson to_yojson
+
+      let as_parent report f =
+        L.with_parent
+          (Some (to_loggable report))
+          L.LoggingConstants.ContentType.unify f
+    end
+
+    module UnifyCaseReport = struct
+      type t = { astate : AstateRec.t; subst : st; up : UP.t }
+      [@@deriving yojson]
+
+      let to_loggable = L.Loggable.make L.dummy_pp of_yojson to_yojson
+
+      let log report =
+        L.normal_specific (to_loggable report)
+          L.LoggingConstants.ContentType.unify_case
+    end
+
+    module UnifyResultReport = struct
+      type remaining_state = UnifyCaseReport.t [@@deriving yojson]
+
+      type t =
+        | Success of {
+            astate : AstateRec.t;
+            subst : st;
+            posts : (Flag.t * Asrt.t list) option;
+            remaining_states : remaining_state list;
+          }
+        | Failure of {
+            cur_step : UP.step option;
+            subst : st;
+            astate : AstateRec.t;
+            errors : err_t list;
+          }
+      [@@deriving yojson]
+
+      let pp fmt report =
+        match report with
+        | Success data ->
+            Fmt.pf fmt
+              "Unifier.unify_up: Unification successful: %d states left"
+              (1 + List.length data.remaining_states)
+        | Failure { cur_step; subst; astate; errors } ->
+            Fmt.pf fmt
+              "@[<v 2>WARNING: Unify Assertion Failed: @[<h>%a@] with subst @\n\
+               %a in state @\n\
+               %a with errors:@\n\
+               %a@]"
+              Fmt.(option ~none:(any "no assertion - phantom node") UP.step_pp)
+              cur_step ESubst.pp subst AstateRec.pp astate
+              Fmt.(list ~sep:(any "@\n") State.pp_err)
+              errors
+
+      let to_loggable = L.Loggable.make pp of_yojson to_yojson
+
+      let log report =
+        L.normal_specific (to_loggable report)
+          L.LoggingConstants.ContentType.unify_result
+    end
+  end
 \end{lstlisting}
