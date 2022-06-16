@@ -58,10 +58,10 @@ function llen(x) {
 \autoref{fig:unify-example} outlines the process of unifying the recursive list
 length function, \texttt{llen} (\autoref{lst:llen-rec}), which makes use of the
 \texttt{list} predicate (see \autoref{lst:list-predicate}). The top-level
-unification plan comprises of:
+unification plan consists of:
 \begin{itemize}
   \item Assert that the logical variable \texttt{\#alpha} is a list
-  \item Assert that the program variable \texttt{ret} is set to the list of
+  \item Assert that the program variable \texttt{ret} is set to the length of
         \texttt{\#alpha}
   \item Assert that the program variable \texttt{x} points to a linked list,
         whose contents are equal to \texttt{\#alpha}
@@ -142,12 +142,12 @@ debugging process, and no control outside of when to execute the next step.
 \section{Symbolic Trace and the Logging Structure}\label{sec:current:trace}
 
 Originally, the log reports made to a file were the only way to debug
-verification. This changed when, in a previous project, Radu Lacraru
-~\cite{gillian-logging-2020} provided mechanisms for making more detailed
-reports to an SQLite database for later querying. While this opens the door for
-more structured logging, and a trace that more closely matches Gillian's
-symbolic execution and unification processes, this is not used to its fullest
-potential in the current debugging implementation.
+verification. This changed when, in a previous project, Radu Lacraru provided
+mechanisms for making more detailed reports to an SQLite database for later
+querying~\cite{gillian-logging-2020}. While this opens the door for more 
+tructured logging, and a trace that more closely matches Gillian's symbolic
+execution and unification processes, this is not used to its fullest potential
+in the current debugging implementation.
 
 \begin{lstlisting}[caption={
   The \texttt{Report.t} type
@@ -198,19 +198,19 @@ to Gillian debugging.
 \section{Debug Adapter}\label{sec:current:dap}
 
 Gillian's current debug adapter is, as established, restricted by the confines
-of the Debug Adapter Protocol specifications. This means that the debugger
-supports the simple actions of step forward, step backwards, step in, step out,
-continue, and continue backwards. While this is sufficient for concrete
-execution, it imposes a hard limit on functionality, especially when considering
-symbolic execution and unification.
+of the Debug Adapter Protocol specifications, meaning that the debugger supports
+the simple actions of step forward, step backwards, step in, step out, continue,
+and continue backwards. While this is sufficient for concrete execution, it
+imposes a hard limit on functionality, especially when considering symbolic
+execution and unification.
 
 Another drawback of the current implementation is the inability to reason
 about branches in execution; each branch is executed to completion, one after
 the other, with no distinction between branches; see
 \autoref{fig:debug-step-current} for a side-by-side example. The current
 debugger also shows no information about unification, at best stopping debugging
-with an error message, and at worst exiting with no error reporting at all (in
-the case of function post-conditions).
+with an error message, and at worst not performing unification at all (in the
+case of function post-conditions).
 
 \begin{figure}
   \center{}
