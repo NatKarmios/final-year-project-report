@@ -33,18 +33,18 @@ subproblem, dubbed \textbf{folding}.
 \begin{lstlisting}[caption={
   The recursive list length function, in WISL
   \label{lst:llen-rec}}, style=code]
-  { (x == #x) * list(#x, #alpha) }
-  function llen(x) {
-      if (x = null) {
-          n := 0
-      } else {
-          t := [x+1];
-          n := llen(t);
-          n := n + 1
-      };
-      return n
-  }
-  { list(#x, #alpha) * (ret == len(#alpha)) }
+{ (x == #x) * list(#x, #alpha) }
+function llen(x) {
+    if (x = null) {
+        n := 0
+    } else {
+        t := [x+1];
+        n := llen(t);
+        n := n + 1
+    };
+    return n
+}
+{ list(#x, #alpha) * (ret == len(#alpha)) }
 \end{lstlisting}
 
 \begin{figure}
@@ -86,9 +86,9 @@ this project.
 
 \section{The Gillian Interpreter}\label{sec:current:interpreter}
 
-Taking a single symbolic execution step in Gillian's interpreter follows
-the general process of:
-\begin{itemize}
+Taking a single symbolic execution step in Gillian's interpreter follows the
+general process of:
+\begin{enumerate}
   \item Pop the first symbolic state configuration from the stack. If the stack
         is empty, then execution has finished, and the execution result is
         returned.
@@ -97,6 +97,24 @@ the general process of:
   \item Push any new state configurations to the stack. There can be multiple
         new states, for example, when symbolic execution branches at an if/else
         statement.
+\end{enumerate}
+
+Symbolic state configurations can take the following forms (see
+\autoref{lst:cconf-type} for the full type):
+\begin{itemize}
+  \item \texttt{ConfCont}, for continuing symbolic execution; contains all the
+        required information to symbolically execute the next step in the
+        program
+  \item \texttt{ConfErr}, when an error is encountered in symbolic execution,
+        e.g.\ use-after-free. Contains the symbolic state at the time of error,
+        the location in the program, and a list of errors encountered.
+  \item \texttt{ConfFinish}, for the end of execution. Contains the execution
+        result (success or failure), a symbolic return value, and the symbolic
+        state.
+  \item \texttt{ConfSusp}; this is rarely encountered and outside the scope
+        of the project. This is used when symbolic execution depends on
+        completion of another symbolic execution, and is thus suspended until
+        it can continue.
 \end{itemize}
 
 In previous work, this process was extended to not simply perform symbolic
@@ -111,9 +129,9 @@ case is returned.
 \begin{lstlisting}[caption={
   The original \texttt{cont\_func} type
   \label{lst:contfunc-type-original}}, style=code, numbers=none]
-  type 'a cont_func =
-  | Finished of 'a list
-  | Continue of (cconf_t list * (unit -> 'a cont_func))
+type 'a cont_func =
+| Finished of 'a list
+| Continue of (cconf_t list * (unit -> 'a cont_func))
 \end{lstlisting}
 
 While this meets the basic needs of step-by-step execution for a debugger, it
@@ -134,18 +152,18 @@ potential in the current debugging implementation.
 \begin{lstlisting}[caption={
   The \texttt{Report.t} type
   \label{lst:report-type}}, style=code, numbers=none]
-  (* report.ml *)
+(* report.ml *)
 
-  type t = {
-    id : ReportId.t;
-    title : string;
-    elapsed_time : float;
-    previous : ReportId.t option;
-    parent : ReportId.t option;
-    content : Loggable.t;
-    severity : severity;
-    type_ : string;
-  }
+type t = {
+  id : ReportId.t;
+  title : string;
+  elapsed_time : float;
+  previous : ReportId.t option;
+  parent : ReportId.t option;
+  content : Loggable.t;
+  severity : severity;
+  type_ : string;
+}
 \end{lstlisting}
 
 Of particular note is the \texttt{Report.t} type's (\autoref{lst:report-type})
@@ -178,4 +196,31 @@ to Gillian debugging.
 
 
 \section{Debug Adapter}\label{sec:current:dap}
-\todo{Write section}
+
+Gillian's current debug adapter is, as established, restricted by the confines
+of the Debug Adapter Protocol specifications. This means that the debugger
+supports the simple actions of step forward, step backwards, step in, step out,
+continue, and continue backwards. While this is sufficient for concrete
+execution, it imposes a hard limit on functionality, especially when considering
+symbolic execution and unification.
+
+Another drawback of the current implementation is the inability to reason
+about branches in execution; each branch is executed to completion, one after
+the other, with no distinction between branches; see
+\autoref{fig:debug-step-current} for a side-by-side example. The current
+debugger also shows no information about unification, at best stopping debugging
+with an error message, and at worst exiting with no error reporting at all (in
+the case of function post-conditions).
+
+\begin{figure}
+  \center{}
+  \includegraphics[width=\textwidth]{img/debug-step-current.png}
+  \caption{
+    Current debugger behaviour: the end of the empty branch branch (left),
+    before stepping once and resuming the non-empty branch (right).}%
+  \label{fig:debug-step-current}
+\end{figure}
+
+While the current solution is somewhat barebones, the existing code, along with
+all the boilerplate it provides, can serve as a helpful starting point when
+adding new features to the debugging interface.

@@ -5,22 +5,47 @@
 \chapter{Listings}
 
 \begin{lstlisting}[caption={
-  \texttt{loggingConstants.ml}
+  \texttt{loggingConstants.ml}, pre-project
   \label{lst:loggingconstants}}, style=code]
-  (** Allowed strings for the type_ field of a report *)
-  module ContentType = struct
-    let debug = "debug"
-    let phase = "phase"
-    let proc_init = "proc_init"
-    let cmd = "cmd"
-    let cmd_result = "cmd_result"
-    let cmd_step = "cmd_step" (* TODO: Remove *)
+(** Allowed strings for the type_ field of a report *)
+module ContentType = struct
+  let debug = "debug"
+  let phase = "phase"
+  let cmd_step = "cmd_step"
+  let annotated_action = "annotated_action"
+  let set_freed_info = "set_freed_info"
+end
+\end{lstlisting}
 
-    let unify = "unify"
-    let unify_case = "unify_case"
-    let unify_result = "unify_result"
-    let assertion = "assertion"
-    let annotated_action = "annotated_action"
-    let set_freed_info = "set_freed_info"
-  end
+\begin{lstlisting}[caption={
+  The \texttt{cconf\_t} type in \texttt{GInterpreter.ml}, pre-project
+  \label{lst:cconf-type}}, style=code]
+type cconf_t =
+| ConfErr of {
+    callstack : CallStack.t;
+    proc_idx : int;
+    error_state : state_t;
+    errors : err_t list;
+  }
+| ConfCont of {
+    state : state_t;
+    callstack : CallStack.t;
+    invariant_frames : invariant_frames;
+    prev_idx : int;
+    next_idx : int;
+    loop_ids : string list;
+    branch_count : int;
+  }
+| ConfFinish of { flag : Flag.t; ret_val : state_vt; final_state : state_t }
+    (** Equal to Conf cont + the id of the required spec *)
+| ConfSusp of {
+    spec_id : string;
+    state : state_t;
+    callstack : CallStack.t;
+    invariant_frames : invariant_frames;
+    prev_idx : int;
+    next_idx : int;
+    loop_ids : string list;
+    branch_count : int;
+  }
 \end{lstlisting}
