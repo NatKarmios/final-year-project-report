@@ -1,0 +1,121 @@
+%!TEX root = ../main.tex
+%chktex-file 18
+
+\section{Rethinking Interpreter and Debugger Mechanisms}
+
+\subsection{Reconfiguring the Interpreter for Branched Execution}%
+
+A particularly interesting consequence of implementing the given logging
+structure was the inclusion of \texttt{branch\_case} fields both in
+\texttt{"cmd"} and \texttt{"cmd\_result"} reports (see \autoref{lst:branch-case}
+for the relevant type); as can be seen in \autoref{fig:log-structure-desired},
+a command that branches (such as an if/else) produces multiple
+\texttt{"cmd\_result"} reports, each with a \texttt{branch\_case} denoting the
+relevant branch case. The next \texttt{"cmd"} reports, one for each branch case,
+also have \texttt{branch\_case} fields linking them to the matching
+\texttt{"cmd\_result"} of the previous \texttt{"cmd"}.
+
+\texttt{branch\_case}s could then be used as a mechanism for controlling
+branched execution. Each state configuration type has been extended with a field
+of type \texttt{branch\_path} (equivalent to a \texttt{branch\_case list}), 
+denoting the `path' of branch cases that has been taken to reach this point in
+symbolic execution. A branch path can optionally be passed to the continuation
+function, which would then be used to select the next state configuration.
+Passing no branch path preserves original behaviour, popping the first available
+state config.
+
+This implementation required a change to the \texttt{cont\_func} type for
+handling the ends of branches, as the end of a branch requires result data for
+use in unifications, but the provided \texttt{Finished} variant gives no
+continuation function. A new variant, \texttt{EndOfBranch}, shown in
+\autoref{lst:contfunc-type-new} has been introduced to cover the case where
+there may still be state configurations left to consider, but none that match
+the provided branch path. This variant gives both the results for the relevant
+symbolic execution branch and a cont func that can be used to explore other
+branches. The \texttt{Normal} variant has been extended to include information
+on the branch path and any new branch cases resulting from the execution step.
+
+\begin{lstlisting}[caption={
+  The new \texttt{cont\_func} type, in the \texttt{GInterpreter} module
+  \label{lst:contfunc-type-new}}, style=code, numbers=none]
+type 'a cont_func_f = ?path:branch_path -> unit -> 'a cont_func
+
+and 'a cont_func =
+  | Finished of 'a list
+  | Continue of
+      (Logging.ReportId.t option
+      * branch_path
+      * branch_case list option
+      * 'a cont_func_f)
+  | EndOfBranch of 'a * 'a cont_func_f
+\end{lstlisting}
+
+
+\subsection{Navigating Symbolic Execution}
+
+While a mechanism is now in place for selecing the branch of execution, it
+won't be of much use to users without a means of navigating the various paths
+through a symbolic execution. To this end, an execution map, or \texttt{ExecMap}
+(\autoref{lst:execmap}) was developed to keep track of that very process.
+
+\begin{lstlisting}[caption={
+  The types of the \texttt{ExecMap} module, inside the \texttt{Debugger} module
+  \label{lst:execmap}}, style=code, numbers=none]
+module ExecMap = struct
+  type unifys = (rid * Unifier.unify_kind * UnifyMap.unify_result) list
+  [@@deriving yojson]
+
+  type cmd_data = {
+    id : rid;
+    origin_id : int option; [@name "originId"]
+    display : string;
+    unifys : unifys;
+    errors : string list;
+  }
+  [@@deriving yojson]
+
+  type 'case t =
+    | Nothing
+    | Cmd of cmd_data * 'case t
+    | BranchCmd of cmd_data * ('case * 'case t) list
+    | FinalCmd of cmd_data
+  [@@deriving yojson]
+
+  (* ... helper functions ... *)
+
+end
+\end{lstlisting}
+
+After each call of the continuation function, the relevant information from
+the executed step is added to the \texttt{ExecMap} in the debugger's internal
+state. This map is used at various points in the debugging process, such as
+finding the report ID of a command at a particular branch path (and vice versa),
+and listing the different branch cases that the interpreter could step to after
+a particular command.
+
+The \texttt{ExecMap} will also be supplied wholesale to the debug adapter,
+albeit with \texttt{PackagedBranchCase} instead of \texttt{branch\_case}.
+The reason for this, and for the \texttt{'case} type variable in
+\texttt{ExecMap}, is to abstract away the details of the \texttt{branch\_case}
+type for the debugger frontend. The \texttt{PackagedBranchCase} type
+(\autoref{lst:packagedbranchcase}) simply provides the `kind' of branch case,
+a pretty-printed form of both the branch case's kind and value, and the JSON
+for the \texttt{branch\_case} represented. This allows the frontend to directly
+use a representation fit for the user's viewing, while still holding on to the
+necessary data structure to talk back to the debugger.
+
+\begin{lstlisting}[caption={
+  The \texttt{PackagedBranchCase} type, inside the \texttt{Debugger} module
+  \label{lst:packagedbranchcase}}, style=code, numbers=none]
+module PackagedBranchCase = struct
+  type t = {
+    kind : string;
+    display : string * string;
+    json : Yojson.Safe.t;
+  }
+  [@@deriving yojson]
+
+  (* ... helper functions ... *)
+
+end
+\end{lstlisting}

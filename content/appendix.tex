@@ -482,3 +482,15 @@ end
     end
   end
 \end{lstlisting}
+
+\begin{lstlisting}[caption={
+  The \texttt{branch\_case} type
+  \label{lst:branch-case}}, style=code, numbers=none]
+type branch_case =
+  | GuardedGoto of bool
+  | LCmd of int
+  | SpecExec of Flag.t
+  | LAction of state_vt list
+  | LActionFail of int
+[@@deriving yojson]
+\end{lstlisting}
