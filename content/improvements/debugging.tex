@@ -1,4 +1,4 @@
-%!TEX root = ../main.tex
+%!TEX root = ../../main.tex
 
 \section{Transcending the DAP}\label{sec:debug-interface}
 
@@ -166,8 +166,90 @@ ability to instantly adapt to the user's colour theme, as demonstrated in
 
 Next came the unification UI.\@ To prevent large amounts of code duplication,
 much of the code for the exec map view component was refactored into the generic
-\texttt{<TreeView />} component; this component handles setting up the React
+\texttt{<TreeMapView />} component; this component handles setting up the React
 Flow renderer, as well as recursively defining nodes from an execution or
-unification map based on a function supplied via props.
+unification map based on a function supplied via props, and rendering nodes
+using a custom component (see \autoref{lst:treemapview-types} for the relevant
+types). The exec map was extended with a badge that displays when a command has
+a unification under it, and the result of that unification. When a command with
+a unification is selected, the extension calls the \texttt{Unification\_command}
+to load the relevant unify map, which is then displayed
+(\autoref{fig:unifymap-init}) in a separate tab in the webview. When viewing
+unification, a resizable sidebar (courtesy of the Allotment library
+library~\cite{allotment}) with information on the selected assertion
+is displayed (\autoref{fig:unifymap-sidebar}).
 
-\todo{Finish section}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/execmap-unify.png}
+  \caption{A demonstration of the Unify badge in the execution map}%
+  \label{fig:execmap-unify}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/unifymap-init.png}
+    \caption{The unification map}%
+    \label{fig:unifymap-init}
+  \end{subfigure}
+  \qquad
+  \begin{subfigure}[b]{0.5\textwidth}
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/unifymap-sidebar.png}
+    \caption{The assertion data sidebar}%
+    \label{fig:unifymap-sidebar}
+  \end{subfigure}
+  \caption{The first iteration of the unify map display}
+\end{figure}
+
+Of course, the top-level unification doesn't tell the full story --- displaying
+folds is required for the complete picture. Similar to the exec map's unify
+badges, an assertion node with a fold displays a fold badge. Once selected,
+the data sidebar displays a button to `step in' to this fold
+(\autoref{fig:unifymap-fold-button}). Internally, the webview effectively tracks
+a stack of unification IDs, displaying the topmost unification in the
+unification tab, and displaying breadcrumbs (\autoref{fig:unifymap-breadcrumbs})
+in the data sidebar that can be used to instantly step back out as far as
+desired.
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/unifymap-fold-button.png}
+    \caption{The button for stepping into a fold}%
+    \label{fig:unifymap-fold-button}
+  \end{subfigure}
+  \quad
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/unifymap-breadcrumbs.png}
+    \caption{The breadcrumbs used to step out of unification folds}%
+    \label{fig:unifymap-breadcrumbs}
+  \end{subfigure}
+  \caption{UI elements concerning folds}
+\end{figure}
+
+While implementing the debug interface for GIL is a vast improvement upon
+previous debugging methods, the ability to work with Gillian's functionality
+to lift information to the target language would be much desired. While support
+for this is partially implemented (\autoref{fig:execmap-wisl}), there are some
+technical challenges that are outside the scope of this project, and are as yet
+unsolved. The current implementation uses a secondary \texttt{ExecMap} to track
+the execution map in the lifed context, containing references to the relevant
+report IDs for execution of GIL commands, and serves that to the debug interface
+instead of the base exec map if applicable. This solution isn't fully
+functional: for example, a node for an if-else statement appears both before
+and after the conditional block in the execution map, and debugger cannot
+handle a situation in which a branching GIL command followed by other commands
+are lifted to a single target language statement.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.35\textwidth]{img/execmap-wisl.png}
+  \caption{A demonstration of partial support for WISL lifting in the debugger
+  interface}%
+  \label{fig:execmap-wisl}
+\end{figure}

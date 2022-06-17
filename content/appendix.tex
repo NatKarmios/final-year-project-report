@@ -494,3 +494,26 @@ type branch_case =
   | LActionFail of int
 [@@deriving yojson]
 \end{lstlisting}
+
+\begin{lstlisting}[caption={
+  The required types for the \texttt{<TreeMapView />} component
+  \label{lst:treemapview-types}}, style=code, numbers=none]
+export type TransformResult<M, D, A> = {
+  id: string | number;
+  data: D;
+  nexts: [A, M][];
+  edgeLabel?: React.ReactNode;
+};
+
+export type TransformFunc<M, D, A> = (
+  map: M,
+  parent: string,
+  aux: A
+) => TransformResult<M, D, A>;
+
+export type Props<M, D, A> = {
+  initElem: TransformResult<M, D, A>;
+  transform: TransformFunc<M, D, A>;
+  nodeComponent: React.ComponentType<NodeProps<D>>;
+};
+\end{lstlisting}
