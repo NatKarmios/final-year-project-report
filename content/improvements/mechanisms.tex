@@ -120,6 +120,75 @@ module PackagedBranchCase = struct
 end
 \end{lstlisting}
 
-\subsection{Enabling Unification When Debugging}
-\todo{Explan what was needed for unifying while debugging}
-\todo{Talk about UnifyMap}
+
+\subsection{Debugging Unification}
+
+As outlined in \autoref{sec:current:dap}, the original debugger implementation
+does not perform unification for postconditions at all --- seeing as
+postconditions are the only uniication guaranteed to be present in any
+verification, this is a major blind spot in debugger functionality. To remedy
+this, the result information provided in the \texttt{} cont func variant
+introduced in \autoref{sec:interpreter-branching} proves its usefulness.
+When the debugger encounters the end of a branch, it passes the execution
+result to a function in the newly introduced \texttt{Verifier.Debug} module
+(\autoref{lst:verifier-debug}). This module was the result of bisecting the
+unification process, refactoring the part of the code that actually performs
+unification to its own function, allowing the debugger to use only the parts
+of the process that it needs to.
+
+\begin{lstlisting}[caption={
+  The signature of the \texttt{Verifier.Debug} module
+  \label{lst:verifier-debug}}, style=code, numbers=none]
+module Debug : sig
+val get_tests_for_prog : prog_t -> proc_tests
+
+val analyse_result :
+  t -> Logging.ReportId.t -> SAInterpreter.result_t -> bool
+end
+\end{lstlisting}
+
+Now that unfication was actually being performed where necessary, the debugger
+(and the frontend, evenutally) needs a way of navigating the structure of
+unification; the \texttt{UnifyMap} (\autoref{lst:unifymap}) serves this purpose.
+This structure is similar to the \texttt{ExecMap}, albeit simpler, as branches
+only occur at the start of unification, and the equivalent of a \texttt{Nothing}
+variant wasn't necessary since unification happens all at once. When
+postcondition unification is manually performed, or another unification (such as
+for a function call) is requested, the representative \texttt{UnifyMap} is
+constructed and cached in the debugger state.
+
+\begin{lstlisting}[caption={
+  The types of the \texttt{Debugger.UnifyMap} module
+  \label{lst:unifymap}}, style=code, numbers=none]
+module UnifyMap = struct
+  open Verification.SUnifier.Logging
+
+  type unify_kind = Unifier.unify_kind [@@deriving yojson]
+  type unify_result = Success | Failure [@@deriving yojson]
+
+  type assertion_data = {
+    id : rid;
+    fold : (rid * unify_result) option;
+    assertion : string;
+    substitutions : (string * string) list;
+  }
+  [@@deriving yojson]
+
+  type unify_seg =
+    | Assertion of assertion_data * unify_seg
+    | UnifyResult of rid * unify_result
+  [@@deriving yojson]
+
+  type map = Direct of unify_seg | Fold of unify_seg list
+  [@@deriving yojson]
+
+  type t = unify_kind * map [@@deriving yojson]
+
+  (* ... helper functions ... *)
+
+end
+\end{lstlisting}
+
+With this in place, the debugger has all the necessary information at its
+disposal necessary to allow an interface to deep dive into the unification
+process.
