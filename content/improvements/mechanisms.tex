@@ -1,9 +1,10 @@
 %!TEX root = ../main.tex
 %chktex-file 18
 
-\section{Rethinking Interpreter and Debugger Mechanisms}
+\section{Rethinking Gillian's Internal Mechanisms}
 
-\subsection{Reconfiguring the Interpreter for Branched Execution}%
+\subsection{Making the Interpreter Branch-Aware}%
+\label{sec:interpreter-branching}
 
 A particularly interesting consequence of implementing the given logging
 structure was the inclusion of \texttt{branch\_case} fields, both in
@@ -118,3 +119,7 @@ module PackagedBranchCase = struct
 
 end
 \end{lstlisting}
+
+\subsection{Enabling Unification When Debugging}
+\todo{Explan what was needed for unifying while debugging}
+\todo{Talk about UnifyMap}

@@ -4,16 +4,170 @@
 
 \subsection{Custom Events and Commands}
 
-As has been stated at various points, the main restriction of the current
-debugger is strict adherence to the confines of the Debug Adapter Protocol.
-Despite the DAP being supplied with a finite set of commands, both the DAP
-library used in Gillian and the debugger extension API in Visual Studio Code
-support the use of custom commands and extensions%
+As stated at various points, the main restriction of the current debugger is
+strict adherence to the confines of the Debug Adapter Protocol. Despite the DAP
+being supplied with a finite set of commands, both the DAP library used in
+Gillian and the debugger extension API in Visual Studio Code support the use of
+custom commands and extensions%
 ~\cite{ocaml-dap-custom, vscode-dap-custom-event, vscode-dap-custom-request}, as
 outlined in \autoref{sec:vscode}.
 
-\todo{Finish section}
+As an introduction to working with DAP extensions, the custom \texttt{log} event
+was introduced (\autoref{lst:custom-log-event}). Since running Gillian in
+debugging mode has standard output captured as the primary form of communication
+with the IDE, direct console printing is no longer a possibility. This event
+can be used a replacement, requesting that the IDE logs the relevant message.
+This has the added benefit of allowing arbitrary JSON to be passed as well,
+where many IDEs present logged JSON in a pretty and collapsible format
+(\autoref{fig:log-json}).
+
+\begin{lstlisting}[caption={
+  The custom \texttt{log} event, in \texttt{Debugger\_log.ml}
+  \label{lst:custom-log-event}}, style=code, numbers=none]
+module Log_event = struct
+  let type_ = "log"
+
+  module Payload = struct
+    type t = { msg : string; json : JsonMap.t }
+    [@@deriving yojson { strict = false }]
+  end
+end
+\end{lstlisting}
+
+\begin{figure}
+  \center{}
+  \includegraphics[width=0.6\textwidth]{img/log-json.png}
+  \caption{
+    The result of emitting a \texttt{log} event, with a collapsed (left) and
+    expanded (right) JSON object}%
+  \label{fig:log-json}
+\end{figure}
+
+And with that, Gillian's debug adapter was ready to be extended. The newly added
+events and commands, contained in \texttt{dapCustom.ml}, consist of:
+\begin{itemize}
+  \item \texttt{Debug\_state\_update\_event} --- automatically sent alongside
+        the \texttt{Stopped\_event}, providing some information on the current
+        state of the debugger (\autoref{lst:debugstate})
+  \item \texttt{Debugger\_state\_command} --- responds with the same debugger
+        state information as\newline\texttt{Debug\_state\_update\_event}
+  \item \texttt{Unification\_command} --- gives information on the unification
+        at the specified report ID, should one exist
+  \item \texttt{Jump\_command} --- instructs the debugger to `jump' to the
+        command at the specified report ID, travelling forwards or backwards
+        (or sideways) in time
+  \item \texttt{Step\_specific\_command} --- jumps to the specified ID, as with
+        the \texttt{Jump\_command}, but also executes a symbolic step at the
+        (optionally) specified branch case; this directly makes use of the
+        branch-aware interpreter introduced in
+        \autoref{sec:interpreter-branching}
+\end{itemize}
+
+\begin{lstlisting}[caption={
+  The \texttt{debug\_state} type, of \texttt{Debugger.Inspect}
+  \label{lst:debugstate}}, style=code, numbers=none]
+type debug_state = {
+  exec_map : exec_map_pkg; [@key "execMap"]
+  lifted_exec_map : exec_map_pkg option; [@key "liftedExecMap"]
+  current_cmd_id : rid; [@key "currentCmdId"]
+  unifys : (rid * Unifier.unify_kind * UnifyMap.unify_result) list;
+  proc_name : string; [@key "procName"]
+}
+[@@deriving yojson]
+\end{lstlisting}
 
 
 \subsection{A Rich Debugging Interface}
-\todo{Write section}
+
+With the debug adapter extensions in place, focus shifted from development of
+the Gillian program itself to an extension for Visual Studio Code. The extension
+code provided in a project last year~\cite{gillian-debugging-2021} formed a
+solid foundation, providing all the boilerplate neccesary to instruct VSCode to
+use Gillian as a debugger. However, for the extension required, the debug API
+is only one half of the coin; to create a bespoke user interface for Gillian
+debugging, the best course of action was to use a webview.
+
+Working with a webview was a first for this project, in regards to the history
+of Gillian. As there existed no baseline code to iterate on, some research was
+performed to find the best practices, or at least clean examples of the kind
+of solution required. The decision was made to develop the webview UI using
+React; while the use of React, or any other fully-featured frontent framework,
+was quite unconventional in the context of webviews, research led to the
+discovery of a UI toolkit for working in React webviews, including a variety
+of React components~\cite{vscode-ui-toolkit}. In an article about the discovery
+of this toolkit~\cite{vscode-ui-toolkit-article}, the motivation for such was
+revealed to be a VSCode extension that makes use of a custom webview UI, with
+React; precisely the kind of setup that Gillian was in need of. This extension,
+`Flat Editor'~\cite{flat-editor}, provided all the boilerplate needed to set
+Gillian up with a React-enabled webview of its very own, including TypeScript
+for static type checking and PostCSS for convenient CSS processing at build
+time.
+
+\begin{figure}
+  \center{}
+  \includegraphics[width=0.8\textwidth]{img/vscode-ui-toolkit-demo.png}
+  \caption{
+    A demonstration of the components made available by the VSCode UI toolkit,
+    from~\cite{vscode-ui-toolkit}}%
+  \label{fig:vscode-ui-toolkit-demo}
+\end{figure}
+
+Now that the webview boilerplate was in place, it was time to start building the
+UI.\@ The first hurdle to this process was finding a way to elegently render
+the execution tree; ultimately, React Flow~\cite{react-flow} was settled upon,
+providing an excellent amount of customisability, at the sacrifice of requiring
+more involvement in its configuration. It also has the benefit of providing,
+out of the box, a pannable, zoomable viewport for the rendered tree.
+
+\begin{figure}
+  \center{}
+  \includegraphics[width=0.8\textwidth]{img/react-flow-demo.png}
+  \caption{
+    A demonstration of the React Flow's capabilities,
+    from~\cite{react-flow}}%
+  \label{fig:react-flow}
+\end{figure}
+
+The first component developed for the UI was the execution map, whose
+prerequisites were twofold; a mechanism for transforming an \texttt{ExecMap}
+into a list of nodes suitable for React Flow and the edges that connect them,
+and a React component to render those nodes in a clear and elegant manner. The
+first iteration of the exec map view, shown in \autoref{fig:execmap-init},
+displays distinct paths of execution, while clearly denoting the current
+command. Each command node has a button that triggers a \texttt{Jump\_command}
+for the relevant command ID, and a command that has yet to be executed, denoted
+by the circular, dotted node, similarly triggers a
+\texttt{Step\_specific\_command}.
+
+A fortunate consequence of using the VSCode UI toolkit, along with using the CSS
+variables provided by VSCode for styling~\cite{vscode-theme}, is the interface's
+ability to instantly adapt to the user's colour theme, as demonstrated in
+\autoref{fig:execmap-theming}.
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/execmap-init.png}
+    \caption{The execution map of a partially completed symbolic execution}%
+    \label{fig:execmap-init}
+  \end{subfigure}
+  \qquad
+  \begin{subfigure}[b]{0.4\textwidth}
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/execmap-theming.png}
+    \caption{
+      A demostration of the interface adapting to the user's selected editor
+      colour scheme}%
+    \label{fig:execmap-theming}
+  \end{subfigure}
+  \caption{The first iteration of the exec map display}
+\end{figure}
+
+Next came the unification UI.\@ To prevent large amounts of code duplication,
+much of the code for the exec map view component was refactored into the generic
+\texttt{<TreeView />} component; this component handles setting up the React
+Flow renderer, as well as recursively defining nodes from an execution or
+unification map based on a function supplied via props.
+
+\todo{Finish section}
