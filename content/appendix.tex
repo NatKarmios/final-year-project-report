@@ -4,9 +4,9 @@
 \appendix
 \chapter{Listings}
 
-\begin{lstlisting}[caption={
-  \texttt{loggingConstants.ml}, pre-project
-  \label{lst:loggingconstants}}, style=code]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 (** Allowed strings for the type_ field of a report *)
 module ContentType = struct
   let debug = "debug"
@@ -15,11 +15,17 @@ module ContentType = struct
   let annotated_action = "annotated_action"
   let set_freed_info = "set_freed_info"
 end
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{\texttt{loggingConstants.ml}, pre-project}
+\label{lst:loggingconstants}
 
-\begin{lstlisting}[caption={
-  The \texttt{cconf\_t} type in \texttt{GInterpreter.ml}, pre-project
-  \label{lst:cconf-type}}, style=code]
+\vspace{2em}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 type cconf_t =
 | ConfErr of {
     callstack : CallStack.t;
@@ -52,11 +58,17 @@ type cconf_t =
     loop_ids : string list;
     branch_count : int;
   }
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{The \texttt{cconf\_t} type in \texttt{GInterpreter.ml}, pre-project}
+\label{lst:cconf-type}
 
-\begin{lstlisting}[caption={
-  The \texttt{Loggable} module
-  \label{lst:loggable}}, style=code]
+\vspace{2em}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 (** Module specifying functions required for a type to be loggable *)
 module type S = sig
   (** Type to be logged *)
@@ -112,12 +124,17 @@ let make_string (s : string) : t =
   in
   let to_yojson s = `String s in
   make pp of_yojson to_yojson s
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{The \texttt{Loggable} module}
+\label{lst:loggable}
 
-\begin{lstlisting}[caption={
-  Exerpt from the \texttt{Logging} module, showing the new functions for
-  controlling the parent and previous report IDs
-  \label{lst:logging-parent-previous}}, style=code]
+\vspace{2em}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 let set_previous = ReportBuilder.set_previous
 let get_parent = ReportBuilder.get_parent
 let set_parent = ReportBuilder.set_parent
@@ -145,12 +162,18 @@ let with_parent ?title ?(lvl = Mode.Normal) ?severity loggable type_ f =
         log_specific lvl ?title ?severity loggable type_)
   in
   with_parent_id id f
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{Exerpt from the \texttt{Logging} module, showing the new functions for
+  controlling the parent and previous report IDs}
+\label{lst:logging-parent-previous}
 
-\begin{lstlisting}[caption={
-  The \texttt{ReportBuilder} module, including new functions for manually
-  controlling the parent and previous report IDs
-  \label{lst:reportbuilder}}, style=code]
+\vspace{2em}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 let previous : ReportId.t option ref = ref None
 let parents : ReportId.t Stack.t = Stack.create ()
 
@@ -210,11 +233,18 @@ let start_phase level ?title ?severity () =
 
 let end_phase = release_parent
 let get_cur_parent_id () = Stack.top_opt parents
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{The \texttt{ReportBuilder} module, including new functions for manually
+  controlling the parent and previous report IDs}
+\label{lst:reportbuilder}
 
-\begin{lstlisting}[caption={
-  Logging types for the interpreter, inside the \texttt{GInterpreter} module
-  \label{lst:interpreter-logging}}, style=code]
+\vspace{2em}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 module Logging = struct
   let pp_str_list = Fmt.(brackets (list ~sep:comma string))
 
@@ -358,11 +388,17 @@ module Logging = struct
     in
     (iter_bindings List.iteri pp_one) ft reslt
 end
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{Logging types for the interpreter, inside the \texttt{GInterpreter} module}
+\label{lst:interpreter-logging}
 
-\begin{lstlisting}[caption={
-  Logging types for unification, inside the \texttt{Unifier} module
-  \label{lst:unifier-logging}}, style=code]
+\vspace{2em}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
   module Logging = struct
     let pp_variants : (string * Expr.t option) Fmt.t =
       Fmt.pair ~sep:Fmt.comma Fmt.string (Fmt.option Expr.pp)
@@ -481,11 +517,17 @@ end
           L.LoggingConstants.ContentType.unify_result
     end
   end
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{Logging types for unification, inside the \texttt{Unifier} module}
+\label{lst:unifier-logging}
 
-\begin{lstlisting}[caption={
-  The \texttt{branch\_case} type
-  \label{lst:branch-case}}, style=code, numbers=none]
+\vspace{2em}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 type branch_case =
   | GuardedGoto of bool
   | LCmd of int
@@ -493,11 +535,17 @@ type branch_case =
   | LAction of state_vt list
   | LActionFail of int
 [@@deriving yojson]
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{The \texttt{branch\_case} type}
+\label{lst:branch-case}
 
-\begin{lstlisting}[caption={
-  The required types for the \texttt{<TreeMapView />} component
-  \label{lst:treemapview-types}}, style=code, numbers=none]
+\vspace{2em}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 export type TransformResult<M, D, A> = {
   id: string | number;
   data: D;
@@ -516,4 +564,9 @@ export type Props<M, D, A> = {
   transform: TransformFunc<M, D, A>;
   nodeComponent: React.ComponentType<NodeProps<D>>;
 };
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{The required types for the \texttt{<TreeMapView />} component}
+\label{lst:treemapview-types}

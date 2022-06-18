@@ -30,9 +30,10 @@ the act of building a predicate from its component parts (in practice, unifying
 the state against the definition of the predicate) can be delegated to a
 subproblem, dubbed \textbf{folding}.
 
-\begin{lstlisting}[caption={
-  The recursive list length function, in WISL
-  \label{lst:llen-rec}}, style=code]
+\begin{listing}[!ht]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{text}
 { (x == #x) * list(#x, #alpha) }
 function llen(x) {
     if (x = null) {
@@ -45,7 +46,13 @@ function llen(x) {
     return n
 }
 { list(#x, #alpha) * (ret == len(#alpha)) }
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\caption{The recursive list length function, in WISL}
+\label{lst:llen-rec}
+\end{listing}
 
 \begin{figure}
   \center{}
@@ -126,13 +133,20 @@ execute the next one; the original behaviour of running to completion can be
 recreated by repeatedly executing the given thunks until the \texttt{Finished}
 case is returned.
 
-\begin{lstlisting}[caption={
-  The original \texttt{cont\_func} type
-  \label{lst:contfunc-type-original}}, style=code, numbers=none]
+\begin{listing}[!ht]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 type 'a cont_func =
 | Finished of 'a list
 | Continue of (cconf_t list * (unit -> 'a cont_func))
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\caption{The original \texttt{cont\_func} type}
+\label{lst:contfunc-type-original}
+\end{listing}
 
 While this meets the basic needs of step-by-step execution for a debugger, it
 proves to be a fairly blunt instrument, giving minimal information to the
@@ -149,9 +163,10 @@ tructured logging, and a trace that more closely matches Gillian's symbolic
 execution and unification processes, this is not used to its fullest potential
 in the current debugging implementation.
 
-\begin{lstlisting}[caption={
-  The \texttt{Report.t} type
-  \label{lst:report-type}}, style=code, numbers=none]
+\begin{listing}[!ht]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 (* report.ml *)
 
 type t = {
@@ -164,7 +179,13 @@ type t = {
   severity : severity;
   type_ : string;
 }
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\caption{The \texttt{Report.t} type}
+\label{lst:report-type}
+\end{listing}
 
 Of particular note is the \texttt{Report.t} type's (\autoref{lst:report-type})
 \texttt{content} field, which is used to store various information in JSON

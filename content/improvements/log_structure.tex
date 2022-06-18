@@ -153,9 +153,10 @@ is a new branch case; this is necessary in the event of sibling branch cases),
 then, if necessary, report a new \texttt{"unify\_case"} and set it as the new
 parent.
 
-\begin{lstlisting}[caption={
-  The function for settling the log structure for \texttt{unify\_case} reports
-  \label{lst:structure-unify-case-reports}}, style=code, numbers=none]
+\begin{listing}[!ht]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 let structure_unify_case_reports
     parent_ids_ref
     target_case_depth
@@ -186,7 +187,13 @@ let structure_unify_case_reports
         target_case_depth
     | None -> target_case_depth
   else target_case_depth
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\caption{The function for settling the log structure for \texttt{unify\_case} reports}
+\label{lst:structure-unify-case-reports}
+\end{listing}
 
 After these changes, the logging structure matched the plan precisely, as can be
 seen by inspection of the database after running verification, in

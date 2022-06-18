@@ -34,9 +34,10 @@ symbolic execution branch, and a cont func that can be used to explore other
 branches. The \texttt{Normal} variant has been extended to include information
 on the branch path, and any new branch cases resulting from the execution step.
 
-\begin{lstlisting}[caption={
-  The new \texttt{cont\_func} type, in the \texttt{GInterpreter} module
-  \label{lst:contfunc-type-new}}, style=code, numbers=none]
+\begin{listing}[!ht]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 type 'a cont_func_f = ?path:branch_path -> unit -> 'a cont_func
 
 and 'a cont_func =
@@ -47,7 +48,13 @@ and 'a cont_func =
       * branch_case list option
       * 'a cont_func_f)
   | EndOfBranch of 'a * 'a cont_func_f
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\caption{The new \texttt{cont\_func} type, in the \texttt{GInterpreter} module}
+\label{lst:contfunc-type-new}
+\end{listing}
 
 
 \subsection{Navigating Symbolic Execution}
@@ -58,9 +65,10 @@ through a symbolic execution. To this end, an `execution map', or
 \texttt{ExecMap} (\autoref{lst:execmap}) was developed to keep track of that
 very process.
 
-\begin{lstlisting}[caption={
-  The \texttt{ExecMap} module, inside the \texttt{Debugger} module
-  \label{lst:execmap}}, style=code, numbers=none]
+\begin{listing}[!ht]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 module ExecMap = struct
   type unifys = (rid * Unifier.unify_kind * UnifyMap.unify_result) list
   [@@deriving yojson]
@@ -84,7 +92,13 @@ module ExecMap = struct
   (* ... helper functions ... *)
 
 end
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\caption{The \texttt{ExecMap} module, inside the \texttt{Debugger} module}
+\label{lst:execmap}
+\end{listing}
 
 After each call of the continuation function, the relevant information from
 the executed step is added to the \texttt{ExecMap} in the debugger's internal
@@ -104,9 +118,10 @@ for the \texttt{branch\_case} represented. This allows the frontend to directly
 use a representation fit for the user's viewing, while still holding on to the
 necessary data structure to talk back to the debugger.
 
-\begin{lstlisting}[caption={
-  The \texttt{PackagedBranchCase} type, inside the \texttt{Debugger} module
-  \label{lst:packagedbranchcase}}, style=code, numbers=none]
+\begin{listing}[!ht]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 module PackagedBranchCase = struct
   type t = {
     kind : string;
@@ -118,7 +133,13 @@ module PackagedBranchCase = struct
   (* ... helper functions ... *)
 
 end
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\caption{The \texttt{PackagedBranchCase} type, inside the \texttt{Debugger} module}
+\label{lst:packagedbranchcase}
+\end{listing}
 
 
 \subsection{Debugging Unification}
@@ -136,16 +157,23 @@ unification process, refactoring the part of the code that actually performs
 unification to its own function, allowing the debugger to use only the parts
 of the process that it needs to.
 
-\begin{lstlisting}[caption={
-  The signature of the \texttt{Verifier.Debug} module
-  \label{lst:verifier-debug}}, style=code, numbers=none]
+\begin{listing}[!ht]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 module Debug : sig
 val get_tests_for_prog : prog_t -> proc_tests
 
 val analyse_result :
   t -> Logging.ReportId.t -> SAInterpreter.result_t -> bool
 end
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\caption{The signature of the \texttt{Verifier.Debug} module}
+\label{lst:verifier-debug}
+\end{listing}
 
 Now that unfication was actually being performed where necessary, the debugger
 (and the frontend, evenutally) needs a way of navigating the structure of
@@ -157,9 +185,10 @@ postcondition unification is manually performed, or another unification (such as
 for a function call) is requested, the representative \texttt{UnifyMap} is
 constructed and cached in the debugger state.
 
-\begin{lstlisting}[caption={
-  The types of the \texttt{Debugger.UnifyMap} module
-  \label{lst:unifymap}}, style=code, numbers=none]
+\begin{listing}[!ht]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 module UnifyMap = struct
   open Verification.SUnifier.Logging
 
@@ -187,7 +216,13 @@ module UnifyMap = struct
   (* ... helper functions ... *)
 
 end
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\caption{The types of the \texttt{Debugger.UnifyMap} module}
+\label{lst:unifymap}
+\end{listing}
 
 With this in place, the debugger has all the necessary information at its
 disposal necessary to allow an interface to deep dive into the unification

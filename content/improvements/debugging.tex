@@ -21,9 +21,10 @@ This has the added benefit of allowing arbitrary JSON to be passed as well,
 where many IDEs present logged JSON in a pretty and collapsible format
 (\autoref{fig:log-json}).
 
-\begin{lstlisting}[caption={
-  The custom \texttt{log} event, in \texttt{Debugger\_log.ml}
-  \label{lst:custom-log-event}}, style=code, numbers=none]
+\begin{listing}[!ht]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 module Log_event = struct
   let type_ = "log"
 
@@ -32,7 +33,13 @@ module Log_event = struct
     [@@deriving yojson { strict = false }]
   end
 end
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\caption{The custom \texttt{log} event, in \texttt{Debugger\_log.ml}}
+\label{lst:custom-log-event}
+\end{listing}
 
 \begin{figure}
   \center{}
@@ -63,9 +70,10 @@ events and commands, contained in \texttt{dapCustom.ml}, consist of:
         \autoref{sec:interpreter-branching}
 \end{itemize}
 
-\begin{lstlisting}[caption={
-  The \texttt{debug\_state} type, of \texttt{Debugger.Inspect}
-  \label{lst:debugstate}}, style=code, numbers=none]
+\begin{listing}[!ht]
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{ocaml}
 type debug_state = {
   exec_map : exec_map_pkg; [@key "execMap"]
   lifted_exec_map : exec_map_pkg option; [@key "liftedExecMap"]
@@ -74,7 +82,13 @@ type debug_state = {
   proc_name : string; [@key "procName"]
 }
 [@@deriving yojson]
-\end{lstlisting}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\caption{The \texttt{debug\_state} type, of \texttt{Debugger.Inspect}}
+\label{lst:debugstate}
+\end{listing}
 
 
 \subsection{A Rich Debugging Interface}
