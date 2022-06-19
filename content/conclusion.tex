@@ -1,4 +1,67 @@
 %!TEX root = ../main.tex
 
 \chapter{Conclusion and Next Steps}\label{sec:conclusion}
-\todo{Write section}
+
+This project serves as a monumental leap forward in Gillian's debugging
+capabilities, and as a result, its overall usability to the those in the field
+of separation logic. Various technical decisions underpinning Gillian's
+implementation have been called into question and reimagined, such as the
+logging structure and the mechanisms of the symbolic execution interpreter, and
+VSCode's extensible capabilities have been incorporated to unlock Gillian's
+potential.
+
+There is some difficulty in describing this project's merit, stemming somewhat
+from its novelty, being the crescendo of many years of work to make automatic
+program verification accessible to any who understand separation logic, not just
+the authors of Gillian. The technical hurdles faced during actual implementation
+are not especially profound (though are noteworthy nonetheless), as the main
+challenge of this project resided in both the broad and deep prerequisite
+understanding required to marry the intricacies of Gillian with the practical
+aspects of the DAP, VSCode's extension API, and modern web development --- all
+within the limited time span of an M.Eng.\ final project. There are very few
+competing projects in this space; those that do exist either have significantly
+different goals (Infer), or exist in a prototype stage (VeriFast), proving the
+work completed to be particularly groundbreaking.
+
+The work completed opens a number of avenues for further research and
+development, some of which are already being considered.
+
+\myparagraph{Education.}
+Looking forwards, work has already been planned to add what little more is
+needed for Gillian to be used for educational purposes, i.e. Prof.\ Gardner's
+course on separation logic, particularly for coursework use; the ability to step
+though each command of a symbolic execution could strengthen students'
+understanding of separation logic. This will not only serve as proof of
+Gillian's usefulness, but also create a far stronger feedback loop, as Gillian
+will be opened to a student body --- a far more diverse group than the
+collection of researchers that make up the Verified Software group --- leading
+to more rapid and better motivated development in Gillian's future.
+
+\myparagraph{Real-world development.}
+The advancements made to the debugger in this project bring Gillian ever closer
+to the prospect of industry use. Infer has proven that separation logic analysis
+is of merit to the software industry, though the feasibility of a more complete
+analysis --- requiring developer knowledge of separation logic --- has not yet
+been explored. Exploration of real-world Gillian usage would make the most sense
+in more security-conscious contexts; this was a large motivating factor in
+Gillian's application to a section of Amazon's AWS encryption SDK.\ Where it
+stands now, Gillian could easily be the first to test these waters.
+
+\myparagraph{A Symbolic DAP.}
+After some consideration, it was realized that the usefulness of the extensions
+made to the Debug Adapter Protocol might not be exclusive to Gillian; there may
+be some possibility for the formalization of a \textit{Symbolic} Debug Adapter
+Protocol, or SDAP.\@ In fact, initial research found that this is not the first
+time such a thing has been considered, though an attempt at formalizing this
+concept has yet to be attempted. Some publications to this end are limited in
+scope from being masters' theses~\cite{sdap-arxiv, sdap-aurecchia}, while others
+only achieve support for debugging a single symbolic tool in a single
+IDE~\cite{sdap-colombo, sdap-kps} (which, in fairness, has been the end result
+of this project as well).
+The closest to an existing solution is MagpieBridge (as introduced in
+\autoref{sec:background:magpiebridge}), though that project is largely concerned
+with static analysis, instead of stepping through a symbolic execution --- more
+along the lines of a language server than a debugging one.
+The appropriateness of the graphical interface developed in this project must
+also be considered, as it may be worth including its functionality in the
+specification for an SDAP standard.
