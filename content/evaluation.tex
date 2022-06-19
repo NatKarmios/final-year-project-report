@@ -1,4 +1,5 @@
 %!TEX root = ../main.tex
+%chktex-file 17
 
 \chapter{Evaluation}\label{sec:eval}
 
@@ -102,7 +103,7 @@ VeriFast is a completely isolated tool, its graphical interface needing to be
 run separately from any other software used for development. Now, armed with the
 new debugging functionality, developers have a real possibility of using Gillian
 as part of their development pipeline; the ability to debug Gillian verification
-directly inside \sacha{use the name of VSCode here: "... inside VSCode - hiwch is by far the most popular editor in the world - is a ..." or something similar} what is, by far, the most popular editor in the world is a
+directly inside VSCode (by far, the most popular editor in the world) is a
 previously unmatched level of accessibility for a tool of this purpose.
 
 \sacha{You probably need concrete examples of debugging programs with bugs. And also, a concrete example of a BIG program (i.e. amazon-c string bug for example, non-lifted)}
@@ -110,87 +111,71 @@ previously unmatched level of accessibility for a tool of this purpose.
 \section{Limitations}%
 \label{sec:eval:limitations}
 
-There are some features that are desired of a Gillian debugger that are not yet
-present, including:
-\begin{itemize}
-  \item Full support for target language lifting
-  \item Decorating the source code during debugging
-  \item Highlighting the relevant blocks of memory for the selected assertion
-        when inspecting unification
-  \item More efficient database logging
-  \item A query language for the execution and unification trees
-\end{itemize}
-
-\sacha{If only these were the sole limitations. There's also the understanding of *why* an error is happening, for which there is no definitive answer, but the debugger could be improved with some heuristics. More immediately, there's also performance issues: logging is SLOW. That could be improved by targetting dynamic enabling of the logging or something, to only activate logging when required. }
-
-However, all of these features are either relatively trivial to implement and
-only missing due to time constraints, or more experimental features that require
-substantial planning and are far outside the scope of this project.
-
-Of course, none of that detracts from the fact that this project has elevated
-Gillian from a prototype research tool to one that that proves useful in
-pursuing new research in separation logic, and even more impressively, a tool
-that can be used for educational purposes --- to help those having their first
-experience of separation logic form a deeper understanding by automatically
-applying its principles to real programs.
-
-\polish{-- Section rewrite --}
-
 Although this project has made immense progress towards making Gillian a more
-user-friendly and mainstream tool, there are still limitations that need to be
-overcome.
+user-friendly and mainstream tool, there are still limitations that must be
+addressed.
 
-\paragraph{Incomplete target language lifting} As discussed \todo{discuss that
-there} in \autoref{sec:debug-interface}, the mechanism to lift the debugging
-process to the level of the target language is currently incomplete.
-Thankfully, there are some very low hanging fruits, such as full support
-for the lifting of \texttt{ExecMap}s. However, some challenges could constitute
-entire Masters project on their own, such as the lifting of state and various
-kind of errors to a point where no knowledge of GIL would be required to debug
-the verification of a program written in, for example, JavaScript.
+\myparagraph{Incomplete target language lifting.}
+As discovered in \autoref{sec:debug-interface}, the mechanism to lift the
+debugging process to the level of the target language is currently incomplete,
+due to particular mechanisms of how multiple GIL commands are coalesced back
+into a single target language command, preventing full support for lifting
+execution maps to represent the target language.
+Thankfully, these issues are very low-hanging fruit, however the challenges
+involved in supporting lifting for more of the verification process could
+constitute entire Masters project on their own, such as lifting the symbolic
+state, and various kinds of errors, to a point where no knowledge of GIL would
+be required to debug the verification of a program written in a supported target
+language (for example, JavaScript).
 
-\paragraph{Lack of annotations on the GIL AST} As of now, it is possible, while
-debugging, to highlight which part of the code is being symbolically executed.
-However, there is no such similar mechanism that occurs during unification.
-For example, the debugger is not highlighting what part of the state is being
-affected by the consumption of an assertion.
+\myparagraph{Lack of annotations on the GIL AST.}
+The current debugger highlights which part of the code is being symbolically
+executed, however there is no such mechanism during unification.
+For example, the debugger does not highlight what part of the state is being
+affected by a particular assertion. The addition of state highlighting, or even
+highlighting previous parts of code that were the last to affect parts of the
+state, would do much to create a more intuitive connection between the code and
+the unification process.
 
-\paragraph{Performances} Logging in Gillian is quite slow. In the past, the
-creators of Gillian have put a lot of efforts into minimising the overhead of
-the logging infrastructure when logging is disabled. Executing verification
-and logging into a file (i.e. the old way) is about 5.75\footnotemark[1]{} times
-slower than executing verification with logging disabled. In our new
-infrastructure, executing verification and logging into the database is
-2.32\footnotemark[1]{} times slower then when logging into a file, i.e.
-13.35\footnotemark[1]{} times slower than when logging is disabled. For small
-WISL programs, such as the ones studied in the Separation Logic course, it is
-all a matter of fractions of seconds. However, the full verification of the
-fragment of the \texttt{AWS Encryption SDK} takes about 6mn on a powerful
-laptop, and the performance of the debugger would then become a deal-breaker.
-\footnotetext[1]{Measures performed on the available benchmark for WISL
-verification.} That being said, we are confident that these performances can be
-massively improved through very low hanging fruits. The two most obvious are
-\textbf{1)} making the database query asynchronous, and \textbf{2)} chosing a
-more efficient serialised form than JSON. Interestingly, implementing \textbf{1)}
-might end up making  logging into a database more efficient than logging
-into a file, since logging into a file has to be done synchronously as to
-preserve the order of the logs, while records can be written in any order in the
-database and will still preserve the right structure.
+\myparagraph{Performance.}
+Logging in Gillian is quite slow. In the past, the creators of Gillian put much
+effort into minimizing the overhead of the logging infrastructure when logging
+is disabled. Executing verification and logging into a file (the old way) is
+about 5.75\footnotemark[1]{} times slower than executing verification with
+logging disabled. In the new infrastructure, executing verification and logging
+to the database is 2.32\footnotemark[1]{} times slower than when logging into
+the file, thus 13.35\footnotemark[1]{} times slower than no logging at all.
+For small WISL programs, such as those studied in the Separation Logic course,
+programs are simple enough for this time difference to be negligible. However,
+full verification of the fragment of the \texttt{AWS Encryption SDK} takes about
+6 minutes on a modern high-end laptop, meaning the relative performance of the
+debugger would be far too sluggish for mainstream use. \footnotetext[1]{Measures
+performed on the available benchmark for WISL verification.} That being said,
+it can be said with the utmost confidence that these performance numbers can be
+monumentally improved with a relatively small amount of work.
+The two most obvious improvements are \textbf{(1)} making the database
+interaction asynchronous (or potentially multithreaded), and \textbf{(2)}
+finding a more efficient method of serializing data than JSON --- perhaps
+Protocol Buffers~\cite{protobuf}. Interestingly, implementing \textbf{(1)} may
+result in database logging becoming more efficient than logging into the file,
+since file logging must be performed synchronously as to preserve the order of
+the logs, while records can be written in any order in the database while
+preserving the necessary structure.
 
-\paragraph{Tool-developer experience} However powerful the logging infrastrcture
-is, its API is far from perfect for the moment. Getting information that has
-been loggeed from the database requires writing SQL queries by hand and calling
-the OCaml-SQL driver. However, given the principled structure of the log trace,
-we believe that this experience could be largely improved by designing a
-domain-specific query language adapted to extracting any kind of information
-from the traces. Note, however, that this limitation only affects the tool
-developer, and does not affect the primary customer of this project, the tool
-user.
+\paragraph{Tool-developer experience}
+However powerful the logging structure is, its API is far from perfect at
+present. Retrieving previously logged data from the database requires writing
+SQL queries by hand, followed by calling the OCaml-SQL driver. However, given
+the principled structure of the log trace, this experience could be largely
+improved by designing a domain-specific query language adapted to extracting any
+kind of information from the traces. Note, however, that this limitation only
+affects the tool developer, and does not affect the primary customer of this
+project, the tool user.
 
-
-Of course, none of that detracts from the fact that, from the point of view of
-user interface, this project has elevated Gillian from a prototype research tool
-to one that that proves useful in pursuing new research in separation logic,
-and even more impressively, a tool that can be used for educational purposes ---
-to help those having their first experience of separation logic form a deeper
-understanding by automatically applying its principles to real programs.
+Of course, none of these factors detract from the fact that, from the
+perspective of user experience, this project has elevated Gillian from a
+prototype research tool to one that that proves useful in pursuing new research
+in separation logic, and even more impressively, a tool that can be used for
+educational purposes --- to help those having their first experience of
+separation logic form a deeper understanding by automatically applying its
+principles to real programs.
