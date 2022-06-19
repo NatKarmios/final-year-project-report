@@ -6,12 +6,12 @@
 
 \section{Separation Logic --- theory and tooling}\label{sec:background:sl-and-tools}
 
-Proposed in 1969, Tony Hoare's \textit{Hoare Logic} provided a standardised
+Proposed in 1969, Tony Hoare's \textit{Hoare Logic} provided a standardized
 means of reasoning about programs and their correctness~\cite{hoare}. The key
 principle of this logic is the Hoare Triple, denoting that if a certain
 pre-condition $P$ holds, and code command $C$ is run (and terminates without
 failing), then the post-condition $Q$ is guaranteed to hold. This is presented
-in the form of a \textit{H ffoare triple}:
+in the form of a \textit{Hoare triple}:
 \[
   \triple{P}{C}{Q}
 \]
@@ -29,7 +29,7 @@ in addition to the standard Hoare Logic:
   \centering
   \includegraphics[width=200px]{img/separating-conjunction.jpg}
   \caption{
-    A visualisation of the separating conjunction.
+    A visualization of the separating conjunction.
     From~\cite{infer-sl}.
   }\label{fig:separating-conjunction}
 \end{figure}
@@ -71,13 +71,13 @@ that can automatically infer the pre- and post-condition of functions.
 invariants in small C code, with \textbf{Abductor} later added to introduce
 bi-abduction to the toolset~\cite{abductor}.
 
-2011 saw the intrudoction of \textbf{VeriFast}~\cite{verifast-paper,
+2011 saw the introduction of \textbf{VeriFast}~\cite{verifast-paper,
   verifast-repo}, `a prototype verification tool for single-threaded and
-multi-threaded C and Java programs'. VeriFast performs verification similar to
+multithreaded C and Java programs'. VeriFast performs verification similar to
 Gillian, working on functions with developer-defined pre- and post-conditions,
 also using an intermediate representation to do so.
-\autoref{fig:verifast-example} and \autoref{fig:verifast-example-output} show how
-VeriFast handles a small Java program that deliberately dereferences a null
+\autoref{fig:verifast-example} and \autoref{fig:verifast-example-output} show
+how VeriFast handles a small Java program that deliberately dereferences a null
 pointer.
 
 \begin{listing}[!ht]
@@ -119,17 +119,16 @@ automated compositional testing, and refines this process to a state in which
 it can easily be used in industry, whilst also including more general analysis
 for concerns such as security and concurrency; it sacrifices depth of analysis
 to result in a lightweight tool that gives developer-friendly feedback.
-Infer doesn't require the a full program in order to perform analysis, as it
-only needs to construct Hoare triples for one function at a time. This,
-combined with its ability to reuse existing results from unchanged functions and
-only consider modified code, makes for a fast and hugely scalable static
-analysis tool, used as part of Facebook's code quality pipeline for all
-modifications to the Android and iOS apps for Facebook, Facebook Messenger,
-Instagram, and others services~\cite{infer-about}. Infer outputs discovered
-errors and warnings to a file in CSV, whilst directly outputting the most
-severe. \autoref{fig:infer-example} and \autoref{fig:infer-example-output} show
-a short example of running Infer on a similar function to what was tested with
-VeriFist.
+Infer doesn't require a full program in order to perform analysis, as it only
+needs to construct Hoare triples for one function at a time. This, combined with
+its ability to reuse existing results from unchanged functions and only consider
+modified code, makes for a fast and hugely scalable static analysis tool, used
+as part of Facebook's code quality pipeline for all modifications to the Android
+and iOS apps for Facebook, Facebook Messenger, Instagram, and others
+services~\cite{infer-about}. Infer outputs discovered errors and warnings to a
+file in CSV, whilst directly outputting the most severe.
+\autoref{fig:infer-example} and \autoref{fig:infer-example-output} show a short
+example of running Infer on a similar function to what was tested with VeriFast.
 
 \begin{listing}[!ht]
   \noindent\rule{\textwidth}{0.5pt}
@@ -187,7 +186,7 @@ A strong source of inspiration for Infer's AI techniques is
 \textbf{Frama-C}~\cite{frama-c-paper, frama-c-site}, `a source code analysis
 platform that aims at conducting verification of industrial-size C programs'; a
 noteworthy feature of Frama-C is its debugger-esque graphical interfaces
-available for certain~analyses.
+available for certain analyses.
 
 
 \subsection{Debugging}
@@ -262,8 +261,7 @@ concrete ones. During execution, a symbolic interpreter keeps track of the
 constraints on symbolic values that must hold for the program to be in the
 current~state.
 
-The following C programs outline some of the nuances of working with symbolic
-values.
+The following C programs outline some nuances of working with symbolic values.
 
 \begin{listing}[!ht]
 \noindent\rule{\textwidth}{0.5pt}
@@ -290,7 +288,7 @@ and assigns it to the program variable \texttt{x}. At the \texttt{if} statement
 at line \texttt{3}, both branches are considered, constraining the symbolic
 value as necessary; the constraint for the `true' branch is \texttt{$\x < 0$}
 whereas for the `false' branch, it is \texttt{$\lnot (x < 0)$}. The former will
-successfully execute, but the latter branch will fail due to the unsatisyiable
+successfully execute, but the latter branch will fail due to the unsatisfiable
 assertion; this indicates that the code fails when $x$ is non-negative.
 
 \begin{listing}[!ht]
@@ -313,9 +311,9 @@ int main(void) {
 \caption{Symbolic execution - non-executed branches}
 \end{listing}
 
-If a branch would constrain symbolic values to the point where no concrete
-values exist in its range (e.g.\ in this program, with $x$ being less than 0
-\textit{and} greater than 10), then that branch will not be execited --- this
+If a branch constrains symbolic values to the point where no concrete values
+exist in its range (e.g.\ in this program, with $x$ being less than 0
+\textit{and} greater than 10), then that branch will not be executed --- this
 makes intuitive sense as such a situation is impossible.
 
 While assert statements can be used to pinpoint if the execution ended up in an
@@ -347,7 +345,7 @@ This example shows how assert statements are most commonly used --- in tandem
 with assume statements, to prove properties of the code to be correct; the
 constraints on symbolic variables can be extended manually using these assume
 statements. Here, we make the assertion that the sum of two positive numbers is
-also positive, which passes symboilic execution.
+also positive, which passes symbolic execution.
 
 \begin{listing}[!ht]
 \noindent\rule{\textwidth}{0.5pt}
@@ -374,7 +372,7 @@ be executed concretely.
 When considering code with loops, Gillian will unroll said loops up to a given
 bound; whilst this gives a reasonable assurance of correctness, it is not a full
 guarantee of correct code. This is emblematic of path explosion --- a core
-difficulty surrounding symboilic execution --- where the amount of possible
+difficulty surrounding symbolic execution --- where the amount of possible
 execution branches grows exponentially. This decision was made as the risk of
 missed failure paths is small enough to make the performance gain worthwhile.
 
@@ -437,16 +435,16 @@ The cause of verification failure is not particularly obvious. This output is
 trying to convey that it has found two failing paths, and has given a variable
 configuration that leads to each; the \texttt{Assert failed with argument}
 statement is the specific reason that the path fails, in this case describing
-how it expects \texttt{true} to be passed to an assert stament, but instead it
+how it expects \texttt{true} to be passed to an assert statement, but instead it
 received \texttt{false}. With some observation, it can be understood that the
 first failure case occurs when $x$ is assigned -1, and the second when $y$ is
-assigned -1, each causing the respective if-staement to evaluate to true.
+assigned -1, each causing the respective if-statement to evaluate to true.
 
 This form of error reporting is one of Gillian's weak points; while it is very
 good at finding such errors, its attempts at communicating them to the
 developer could use improvement; even a simple program case such as this was
 not entirely obvious to understand, so attempting to apply this to a larger
-program would be cubersome at best.
+program would be cumbersome at best.
 
 \subsection{Full verification}
 
@@ -672,7 +670,7 @@ wisl.exe: internal error, uncaught exception:
 \end{listing}
 
 The error message provided is vague, referencing some imaginary function
-\texttt{llen\_iter\_loop0}, followed by a slew of logical veriable information
+\texttt{llen\_iter\_loop0}, followed by a slew of logical variable information
 unfit for human understanding. The key to deciphering this is the knowledge that
 Gillian internally compiles while loops to functions, and this unification
 failure indicates that the loop invariant could not be re-established. To
@@ -859,7 +857,8 @@ programming language supporting functional, imperative and object-oriented
 styles'. Specifically, OCaml provides the ability to make use of functional,
 imperative, and object-oriented styles. This, combined with its powerful type
 system, makes it a good fit for symbolic analysis tools. Many of Gillian's
-contemporaries, including Infer, VeriFast and Frama-C, are also written in OCaml.
+contemporaries, including Infer, VeriFast and Frama-C, are also written in
+OCaml.
 
 OCaml's most popular build system is \textit{Dune}~\cite{dune} --- it allows the
 easy compilation of multi-file OCaml programs and libraries, including
@@ -871,18 +870,18 @@ are installed system-wide, which can lead to inconsistent builds and version
 conflicts. The answer to these concerns is \textit{esy}~\cite{esy}, a package
 management system for OCaml and Reason styled after \textit{npm}~\cite{npm}.
 Esy provides `provides a fast and powerful workflow for local development of
-opam packages without requiring ``switches''\,', meaning dependencies are isolated
-between projects. Esy also provides a number of convenience features, such as
-defining custom commands that run within the OCaml project's environment, as
-well as supporting non-OPAM dependencies, e.g. OCaml sources from GitHub
-repositories (optionally at a specific commit).
+OPAM packages without requiring ``switches''\,', meaning dependencies are
+isolated between projects. Esy also provides a number of convenience features,
+such as defining custom commands that run within the OCaml project's
+environment, as well as supporting non- OPAM dependencies, e.g. OCaml sources
+from GitHub repositories (optionally at a specific commit).
 
 Knowledge of these build systems will become paramount when introducing the
 somewhat foreign element that is a VSCode extension.
 
 \subsection{VSCode and its extensions}\label{sec:vscode}
 
-VSCode (Visual Studio Code)~\cite{vscode} is a universally recognised text
+VSCode (Visual Studio Code)~\cite{vscode} is a universally recognized text
 editor and development environment, developed by Microsoft. It currently stands
 as the most popular development worldwide, enjoying a 71\% market share
 according to Stack Overflow's 2021 developer survey
@@ -897,7 +896,7 @@ use of VSCode's well-documented API~\cite{vscode-api} to have a large degree of
 control over the editor.
 
 Whilst VSCode limits the extent to which extensions can extend the editor's UI,
-extension authors are able to make use of Webviews~\cite{vscode-webview}; an
+extension authors are able to make use of webviews~\cite{vscode-webview}; an
 extension can open an editor tab that contains web content (HTML/CSS/JS) that
 the extension has complete control over, providing a method for extensions to
 fill in any gaps in VSCode's UI.\@
@@ -905,7 +904,8 @@ fill in any gaps in VSCode's UI.\@
 \begin{figure}
   \center{}
   \includegraphics[width=400px]{img/webview-example.png}
-  \caption{An example of a Webview created by a VSCode extension}\label{fig:webview-example}
+  \caption{An example of a webview created by a VSCode extension}%
+  \label{fig:webview-example}
 \end{figure}
 
 
@@ -917,7 +917,7 @@ significant portion of developers. Unfortunately, maintaining support for many
 editors at once is an unreasonably large undertaking. The \textit{Debug Adapter
 Protocol} (DAP)~\cite{dap} exists as an attempted countermeasure to this issue,
 turning the $O(m \times n)$ complexity problem of supporting many debuggers on
-many editors into a $O(m + n)$ problem; each debugger and each editor need only
+many editors into an $O(m + n)$ problem; each debugger and each editor need only
 be integrated once.
 
 \begin{figure}[!t]
@@ -967,28 +967,29 @@ with the Gillian libraries as they are, such libraries cannot be haphazardly
 included in the extension code; \texttt{Js\_of\_ocaml} transitively includes all
 OCaml dependencies, potentially leading to code that cannot be executed. As a
 concrete example to this, attempting to include Gillian's \texttt{debugAdapter}
-library results in erroring code, due to the compiler's attempt to include an
-SQLite implementation, which it simply is not equipped to handle. Aside from
-this, the inclusion of unnecessary dependencies in JS-compiled code results in
-a hugely bloated extension --- the \texttt{debugAdapter} example created a
-compiled JS file over a million lines long. The ideal scenario here is to move
-shared Gillian code to its own library within Gillian, which has as few
-dependencies as possible (ideally none), but on which both Gillian and the
-extension code would then depend.
+library results in errors, due to the compiler's attempt to include an SQLite
+implementation, which it simply is not equipped to handle. Aside from this, the
+inclusion of unnecessary dependencies in JS-compiled code results in a hugely
+bloated extension --- the \texttt{debugAdapter} example created a compiled JS
+file over a million lines long. The ideal scenario here is to move shared
+Gillian code to its own library within Gillian, which has as few dependencies as
+possible (ideally none), but on which both Gillian and the extension code would
+then depend.
 
 \begin{sidewaysfigure}
   \center{}
   \includegraphics[width=0.8\textwidth]{img/vscode-extension-with-ocaml.png}
-  \caption{The process of including OCaml code in a VSCode extension}\label{fig:vscode-extension-with-ocaml}
+  \caption{The process of including OCaml code in a VSCode extension}%
+  \label{fig:vscode-extension-with-ocaml}
 \end{sidewaysfigure}
 
 \myparagraph{Putting it all together.}\label{sec:background:extending-dap}
-A combination of DAP custom events and VSCode's Webviews could allow us to move
+A combination of DAP custom events and VSCode's webviews could allow us to move
 past DAP's initial limitations. This, however, comes at the cost of creating an
 implementation specific to VSCode, eliminating a large benefit of using the DAP
 in the first place.
 
-A working example that tests custom DAP commands/events, Webviews and the
+A working example that tests custom DAP commands/events, webviews and the
 inclusion of OCaml code (alongside a Gillian library) is available
 at~\cite{debugger-experiment}.
 

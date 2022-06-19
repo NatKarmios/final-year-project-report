@@ -1,0 +1,15 @@
+{"rule":"A_INFINITIVE","sentence":"^\\QThis output is trying to convey that it has found two failing paths, and has given a variable configuration that leads to each; the Assert failed with argument statement is the specific reason that the path fails, in this case describing how it expects true to be passed to an assert stament, but instead it received false.\\E$"}
+{"rule":"A_INFINITIVE","sentence":"^\\QThis output is trying to convey that it has found two failing paths, and has given a variable configuration that leads to each; the Assert failed with argument statement is the specific reason that the path fails, in this case describing how it expects true to be passed to an assert statement, but instead it received false.\\E$"}
+{"rule":"SENTENCE_WHITESPACE","sentence":"^\\QInspect\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Q\"cmdresult\" — representing the symbolic state after executing a command; this replaces \"cmdstep\" reports in almost all cases.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\Q\"cmdresult\" — representing the symbolic state after executing a command; this replaces \"cmdstep\" reports in almost all cases.\\E$"}
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\Q\"procinit\" — a replacement for the \"cmdstep\" report at the very start of symbolic execution; this is a compromise in order to preserve the original file log layout, and will be ignored during debugging.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Q\"procinit\" — a replacement for the \"cmdstep\" report at the very start of symbolic execution; this is a compromise in order to preserve the original file log layout, and will be ignored during debugging.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Q\"unify\" — denotes the start of unification; includes the full unification plan and the symbolic state that will be unified against it, as well as the nature of unification (postcondition, function call, fold, etc.)\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Q\"unifycase\" — specifies a particular case of unification; this comes into play when folding a predicate with multiple cases.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Q\"unifyresult\" — simply denotes the end of unification, while specifying whether the unification was a success or failure.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Q\"assertion\" — contains all relevant information about the symbolic state being unified against an assertion; this serves as a single step in the unification process.\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qbranchcases could then be used as a mechanism for dictating branched execution.\\E$"}
+{"rule":"SENTENCE_WHITESPACE","sentence":"^\\QDebug module (\\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q).\\E$"}
+{"rule":"SENTENCE_WHITESPACE","sentence":"^\\QDebug module\\E$"}
+{"rule":"SENTENCE_WHITESPACE","sentence":"^\\QUnifyMap module\\E$"}

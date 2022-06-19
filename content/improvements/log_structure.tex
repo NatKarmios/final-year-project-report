@@ -14,13 +14,13 @@ and an indication of where they needed improvement.
 In order to log a report to the database, one must first create a
 \texttt{Loggable.t} and supply it to the relevant log function (see
 \autoref{lst:loggable} for the relevant module). Constructing a
-\texttt{Loggable.t} essenitally requires a pretty-pretting function (for logging
+\texttt{Loggable.t} essentially requires a pretty-pretting function (for logging
 to the file), and functions to convert the content type to and from a
-\texttt{Yojson.Safe.t}, the itermediate representation of a JSON object provided
-by the Yojson library~\cite{yojson} (when logging to the database). For the vast
-majority of the project, there was no need to consider manually creating
-functions for converting types to JSON (and never a need to write one for the
-inverse), due to the very helpful `deriving' syntax provided by the
+\texttt{Yojson.Safe.t}, the intermediate representation of a JSON object
+provided by the Yojson library~\cite{yojson} (when logging to the database). For
+the vast majority of the project, there was no need to consider manually
+creating functions for converting types to JSON (and never a need to write one
+for the inverse), due to the very helpful `deriving' syntax provided by the
 \texttt{ppx\_deriving} library~\cite{ppx-deriving}, and extended for Yojson by
 \texttt{ppx\_deriving\_yojson}~\cite{ppx-deriving-yojson}; simply by suffixing a
 type with \texttt{[@@deriving yojson]}, JSON conversion functions are
@@ -63,7 +63,7 @@ intuition of symbolic execution and unification, rather than being dictated by
 Gillian's internals. There were three driving principles in the formation of this
 structure:
 
-\myparagraph{Intiution}:
+\myparagraph{Intuition}:
 It's especially important that the logging structure represents the intuitive
 process of branched symbolic execution and unification, so that when the
 debugger extension is developed, a user-friendly UI can become a natural
@@ -136,7 +136,7 @@ structure them. Some instances, such as setting \texttt{"unify"} reports as the
 parent, were as simple as wrapping code that generates any child reports in a
 call to \texttt{with\_parent}, but some situations required a little trickery
 to properly set report references without refactoring core parts of Gillian into
-an unintelligble mess --- this involved extending types such as
+an unintelligible mess --- this involved extending types such as
 \texttt{cconf\_t} to track the previous report ID, and in some cases, keeping a
 reference to track the current parent ID throughout the densely nested function
 calls that make up the interpreter.

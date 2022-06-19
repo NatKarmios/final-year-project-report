@@ -96,16 +96,16 @@ type debug_state = {
 With the debug adapter extensions in place, focus shifted from development of
 the Gillian program itself to an extension for Visual Studio Code. The extension
 code provided in a project last year~\cite{gillian-debugging-2021} formed a
-solid foundation, providing all the boilerplate neccesary to instruct VSCode to
+solid foundation, providing all the boilerplate necessary to instruct VSCode to
 use Gillian as a debugger. However, for the extension required, the debug API
 is only one half of the coin; to create a bespoke user interface for Gillian
 debugging, the best course of action was to use a webview.
 
-Working with a webview was a first for this project, in regards to the history
-of Gillian. As there existed no baseline code to iterate on, some research was
+Working with a webview was a first for this project, regarding the history of
+Gillian. As there existed no baseline code to iterate on, some research was
 performed to find the best practices, or at least clean examples of the kind
 of solution required. The decision was made to develop the webview UI using
-React; while the use of React, or any other fully-featured frontent framework,
+React; while the use of React, or any other fully-featured frontend framework,
 was quite unconventional in the context of webviews, research led to the
 discovery of a UI toolkit for working in React webviews, including a variety
 of React components~\cite{vscode-ui-toolkit}. In an article about the discovery
@@ -127,7 +127,7 @@ time.
 \end{figure}
 
 Now that the webview boilerplate was in place, it was time to start building the
-UI.\@ The first hurdle to this process was finding a way to elegently render
+UI.\@ The first hurdle to this process was finding a way to elegantly render
 the execution tree; ultimately, React Flow~\cite{react-flow} was settled upon,
 providing an excellent amount of customisability, at the sacrifice of requiring
 more involvement in its configuration. It also has the benefit of providing,
@@ -171,7 +171,7 @@ ability to instantly adapt to the user's colour theme, as demonstrated in
     \centering
     \includegraphics[width=0.75\textwidth]{img/execmap-theming.png}
     \caption{
-      A demostration of the interface adapting to the user's selected editor
+      A demonstration of the interface adapting to the user's selected editor
       colour scheme}%
     \label{fig:execmap-theming}
   \end{subfigure}
@@ -189,9 +189,9 @@ a unification under it, and the result of that unification. When a command with
 a unification is selected, the extension calls the \texttt{Unification\_command}
 to load the relevant unify map, which is then displayed
 (\autoref{fig:unifymap-init}) in a separate tab in the webview. When viewing
-unification, a resizable sidebar (courtesy of the Allotment library
-library~\cite{allotment}) with information on the selected assertion
-is displayed (\autoref{fig:unifymap-sidebar}).
+unification, a resizeable sidebar (courtesy of the Allotment
+library~\cite{allotment}) with information on the selected assertion is
+displayed (\autoref{fig:unifymap-sidebar}).
 
 \begin{figure}
   \centering
@@ -215,7 +215,7 @@ is displayed (\autoref{fig:unifymap-sidebar}).
     \caption{The assertion data sidebar}%
     \label{fig:unifymap-sidebar}
   \end{subfigure}
-  \caption{The first iteration of the unify map display}
+  \caption{The first iteration of the unification map display}
 \end{figure}
 
 Of course, the top-level unification doesn't tell the full story --- displaying
@@ -252,7 +252,7 @@ to lift information to the target language would be much desired. While support
 for this is partially implemented (\autoref{fig:execmap-wisl}), there are some
 technical challenges that are outside the scope of this project, and are as yet
 unsolved. The current implementation uses a secondary \texttt{ExecMap} to track
-the execution map in the lifed context, containing references to the relevant
+the execution map in the lifted context, containing references to the relevant
 report IDs for execution of GIL commands, and serves that to the debug interface
 instead of the base exec map if applicable. This solution isn't fully
 functional: for example, a node for an if-else statement appears both before

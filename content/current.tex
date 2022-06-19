@@ -10,16 +10,16 @@ are outlined here.
 
 \section{Symbolic Execution with Unification}\label{sec:current:symex}
 
-\todo{Describe SybmEx in more detail?}
+\todo{Describe symbolic execution in more detail?}
 
 While symbolic execution is an essential component of program verification, it
 alone is not sufficient for applying separation logic when reasoning about a
-program. The `gotcha' step that bridges symbolic exection to separation logic is
-the process of \textbf{unification}, where a symbolic state is matched against a
-particular condition in separation logic. Gillian does this by transforming the
-relevant condition into a \textbf{unification plan} (or \textbf{UP}), where each
-step is an assertion that the current state must be matched against, potentially
-after finding appropriate substitutions.
+program. The `gotcha' step that bridges symbolic execution to separation logic
+is the process of \textbf{unification}, where a symbolic state is matched
+against a particular condition in separation logic. Gillian does this by
+transforming the relevant condition into a \textbf{unification plan} (or
+\textbf{UP}), where each step is an assertion that the current state must be
+matched against, potentially after finding appropriate substitutions.
 
 It's worth noting that Gillian has a notion of a \textit{predicate state} in
 addition to symbolic state, where the former is an extension of the latter that
@@ -28,7 +28,7 @@ considering logic that contain predicates, as predicates can be defined
 recursively, and thus cannot be considered in pure separation logic. This way,
 the act of building a predicate from its component parts (in practice, unifying
 the state against the definition of the predicate) can be delegated to a
-subproblem, dubbed \textbf{folding}.
+sub-problem, dubbed \textbf{folding}.
 
 \begin{listing}[!ht]
 \noindent\rule{\textwidth}{0.5pt}
@@ -150,7 +150,7 @@ type 'a cont_func =
 
 While this meets the basic needs of step-by-step execution for a debugger, it
 proves to be a fairly blunt instrument, giving minimal information to the
-debugging process, and no control outside of when to execute the next step.
+debugging process, and no control besides when to execute the next step.
 
 
 \section{Symbolic Trace and the Logging Structure}\label{sec:current:trace}
@@ -159,7 +159,7 @@ Originally, the log reports made to a file were the only way to debug
 verification. This changed when, in a previous project, Radu Lacraru provided
 mechanisms for making more detailed reports to an SQLite database for later
 querying~\cite{gillian-logging-2020}. While this opens the door for more 
-tructured logging, and a trace that more closely matches Gillian's symbolic
+structured logging, and a trace that more closely matches Gillian's symbolic
 execution and unification processes, this is not used to its fullest potential
 in the current debugging implementation.
 
@@ -195,7 +195,7 @@ the \texttt{type\_} field, which is set to one of a set of preset strings
 (\autoref{lst:loggingconstants}).
 
 While \texttt{Report.t} supports references to a \texttt{parent} and
-\texttt{previous} report, these were not utilised in log querying whatsoever,
+\texttt{previous} report, these were not utilized in log querying whatsoever,
 instead relying on the \texttt{elapsed\_time} field to deduce which reports
 preceded and succeeded others. The current logging structure, shown in
 \autoref{fig:log-structure-current}, is merely a consequence of when and where
@@ -237,11 +237,11 @@ case of function post-conditions).
   \center{}
   \includegraphics[width=\textwidth]{img/debug-step-current.png}
   \caption{
-    Current debugger behaviour: the end of the empty branch branch (left),
-    before stepping once and resuming the non-empty branch (right).}%
+    Current debugger behaviour: the end of the empty case branch (left), before
+    stepping once and resuming the non-empty case branch (right).}%
   \label{fig:debug-step-current}
 \end{figure}
 
-While the current solution is somewhat barebones, the existing code, along with
+While the current solution is somewhat bare-bones, the existing code, along with
 all the boilerplate it provides, can serve as a helpful starting point when
 adding new features to the debugging interface.

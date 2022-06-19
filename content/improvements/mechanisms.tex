@@ -11,7 +11,7 @@ structure was the inclusion of \texttt{branch\_case} fields, both in
 \texttt{"cmd"} and \texttt{"cmd\_result"} reports (see \autoref{lst:branch-case}
 for the relevant type). As can be seen in \autoref{fig:log-structure-desired},
 the multiple results of a command that branches (such as an if/else), and the
-relevant commands that directly follow, are associated with eachother via their
+relevant commands that directly follow, are associated with each other via their
 \texttt{branch\_case} fields.
 
 \texttt{branch\_case}s could then be used as a mechanism for dictating branched
@@ -59,7 +59,7 @@ and 'a cont_func =
 
 \subsection{Navigating Symbolic Execution}
 
-Despite a mechanism now being in place for selecing the branch of execution, it
+Despite a mechanism now being in place for selecting the branch of execution, it
 won't be of much use to users without a means of navigating the various paths
 through a symbolic execution. To this end, an `execution map', or
 \texttt{ExecMap} (\autoref{lst:execmap}) was developed to keep track of that
@@ -146,7 +146,7 @@ end
 
 As outlined in \autoref{sec:current:dap}, the original debugger implementation
 does not perform unification for postconditions at all --- seeing as
-postconditions are the only uniication guaranteed to be present in any
+postconditions are the only unification guaranteed to be present in any
 verification, this is a major blind spot in debugger functionality. To remedy
 this, the result information provided in the \texttt{} cont func variant
 introduced in \autoref{sec:interpreter-branching} proves its usefulness.
@@ -175,8 +175,8 @@ end
 \label{lst:verifier-debug}
 \end{listing}
 
-Now that unfication was actually being performed where necessary, the debugger
-(and the frontend, evenutally) needs a way of navigating the structure of
+Now that unification was actually being performed where necessary, the debugger
+(and the frontend, eventually) needs a way of navigating the structure of
 unification; the \texttt{UnifyMap} (\autoref{lst:unifymap}) serves this purpose.
 This structure is similar to the \texttt{ExecMap}, albeit simpler, as branches
 only occur at the start of unification, and the equivalent of a \texttt{Nothing}

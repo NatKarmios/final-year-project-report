@@ -2,17 +2,9 @@
 
 \chapter{Introduction}\label{sec:intro}
 
-% Why is Gillian necessary?
-
-% Why is *debugging* Gillian necessary?
-
-% Why should we extend the debugging capabilities.
-
 It is an inevitable truth that the complexity of programs and their codebase
 will continuously grow. As this happens, how can one guarantee code does what
 it needs to?
-
-%\section{Symbolic execution and analysis}
 
 Symbolic analysis tools are becoming an increasingly promising choice as
 research and development into a plethora of projects continue (some of which
@@ -20,8 +12,6 @@ are discussed in \autoref{sec:background:sl-and-tools}). The benefit of using
 symbolic methods over ones dependent on concrete execution (i.e.\ unit tests) is
 that they cover all possible states of execution without needing to specify each
 scenario by hand.
-
-%\section{Gillian}
 
 Enter
 Gillian~\cite{gillian-santos,gillian-part1,gillian-part2,gillian-techrep}.
@@ -53,20 +43,15 @@ analysis:
   to a specified bound.
 \end{itemize}
 
-
-%\section{Debugging}
-%\label{sec:intro:debugging}
-
 Whilst symbolic analysis tools have clear benefits when proving program
 correctness, the adoption of symbolic methods in industry remains limited; a
 strong factor to this end is the lack of IDE support for
 developers~\cite{magpiebridge}.
-%
-In addition, in the specific case of Gillian, upon failure of any of its analyses, 
-a user has to sift through a multi-megabyte log file to
-find the offending piece of GIL code; deducing both the cause of the error and
-the location of the problems in the original TL code would take an
-unreasonable amount of work and understanding~\cite{gillian-debugging-2021}.
+In addition, in the specific case of Gillian, upon failure of any analyses, a
+user has to sift through a multi-megabyte log file to find the offending piece
+of GIL code; deducing both the cause of the error and the location of the
+problems in the original TL code would take an unreasonable amount of work and
+understanding~\cite{gillian-debugging-2021}.
 
 To assuage these issues, significant work has gone into developing a debugger
 for Gillian's verification process, as well as improving its error reporting.
@@ -80,7 +65,7 @@ limitations, producing a debugger that can successfully step over, into and out
 of (GIL, WISL, or JavaScript) code. An unfortunate consequence of this decision
 is that a number of much desired features could not be provided, such as `the
 ability to choose which branch to go down on a conditional statement' and
-`better visualisations of the current execution tree'
+`better visualizations of the current execution tree'
 ~\cite[p.~49]{gillian-debugging-2021}.
 
 The decision to use the DAP instead of a custom solution was made, quite
