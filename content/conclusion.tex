@@ -4,11 +4,13 @@
 
 This project serves as a monumental leap forward in Gillian's debugging
 capabilities, and as a result, its overall usability to the those in the field
-of separation logic \sacha{I don't know where exactly, but you can mention that your tool can be used to explain how CSE (compositional symbolic execution) works in our future papers}. Various technical decisions underpinning Gillian's
-implementation have been called into question and reimagined, such as the
-logging structure and the mechanisms of the symbolic execution interpreter, and
-VSCode's extensible capabilities have been incorporated to unlock Gillian's
-potential.
+of separation logic; in fact, existing users of Gillian have stated their
+intentions to use the new UI as a means of explaining how CSE (compositional
+symbolic execution) works when authoring papers in the future. Various technical
+decisions underpinning Gillian's implementation have been called into question
+and reimagined, such as the logging structure and the mechanisms of the symbolic
+execution interpreter, and VSCode's extensible capabilities have been
+incorporated to unlock Gillian's potential.
 
 There is some difficulty in describing this project's merit, stemming somewhat
 from its novelty, being the crescendo of many years of work to make automatic
@@ -36,17 +38,17 @@ You can defend that the debugging information is already fed back into execution
 \sacha{you can also mention heap visualisation as future work.}
 
 \myparagraph{A more ambitious tool.}
-The Gillian debugger has already proven to be an great tool to visualise and
-understand events occuring during symbolic execution. We want to keep improving
-it, and have a myriad of ideas. First of all we plan on overcoming some of the
-limiations described in \autoref{sec:eval:limitations}, in the various ways
-described in that section. We also want to push the limits
-of what can be visualised by adding navigable heap diagrams with abstractions
-(i.e. recursive predicates). Finally, we showed in
-\autoref{sec:navigating-symex} that user interaction could be fed back into
-the symbolic execution engine through the debugger; we want to explore this
-path, making the execution more interactive and letting user leverage the
-debugger to add tactics and annotations on the fly.
+The Gillian debugger has already proven to be a great tool to visualize and
+understand events occurring during symbolic execution. Regardless, there is
+still much potential to be unlocked through a myriad of ideas.
+The first point of order is to overcome a number of limitations described in
+\autoref{sec:eval:limitations}. Additional work can be done to push the limits
+of what can be visualized, by adding navigable heap diagrams with abstractions
+(i.e.\ recursive predicates). Finally, \autoref{sec:navigating-symex} shows that
+user interaction could be fed back into the symbolic execution engine through
+the debugger; this possibility warrants exploration, in order to make execution
+more interactive and allow the user to leverage the debugger to add tactics and
+annotations on the fly.
 
 \myparagraph{Education.}
 Looking forwards, work has already been planned to add what little more is
@@ -80,10 +82,11 @@ scope from being masters' theses~\cite{sdap-arxiv, sdap-aurecchia}, \sacha{caref
 only achieve support for debugging a single symbolic tool in a single
 IDE~\cite{sdap-colombo, sdap-kps} \sacha{that colombo report has some sexy diagrams!} (which, in fairness, has been the end result
 of this project as well).
-The closest to an existing solution is MagpieBridge (as introduced in
-\autoref{sec:background:magpiebridge}), though that project is largely concerned
-with static analysis, instead of stepping through a symbolic execution --- more
-along the lines of a language server than a debugging one \sacha{magpie bridge is def not debugging. It's exactly a bridge between Java static analysis tools and the LSP (so in other words it's a useless middleman)}.
+There is only one fully-realised `platform-agnostic' (though the API is
+Java-based) tool aimed at improving the user experience of static analysis tools
+--- MagpieBridge, as introduced in \autoref{sec:background:magpiebridge},
+However, this only serves to extend the Language Server Protocol rather than
+have any debugging functionality (or any interactivity whatsoever).
 The appropriateness of the graphical interface developed in this project must
 also be considered, as it may be worth including its functionality in the
 specification for an SDAP standard.
