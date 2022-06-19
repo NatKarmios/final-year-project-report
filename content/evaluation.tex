@@ -15,7 +15,7 @@ Compared to the original debugging method --- manually reading the log file
 resulting from verification --- the advantages of the visual debugger are
 obvious. Not only does the file log require a deep understanding of Gillian's
 internals, but it contains a vast amount of detail, often obfuscating the
-information relevant to the encountered error.
+information relevant to the encountered error. \sacha{It's a bit more than that. There's also the fact that reading text that describes a process is always less easy than reading a diagram that describes the same process. It's also, quite importantly, about how to navigate the log data.}
 Even in the simple case of the recursive list length function, which was used as
 a baseline throughout the project, a total of 9328 lines of logging output is
 generated during verification. As a more precise comparison, about 1500 of those
@@ -102,9 +102,10 @@ VeriFast is a completely isolated tool, its graphical interface needing to be
 run separately from any other software used for development. Now, armed with the
 new debugging functionality, developers have a real possibility of using Gillian
 as part of their development pipeline; the ability to debug Gillian verification
-directly inside what is, by far, the most popular editor in the world is a
+directly inside \sacha{use the name of VSCode here: "... inside VSCode - hiwch is by far the most popular editor in the world - is a ..." or something similar} what is, by far, the most popular editor in the world is a
 previously unmatched level of accessibility for a tool of this purpose.
 
+\sacha{You probably need concrete examples of debugging programs with bugs. And also, a concrete example of a BIG program (i.e. amazon-c string bug for example, non-lifted)}
 
 \section{Limitations}%
 \label{sec:eval:limitations}
@@ -119,6 +120,8 @@ present, including:
   \item More efficient database logging
   \item A query language for the execution and unification trees
 \end{itemize}
+
+\sacha{If only these were the sole limitations. There's also the understanding of *why* an error is happening, for which there is no definitive answer, but the debugger could be improved with some heuristics. More immediately, there's also performance issues: logging is SLOW. That could be improved by targetting dynamic enabling of the logging or something, to only activate logging when required. }
 
 However, all of these features are either relatively trivial to implement and
 only missing due to time constraints, or more experimental features that require

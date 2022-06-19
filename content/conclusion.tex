@@ -4,7 +4,7 @@
 
 This project serves as a monumental leap forward in Gillian's debugging
 capabilities, and as a result, its overall usability to the those in the field
-of separation logic. Various technical decisions underpinning Gillian's
+of separation logic \sacha{I don't know where exactly, but you can mention that your tool can be used to explain how CSE (compositional symbolic execution) works in our future papers}. Various technical decisions underpinning Gillian's
 implementation have been called into question and reimagined, such as the
 logging structure and the mechanisms of the symbolic execution interpreter, and
 VSCode's extensible capabilities have been incorporated to unlock Gillian's
@@ -26,6 +26,14 @@ work completed to be particularly groundbreaking.
 The work completed opens a number of avenues for further research and
 development, some of which are already being considered.
 
+\sacha{
+  What about saying that the debugger could be used to interactively write the tactics?
+I.e: oh this is failing? It's clearly because *this* needs to be unfolded.
+No worry, in the debugger you can clic that button to hot-fix the code, and you don't have to re-run the whole thing, just continue execution.
+You can defend that the debugging information is already fed back into execution, according to 4.2.2, so it seems like a natural path.}
+
+
+\sacha{you can also mention heap visualisation as future work.}
 \myparagraph{Education.}
 Looking forwards, work has already been planned to add what little more is
 needed for Gillian to be used for educational purposes, i.e. Prof.\ Gardner's
@@ -45,7 +53,7 @@ analysis --- requiring developer knowledge of separation logic --- has not yet
 been explored. Exploration of real-world Gillian usage would make the most sense
 in more security-conscious contexts; this was a large motivating factor in
 Gillian's application to a section of Amazon's AWS encryption SDK.\ Where it
-stands now, Gillian could easily be the first to test these waters.
+stands now, Gillian could easily be the first to test these waters. \sacha{It would not be the first, but it could be "a better" way}
 
 \myparagraph{A Symbolic DAP.}
 After some consideration, it was realized that the usefulness of the extensions
@@ -54,14 +62,14 @@ be some possibility for the formalization of a \textit{Symbolic} Debug Adapter
 Protocol, or SDAP.\@ In fact, initial research found that this is not the first
 time such a thing has been considered, though an attempt at formalizing this
 concept has yet to be attempted. Some publications to this end are limited in
-scope from being masters' theses~\cite{sdap-arxiv, sdap-aurecchia}, while others
+scope from being masters' theses~\cite{sdap-arxiv, sdap-aurecchia}, \sacha{careful about sdap-arxiv: deductive verification is not symbolic execution.} while others
 only achieve support for debugging a single symbolic tool in a single
-IDE~\cite{sdap-colombo, sdap-kps} (which, in fairness, has been the end result
+IDE~\cite{sdap-colombo, sdap-kps} \sacha{that colombo report has some sexy diagrams!} (which, in fairness, has been the end result
 of this project as well).
 The closest to an existing solution is MagpieBridge (as introduced in
 \autoref{sec:background:magpiebridge}), though that project is largely concerned
 with static analysis, instead of stepping through a symbolic execution --- more
-along the lines of a language server than a debugging one.
+along the lines of a language server than a debugging one \sacha{magpie bridge is def not debugging. It's exactly a bridge between Java static analysis tools and the LSP (so in other words it's a useless middleman)}.
 The appropriateness of the graphical interface developed in this project must
 also be considered, as it may be worth including its functionality in the
 specification for an SDAP standard.
