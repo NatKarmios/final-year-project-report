@@ -15,5 +15,6 @@
         ],
         "env": {}
     },
-  ]
+  ],
+  "ltex.language": "en-GB"
 }
