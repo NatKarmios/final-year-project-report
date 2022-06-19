@@ -34,6 +34,23 @@ You can defend that the debugging information is already fed back into execution
 
 
 \sacha{you can also mention heap visualisation as future work.}
+
+\myparagraph{A more ambitious tool.}
+The Gillian debugger has already proven to be an great tool to visualise and
+understand events occuring during symbolic execution. We want to keep improving
+it, and have a myriad of ideas. First of all we plan on overcoming some of the
+limiations described in \autoref{sec:eval:limitations}, as most of them are due
+to a lack of time: there are straightforward ways of improving the support for 
+target language lifting by adding annotations to the GIL AST, as well as
+straightforward ways of making the database logging more efficient, by
+sprinkling some basic paralellism over Gillian. We also want to push the limits
+of what can be visualised by adding navigable heap diagrams with abstractions
+(i.e. recursive predicates). Finally, we showed in
+\autoref{sec:navigating-symex} that user interaction could be fed back into
+the symbolic execution engine through the debugger; we want to explore this
+path, making the execution more interactive and letting user leverage the
+debugger to add tactics and annotations on the fly.
+
 \myparagraph{Education.}
 Looking forwards, work has already been planned to add what little more is
 needed for Gillian to be used for educational purposes, i.e. Prof.\ Gardner's
