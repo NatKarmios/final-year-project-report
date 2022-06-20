@@ -6,9 +6,67 @@
 There is some difficulty in describing this project's merit, stemming somewhat
 from its novelty, with it being the crescendo of several years of MEng/MSc
 projects with the goal of making semi-automatic program verification accessible
-to any who understand separation logic, not just the authors of Gillian. The
-technical hurdles faced during the actual implementation were not particularly
-profound (though are noteworthy nonetheless)\todo{What challenges?}, as the main challenge of this
+to any who understand separation logic, not just the authors of Gillian. There
+were a number of interesting technical hurdles overcome in this project,
+including but not limited to:
+
+\myparagraph{Full realisation of the planned log structure while leaving the
+  file log untouched.}
+To summarise the challenges presented in \autoref{sec:log-structure}, Gillian
+required substantial additions to the amount of logging code, without having
+any effect on the logged file. Implementing this ad-hoc would not have posed
+much challenge, but it would have involved numerous special cases and
+duplicate logging code; the challenge came from taking care to coalesce
+instances of logger calls that would affect both the file and database log.
+
+\myparagraph{Facilitating communication between the debugger and the UI.}
+An immediate consideration when beginning work on the VSCode extension and
+subsequent webview is the consistent handling of communication from the debugger
+to the webview, with the extension as the middleman. The source of challenge
+here was the difference in environments between the two; the debugger is written
+in OCaml, the extension and webview are TypeScript based. The devised solution
+for the span of this project was to maintain a file of type definitions for the
+TypeScript side of things, \texttt{types.ts} (\autoref{lst:types-ts}), which is
+shared by the webview and the extension. These types are a recreation of how the
+automatically generated \texttt{to\_yojson} function for each type structure
+their respective outputs, and have some quirks (particularly the frequent use
+of arrays to represent tuple). While the types themselves look somewhat
+unorthodox, they end up playing very nicely with TypeScript's static type
+checking (albeit requiring somewhat verbose logic to pick apart), making working
+with said types relatively painless. A more sophisticated and maintainable
+solution (but one that there was insufficient time to implement) is to leverage
+ReasonML's~\cite{reason-ml} interoperability with both OCaml and TypeScript to
+automatically keep the types on both sides of the language barrier synchronised.
+Going in this direction may even open the door to implementing parts of the
+otherwise cumbersome logic of the webview in Reason.
+
+\myparagraph{Creating a responsive interface, visually consistent with VSCode
+  without compromising functionality.}
+As described in \autoref{sec:debug-interface}, the VSCode UI
+toolkit~\cite{vscode-ui-toolkit} provided a basis for creating responsive
+webviews with the same look and feel as the native editor UI
+(\autoref{fig:vscode-ui-toolkit-demo}). However, these components were far from
+sufficient to display the kind of rich interface desired when debugging Gillian
+verification. To this end, the React Flow library~\cite{react-flow} was used
+to create the execution and unification maps demonstrated in
+\autoref{sec:improvements}. Unfortunately, the default visual style of React
+Flow~\autoref{fig:react-flow-default} is a far cry from VSCode's, and access
+to the styling aspects of the library was limited or absent, especially for the
+control buttons at the bottom-left of the viewport. Fortunately, through careful
+inspection of the CSS class names employed by React Flow and liberal use of the
+CSS variables provided by VSCode~\cite{vscode-theme}, the current VSCode theme
+can be applied (dynamically!) to even the internal components of React Flow.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/react-flow-default.png}
+  \caption{
+    The default visual style of React Flow~\cite{react-flow}
+  }\label{fig:react-flow-default}
+\end{figure}
+
+These challenges were not particularly profound in the context of an MEng final
+project (though are noteworthy nonetheless), as the main challenge of this
 project resided in both the broad and deep prerequisite understanding required
 to marry the intricacies of Gillian with the practical aspects of the DAP,
 VSCode's extension API, and modern web development---all within the limited time
