@@ -5,13 +5,18 @@
 
 \todo{PM: Need to figure out where this para goes.}
 There is some difficulty in describing this project's merit, stemming somewhat
-from its novelty, with it being the crescendo of several years of MEng/MSc projects with the goal of making semi-automatic program verification accessible to any who understand separation logic, not just
-the authors of Gillian. The technical hurdles faced during the actual implementation
-were not particularly profound (though are noteworthy nonetheless), as the main
-challenge of this project resided in both the broad and deep prerequisite
-understanding required to marry the intricacies of Gillian with the practical
-aspects of the DAP, VSCode's extension API, and modern web development---all
-within the limited time span of an MEng final project. What should be noted is that there are few competing projects in this space; those that do exist either have significantly different goals (Infer), or exist only in a prototype stage (VeriFast). This leads us to believe that this work could be potentially ground-breaking.
+from its novelty, with it being the crescendo of several years of MEng/MSc
+projects with the goal of making semi-automatic program verification accessible
+to any who understand separation logic, not just the authors of Gillian. The
+technical hurdles faced during the actual implementation were not particularly
+profound (though are noteworthy nonetheless), as the main challenge of this
+project resided in both the broad and deep prerequisite understanding required
+to marry the intricacies of Gillian with the practical aspects of the DAP,
+VSCode's extension API, and modern web development---all within the limited time
+span of an MEng final project. What should be noted is that there are few
+competing projects in this space; those that do exist either have significantly
+different goals (Infer), or exist only in a prototype stage (VeriFast). This
+leads us to believe that this work could be potentially ground-breaking.
 
 Due to the scarcity of similar tools, points of strong comparison for Gillian's
 new debugger are few and far between. The best options to evaluate this project
@@ -20,39 +25,48 @@ prior to any debugging work being done at all, as this project comes after
 multiple years of work to this end), and to VeriFast, Gillian's closest
 contemporary.
 
-\section{Comparison: Previous Gillian Debugging Methods}
+\section{Comparison with Previous Gillian Debugging Methods}
 
-When compared to the previous debugging method---manually reading the (textual) log file
-resulting from verification---the advantages of having a working visual debugger are evident. Not only does the log file require a deep understanding of Gillian's
-internals, but it contains a vast amount of detail, often obfuscating the
-information relevant to the encountered error. Moreover, the navigation from one point of interest to the next is highly non-trivial. 
-Even in the simple case of the recursive list length function, which was used as
-a baseline throughout the project, a total of 9328 lines of logging output is
-generated during verification. As a more precise comparison, about 1500 of those
-lines concern unification of the postconditions, with a high degree of
-redundancy and verbosity. This contrasts with what is essentially a few lines of
-text in the debugger interface, with more detail available as and when the user
-requires. Compared to the clear, clean, and concise interface of the new
-solution, a far more ideal debugging process has been presented---even those
-with a deep understanding of Gillian, who are well acclimated to debugging via
-the file log, intend to use this as their primary method of debugging moving
-forwards.
+When compared to the previous debugging method---manually reading the (textual)
+log file resulting from verification---the advantages of having a working visual
+debugger are evident. Not only does the log file require a deep understanding of
+Gillian's internals, but it contains a vast amount of detail, often obfuscating
+the information relevant to the encountered error. Moreover, the navigation from
+one point of interest to the next is highly non-trivial. Even in the simple case
+of the recursive list length function, which was used as a baseline throughout
+the project, a total of 9328 lines of logging output is generated during
+verification. As a more precise comparison, about 1500 of those lines concern
+unification of the postconditions, with a high degree of redundancy and
+verbosity. This contrasts with what is essentially a few lines of text in the
+debugger interface, with more detail available as and when the user requires.
+Compared to the clear, clean, and concise interface of the new solution, a far
+more ideal debugging process has been presented---even those with a deep
+understanding of Gillian, who are well acclimated to debugging via the file log,
+intend to use this as their primary method of debugging moving forwards.
 
 \todo{Add a specific example --- reference background?}
 
-The new debugger also brings substantial improvement when compared to the previous iterations: aside from not having any unification information whatsoever, their use required of the user to understand the quirks of the solution, such as branches being executed one after the other with no means of discerning between then. 
-The iterations of the debugger were very much a case of attempting to move Gillian a step closer to debugging in whatever manner was available, rather than setting out a clear vision of what prospective users would desire from a program verification debugger, and working to meet that goal.
+The new debugger also brings substantial improvement when compared to the
+previous iterations: aside from not having any unification information
+whatsoever, their use required of the user to understand the quirks of the
+solution, such as branches being executed one after the other with no means of
+discerning between them. The iterations of the debugger were very much a case of
+attempting to move Gillian a step closer to debugging in whatever manner was
+available, rather than setting out a clear vision of what prospective users
+would desire from a program verification debugger, and working to meet that
+goal.
 
-\section{Vs. VeriFast}
+\section{Comparison with VeriFast}
 
 VeriFast has a fundamentally different approach to the debugging process;
 instead of reporting the results of symbolic execution step by step, the whole
 verification is performed all at once, only showing details in the event of an
 error (or a breakpoint being reached). There is no concept of exploring the
 different execution paths of the program, severely limiting its ability to be
-used as a tool for deepening one's understanding of the underlying reasoning. Multiple
-branches of execution are not presented to the user, only showing the single
-path taken to reach the error or breakpoint. This textual format is far more rigid than the Gillian debugger's explorable execution map given in
+used as a tool for deepening one's understanding of the underlying reasoning.
+Multiple branches of execution are not presented to the user, only showing the
+single path taken to reach the error or breakpoint. This textual format is far
+more rigid than the Gillian debugger's explorable execution map given in
 \autoref{fig:verifast-path-compare}; not only is the latter more feature-rich,
 but it also provides a complete overview of the program execution.
 
@@ -71,15 +85,16 @@ but it also provides a complete overview of the program execution.
     %\caption{The Gillian debugger's execution map}%
     %\label{fig:execmap-final}
   \end{subfigure}
-  \caption{Execution Path/Branching Information: VeriFast (left); (b) the Gillian
-  debugger (right)}%
+  \caption{Execution Path/Branching Information: \textbf{(a)} VeriFast (left); 
+  \textbf{(b)} the Gillian debugger (right)}%
   \label{fig:verifast-path-compare}
 \end{figure}
 
 VeriFast also gives no insight into the unification process; the only
 information provided is an error message should unification fail. The Gillian
 debugger gives more information to this end by showing all assertions from
-a unification, up to and including the failing one, as shown in \autoref{fig:verifast-path-compare}.
+a unification, up to and including the failing one, as shown in
+\autoref{fig:verifast-path-compare}.
 
 \begin{figure}
   \centering
@@ -96,7 +111,8 @@ a unification, up to and including the failing one, as shown in \autoref{fig:ver
     %\caption{A failing unification map given by the Gillian debugger}%
     %\label{fig:unifymap-failure}
   \end{subfigure}
-  \caption{Failing Unification Information: Verifast (left); (b) Gillian debugger (right)}%
+  \caption{Failing Unification Information: \textbf{(a)} VeriFast (left);
+  \textbf{(b)} Gillian debugger (right)}%
   \label{fig:verifast-unifyfail-compare}
 \end{figure}
 
@@ -105,17 +121,17 @@ VeriFast is a completely isolated tool, its graphical interface needing to be
 run separately from any other software used for development. Now, armed with the
 new debugging functionality, developers have a real possibility of using Gillian
 as part of their development pipeline; the ability to debug Gillian verification
-directly inside VSCode (by far the most popular editor in the world) is, we believe, a
-previously unmatched level of accessibility for a tool of this purpose.
+directly inside VSCode (by far the most popular editor in the world) is, we
+believe, a previously unmatched level of accessibility for a tool of this
+purpose.
 
-\sacha{You probably need concrete examples of debugging programs with bugs. And also, a concrete example of a BIG program (i.e. amazon-c string bug for example, non-lifted)}
 
 \section{Limitations}%
 \label{sec:eval:limitations}
 
-Although this project has made substantial progress towards making Gillian a more
-user-friendly and mainstream tool, there are still several limitations that need to be
-addressed.
+Although this project has made substantial progress towards making Gillian a
+more user-friendly and mainstream tool, there are still several limitations that
+need to be addressed.
 
 \myparagraph{Incomplete target language lifting.}
 As discovered in \autoref{sec:debug-interface}, the mechanism to lift the
@@ -125,10 +141,10 @@ into a single target language command, preventing full support for lifting
 execution maps to represent the target language.
 Thankfully, these issues are very low-hanging fruit. However, the challenges
 involved in supporting lifting for more of the verification process could
-constitute another entire Masters project on their own, such as lifting the symbolic
-state, and various kinds of errors, to a point where no knowledge of GIL would
-be required to debug the verification of a program written in a supported target
-language (for example, JavaScript).
+constitute another entire Masters project on their own, such as lifting the
+symbolic state, and various kinds of errors, to a point where no knowledge of
+GIL would be required to debug the verification of a program written in a
+supported target language (for example, JavaScript).
 
 \myparagraph{Lack of annotations on the GIL AST.}
 The current debugger highlights which part of the code is being symbolically
@@ -179,5 +195,5 @@ perspective of user experience, this project has elevated Gillian from a
 prototype research tool to one that that proves useful in pursuing new research
 in program analysis, and even more importantly, a tool that can be used for
 educational purposes---to help those having their first experience of
-program analysis, separation logic, and symbolic execution form a deeper understanding by automatically applying its
-principles to actual programs.
+program analysis, separation logic, and symbolic execution form a deeper
+understanding by automatically applying its principles to actual programs.

@@ -2,15 +2,16 @@
 
 \chapter{Conclusion and Next Steps}\label{sec:conclusion}
 
-We believe that this project constitutes a solid leap forward in Gillian's debugging
-capabilities, and as a result, its overall usability to the those in the field
-of separation logic and symbolic execution; in fact, existing users of Gillian have stated their
-intentions to use the new UI as a means of explaining how the underlying CSE (compositional
-symbolic execution) works when authoring papers in the future. Various technical
-decisions underpinning Gillian's implementation have been called into question
-and reimagined, such as the logging structure and the mechanisms of the symbolic
-execution interpreter, and VSCode's extensible capabilities have been
-incorporated to unlock Gillian's potential.
+We believe that this project constitutes a solid leap forward in Gillian's
+debugging capabilities, and as a result, its overall usability to the those in
+the field of separation logic and symbolic execution; in fact, existing users of
+Gillian have stated their intentions to use the new UI as a means of explaining
+how the underlying CSE (compositional symbolic execution) works when authoring
+papers in the future. Various technical decisions underpinning Gillian's
+implementation have been called into question and reimagined, such as the
+logging structure and the mechanisms of the symbolic execution interpreter, and
+VSCode's extensible capabilities have been incorporated to unlock Gillian's
+potential.
 
 The work completed opens a number of avenues for further research and
 development, some of which are already being considered.
@@ -39,12 +40,15 @@ annotations on the fly.
 
 \myparagraph{Education.}
 Looking forwards, work has already been planned to add what little more is
-needed for Gillian to be used for educational purposes, i.e. in the Scalable Software Verification course at Imperial, particularly for coursework use; the ability to step though each command of a symbolic execution could strengthen the students'
-understanding of separation logic and symbolic execution. This will not only serve as proof of
-Gillian's usefulness, but also create a strong feedback loop, as Gillian
-will be opened to the student body---a more diverse group than the
-collection of researchers that make up the Verified Software group---leading
-to a more rapid and better motivated development in Gillian's future.
+needed for Gillian to be used for educational purposes, i.e.\ in the Scalable
+Software Verification course at Imperial, particularly for coursework use; the
+ability to step though each command of a symbolic execution could strengthen the
+students' understanding of separation logic and symbolic execution. This will
+not only serve as proof of Gillian's usefulness, but also create a strong
+feedback loop, as Gillian will be opened to the student body---a more diverse
+group than the collection of researchers that make up the Verified Software
+group---leading to a more rapid and better motivated development in Gillian's
+future.
 
 \myparagraph{Real-world development.}
 The advancements made to the debugger in this project bring Gillian closer
@@ -63,9 +67,9 @@ be some possibility for the formalisation of a \textit{Symbolic} Debug Adapter
 Protocol, or SDAP. In fact, initial research found that this is not the first
 time such a thing has been considered, though an attempt at formalizing this
 concept has yet to be attempted. Some publications to this end are limited in
-scope from being masters' theses~\cite{sdap-arxiv, sdap-aurecchia}, \sacha{careful about sdap-arxiv: deductive verification is not symbolic execution.} while others
-only achieve support for debugging a single symbolic tool in a single
-IDE~\cite{sdap-colombo, sdap-kps} \sacha{that colombo report has some sexy diagrams!} (which, in fairness, has been the end result
+scope from being masters' theses~\cite{sdap-aurecchia}, while others only
+achieve support for debugging a single symbolic tool in a single
+IDE~\cite{sdap-colombo, sdap-kps} (which, in fairness, has been the end result
 of this project as well).
 There is only one fully-realised `platform-agnostic' tool (though the API is
 Java-based) aimed at improving the user experience of static analysis tools---MagpieBridge, as introduced in \autoref{sec:background:magpiebridge},
