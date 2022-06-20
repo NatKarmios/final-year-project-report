@@ -48,18 +48,15 @@
 \input{title/title.tex}
 
 \begin{abstract}
-This project improves upon previous work to provide debugging functionality to
+This project improves upon previous work to provide complex debugging functionality to
 Gillian, a multi-language real-world program analysis platform built by the
-Verified Software group at Imperial College London, parametric on the memory
-model of a target language.
-The existing solution is restricted to linear, step-by-step execution by its
-adherence to the Debug Adapter Protocol, but by reconfiguring Gillian's log
+Verified Software group at Imperial College London, which is parametric on the memory
+model of the target language.
+The previous solution was restricted to linear, step-by-step execution by its
+adherence to the Debug Adapter Protocol. This project, by reconfiguring Gillian's log
 trace structure, implementing branched execution, extending the DAP, and
-implementing a custom UI via webview, a rich debugging interface for debugging
-Gillian program verification has been implemented.
-This interface, created for Visual Studio Code, allows debugging symbolic
-execution down specific execution paths at the user's command, as well as
-providing detail about the unification process.
+implementing a custom UI via webview, has resulted in the creation of a rich debugging interface for debugging Gillian program verification.
+This interface, created for Visual Studio Code, enables customised debugging of symbolic execution traces, providing, for example, the ability to isolate and switch between various execution branches, as well as to step through and inspect Gillian's unification process, which is essential for debugging specifications in verification. This has greatly improved the overall usability of Gillian, bringing it closer to real-world users, such as Imperial College students and general developers.
 \end{abstract}
 
 \renewcommand{\abstractname}{Acknowledgements}
