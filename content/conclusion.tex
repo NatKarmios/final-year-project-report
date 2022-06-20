@@ -16,15 +16,6 @@ potential.
 The work completed opens a number of avenues for further research and
 development, some of which are already being considered.
 
-\sacha{
-  What about saying that the debugger could be used to interactively write the tactics?
-I.e: oh this is failing? It's clearly because *this* needs to be unfolded.
-No worry, in the debugger you can clic that button to hot-fix the code, and you don't have to re-run the whole thing, just continue execution.
-You can defend that the debugging information is already fed back into execution, according to 4.2.2, so it seems like a natural path.}
-
-
-\sacha{you can also mention heap visualisation as future work.}
-
 \myparagraph{A more ambitious tool.}
 The Gillian debugger has already proven to be a great tool to visualise and
 understand events occurring during symbolic execution. Regardless, there is
@@ -36,7 +27,7 @@ of what can be visualised, by adding navigable heap diagrams with abstractions
 user interaction could be fed back into the symbolic execution engine through
 the debugger; this possibility warrants exploration, in order to make execution
 more interactive and allow the user to leverage the debugger to add tactics and
-annotations on the fly.
+annotations, automatically hot-fixing code on the fly. 
 
 \myparagraph{Education.}
 Looking forwards, work has already been planned to add what little more is
@@ -58,7 +49,8 @@ analysis---requiring developer knowledge of separation logic---has not yet
 been explored. Exploration of real-world Gillian usage would make the most sense
 in more security-conscious contexts; this was a large motivating factor in
 Gillian's application to a section of Amazon's AWS encryption SDK.\ Where it
-stands now, it is not infeasible for Gillian to bring further impact in this context. %\sacha{It would not be the first, but it could be "a better" way}
+stands now, it is not infeasible for Gillian to bring further impact in this
+context.
 
 \myparagraph{A Symbolic DAP.}
 After some consideration, it was realised that the usefulness of the extensions
@@ -72,9 +64,10 @@ achieve support for debugging a single symbolic tool in a single
 IDE~\cite{sdap-colombo, sdap-kps} (which, in fairness, has been the end result
 of this project as well).
 There is only one fully-realised `platform-agnostic' tool (though the API is
-Java-based) aimed at improving the user experience of static analysis tools---MagpieBridge, as introduced in \autoref{sec:background:magpiebridge},
-However, this only serves to extend the Language Server Protocol rather than
-have any debugging functionality or any interactivity whatsoever.
-The appropriateness of the graphical interface developed in this project must
-also be considered, as it may be worth including its functionality in the
-specification for an SDAP standard.
+Java-based) aimed at improving the user experience of static analysis tools---%
+MagpieBridge, as introduced in \autoref{sec:background:magpiebridge}, However,
+this only serves to extend the Language Server Protocol rather than have any
+debugging functionality or any interactivity whatsoever. The appropriateness of
+the graphical interface developed in this project must also be considered, as it
+may be worth including its functionality in the specification for an SDAP
+standard.

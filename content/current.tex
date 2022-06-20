@@ -10,8 +10,6 @@ are outlined here.
 
 \section{Symbolic Execution with Unification}\label{sec:current:symex}
 
-\todo{Describe symbolic execution in more detail?}
-
 While symbolic execution is an essential component of program verification, it
 alone is not sufficient for applying separation logic when reasoning about a
 program. The `gotcha' step that bridges symbolic execution to separation logic
@@ -75,7 +73,7 @@ unification plan consists of:
 \end{itemize}
 The first two assertions are readily available in the predicate state, however
 the final assertion has no direct match; the only instance of the \texttt{list}
-predicate in our state is for the tail of the given list. Therefore, since
+predicate in the state is for the tail of the given list. Therefore, since
 Gillian is attempting to unify a predicate assertion, it attempts a fold.
 Here, two different unifications are considered; one for the \texttt{list}
 predicate's empty case, and one for its non-empty case. The empty case
