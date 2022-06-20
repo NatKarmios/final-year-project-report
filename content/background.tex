@@ -80,10 +80,9 @@ also using an intermediate representation to do so.
 how VeriFast handles a small Java program that deliberately dereferences a null
 pointer.
 
-\begin{listing}[H]
-  \noindent\rule{\textwidth}{0.5pt}
-  \vspace{-0.6cm}
-  \begin{minted}{java}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{java}
 class VerifastTest {
     int nullDeref()
         //@ requires true;
@@ -93,28 +92,27 @@ class VerifastTest {
         return str.length();
     }
 }
-  \end{minted}
-  \vspace{-0.4cm}
-  \noindent\rule{\textwidth}{0.5pt}
-  \vspace{-0.6cm}
-  \caption{\texttt{VerifastTest.java}}
-  \label{fig:verifast-example}
-\end{listing}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{\texttt{VerifastTest.java}}~
+\label{fig:verifast-example}
+\vspace{0.5cm}
 
-\begin{listing}[H]
-  \noindent\rule{\textwidth}{0.5pt}
-  \vspace{-0.6cm}
-  \begin{minted}{text}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{text}
 > verifast ./VerifastTest.java
 ./VerifastTest.java
 ./VerifastTest.java(7,20-26): Target of method call might be null.
-  \end{minted}
-  \vspace{-0.4cm}
-  \noindent\rule{\textwidth}{0.5pt}
-  \vspace{-0.6cm}
-  \caption{Output from analysing \texttt{VerifastTest.java}}
-  \label{fig:verifast-example-output}
-\end{listing}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{Output from analysing \texttt{VerifastTest.java}}~
+\label{fig:verifast-example-output}
+\vspace{0.5cm}
 
 In industry, probably the most prominent use of a tool built on separation logic
 is Facebook's \textbf{Infer}~\cite{infer, infer-site}; it's a static analysis
@@ -137,10 +135,9 @@ file in CSV, whilst directly outputting the most severe.
 \autoref{fig:infer-example} and \autoref{fig:infer-example-output} show a short
 example of running Infer on a similar function to what was tested with VeriFast.
 
-\begin{listing}[H]
-  \noindent\rule{\textwidth}{0.5pt}
-  \vspace{-0.6cm}
-  \begin{minted}{java}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{java}
 class InferTest {
     // Deliberately call a method on a null pointer
     int nullDeref() {
@@ -148,18 +145,17 @@ class InferTest {
         return str.length();
     }
 }
-  \end{minted}
-  \vspace{-0.6cm}
-  \noindent\rule{\textwidth}{0.5pt}
-  \vspace{-0.6cm}
-  \caption{\texttt{InferTest.java}}
-  \label{fig:infer-example}
-\end{listing}
+\end{minted}
+\vspace{-0.6cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{\texttt{InferTest.java}}~
+\label{fig:infer-example}
+\vspace{0.5cm}
 
-\begin{listing}[H]
-  \noindent\rule{\textwidth}{0.5pt}
-  \vspace{-0.6cm}
-  \begin{minted}{text}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\begin{minted}{text}
 > infer -- javac ./InferTest.java
 Starting analysis (Infer v0.5.0)
 
@@ -173,13 +169,13 @@ InferTest.java:5: error: NULL_DEREFERENCE
   4.           String str = null;
   5. >         return str.length();
   6.       }
-  \end{minted}
-  \vspace{-0.4cm}
-  \noindent\rule{\textwidth}{0.5pt}
-  \vspace{-0.6cm}
-  \caption{Output from analysing \texttt{InferTest.java}}
-  \label{fig:infer-example-output}
-\end{listing}
+\end{minted}
+\vspace{-0.4cm}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{-0.6cm}
+\captionof{listing}{Output from analysing \texttt{InferTest.java}}~
+\label{fig:infer-example-output}
+\vspace{0.5cm}
 
 Both VeriFast and Infer produce clear and direct feedback about the null
 dereference error, providing line numbers (and even column numbers, in
@@ -272,7 +268,6 @@ current~state.
 
 The following C programs outline some nuances of working with symbolic values.
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{c}
@@ -289,8 +284,8 @@ int main(void) {
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Symbolic execution - basic example}
-\end{listing}
+\captionof{listing}{{Symbolic execution - basic example}}
+\vspace{0.5cm}
 
 When executing line \texttt{2}, the interpreter creates a symbolic integer $x$,
 and assigns it to the program variable \texttt{x}. At the \texttt{if} statement
@@ -300,7 +295,6 @@ whereas for the `false' branch, it is \texttt{$\lnot (x < 0)$}. The former will
 successfully execute, but the latter branch will fail due to the unsatisfiable
 assertion; this indicates that the code fails when $x$ is non-negative.
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{c}
@@ -317,8 +311,8 @@ int main(void) {
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Symbolic execution - non-executed branches}
-\end{listing}
+\captionof{listing}{{Symbolic execution - non-executed branches}}
+\vspace{0.5cm}
 
 If a branch constrains symbolic values to the point where no concrete values
 exist in its range (e.g.\ in this program, with $x$ being less than 0
@@ -331,7 +325,6 @@ conjunction with assume statements to prove correctness properties of code.
 Assume statements extend the path condition with a given constraint. Take, for
 example, the following program:
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{c}
@@ -347,8 +340,8 @@ int main(void) {
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Symbolic execution - assume and assert}
-\end{listing}
+\captionof{listing}{{Symbolic execution - assume and assert}}
+\vspace{0.5cm}
 
 This example shows how assert statements are most commonly used --- in tandem
 with assume statements, to prove properties of the code to be correct; the
@@ -356,7 +349,6 @@ constraints on symbolic variables can be extended manually using these assume
 statements. Here, the assertion that the sum of two positive numbers is also
 positive is made, which passes symbolic execution.
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{c}
@@ -370,8 +362,8 @@ int main(void) {
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Symbolic execution - termination when unsatisfiable}
-\end{listing}
+\captionof{listing}{{Symbolic execution - termination when unsatisfiable}}
+\vspace{0.5cm}
 
 Somewhat counter-intuitively, if execution is halted by the symbolic value
 constraints becoming unsatisfiable, the test passes; this captures a sense of
@@ -388,7 +380,6 @@ missed failure paths is small enough to make the performance gain worthwhile.
 Of course, the more interesting (or useful) cases are where the test fails;
 consider this example:
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{c}
@@ -413,14 +404,13 @@ int main(void) {
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Symbolic execution - assertion failure}
-\end{listing}
+\captionof{listing}{{Symbolic execution - assertion failure}}
+\vspace{0.5cm}
 
 This program can fail in the `true' branch of either if-statement; the only
 succeeding path occurs when both $x$ and $y$ are negative. This is the output
 given by Gillian:
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -437,8 +427,8 @@ Failing Model:
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Symbolic execution - assertion failure (Gillian output)}
-\end{listing}
+\captionof{listing}{{Symbolic execution - assertion failure (Gillian output)}}
+\vspace{0.5cm}
 
 The cause of verification failure is not particularly obvious. This output is
 trying to convey that it has found two failing paths, and has given a variable
@@ -455,7 +445,7 @@ developer could use improvement; even a simple program case such as this was
 not entirely obvious to understand, so attempting to apply this to a larger
 program would be cumbersome at best.
 
-\subsection{Full verification}
+\subsection{Full verification --- an example in debugging}
 
 Gillian's full verification is based upon principles of separation logic. When
 moving from simple program state to more complex ideas such as data structures,
@@ -487,7 +477,6 @@ of the scope of the predicate:
 To test Gillian's verification, consider this iterative list length function,
 written in WISL:\@
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -506,8 +495,8 @@ function llen_iter(x) {
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Verification example - list length in WISL}
-\end{listing}
+\captionof{listing}{{Verification example - list length in WISL}}
+\vspace{0.5cm}
 
 This is the standard iterative method of counting a linked list. The pre- and
 post-conditions state that, given a list at \texttt{x} with contents
@@ -516,7 +505,6 @@ returns the length of \texttt{\#alpha}.
 
 Note that the list / list segment predicates must be defined in order to be used:
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -535,7 +523,6 @@ predicate lseg(+x, +y, alpha) {
 \vspace{-0.6cm}
 \caption{List predicates in WISL}
 \label{lst:list-predicate}
-\end{listing}
 
 The following lemma must also be defined, stating that if a list segment
 terminates with $\nil$, then it is equivalent to a full list:
@@ -547,7 +534,6 @@ Note that Gillian allows the user to prove specified lemmas using a series of
 logical commands, making use of unfolding, folding, auxiliary assertions, and
 application of lemmas.
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -570,12 +556,11 @@ lemma lseg_to_list {
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{List lemma in WISL}
-\end{listing}
+\captionof{listing}{{List lemma in WISL}}
+\vspace{0.5cm}
 
 \ldots and Gillian approves:
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -584,15 +569,14 @@ Verifying lemma lseg_to_list... Success
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{List lemma in WISL - Gillian output}
-\end{listing}
+\captionof{listing}{{List lemma in WISL - Gillian output}}
+\vspace{0.5cm}
 
 A lemma to describe appending to a list segment is also required:
 \begin{align*}
     \lseg{\pvar{x}}{\pvar{y}}{\alpha} \lstar \twocell{\pvar{y}}{a}{\pvar{z}} \iff \lseg{\pvar{x}}{\pvar{z}}{(\alpha \dot [a])}
 \end{align*}
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -605,12 +589,11 @@ lemma lseg_append {
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{List segment lemma in WISL}
-\end{listing}
+\captionof{listing}{{List segment lemma in WISL}}
+\vspace{0.5cm}
 
 At last, the program is ready for verification. Upon first attempt, an error is
 produced:
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -620,8 +603,8 @@ wisl.exe: internal error, uncaught exception:
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Attempted verification - no loop invariant}
-\end{listing}
+\captionof{listing}{{Attempted verification - no loop invariant}}
+\vspace{0.5cm}
 
 When verifying, Gillian requires the user to provide a loop invariant in order
 to provide a full guarantee, as opposed to settling for unrolling. The correct
@@ -632,7 +615,6 @@ yet to be counted:
     \exists \alpha_1, \alpha_2 \ldotp (\alpha \doteq (\alpha_1 \dot \alpha_2)) \lstar \lseg{\pvar{x}}{\pvar{y}}{\alpha_1} \lstar (\pvar{n} \doteq | \alpha_1 |) \lstar \llist{\pvar{y}, \alpha_2}
 \end{align*}
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -647,11 +629,10 @@ yet to be counted:
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{WISL list length - loop invariant}
-\end{listing}
+\captionof{listing}{{WISL list length - loop invariant}}
+\vspace{0.5cm}
 
 Upon attempting verification again, Gillian presents this:
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -676,8 +657,8 @@ wisl.exe: internal error, uncaught exception:
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Verification: WISL list length error - precondition not met}
-\end{listing}
+\captionof{listing}{{Verification: WISL list length error - precondition not met}}
+\vspace{0.5cm}
 
 The error message provided is vague, referencing some imaginary function
 \texttt{llen\_iter\_loop0}, followed by a slew of logical variable information
@@ -686,7 +667,6 @@ Gillian internally compiles while loops to functions, and this unification
 failure indicates that the loop invariant could not be re-established. To
 understand why, the text file log must be investigated, at the last executed
 command:
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -733,8 +713,8 @@ PREDICATES:
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Loop invariant failure - Gillian log file}
-\end{listing}
+\captionof{listing}{{Loop invariant failure - Gillian log file}}
+\vspace{0.5cm}
 
 
 This shows that the last executed command was at the end of the loop's internal
@@ -745,7 +725,6 @@ Gillian is aware of a list containing $\alpha_1$, but inspecting the loop
 invariant shows no sign of a list segment containing $(\alpha_1 \dot [b])$. This
 is where the lemma \texttt{lseg\_append} comes into play, once inserted into
 the loop:
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -761,14 +740,13 @@ the loop:
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Applying \texttt{lseg\_append}}
-\end{listing}
+\captionof{listing}{{Applying \texttt{lseg\_append}}}
+\vspace{0.5cm}
 
 Notice the inclusion of an assertion; this is used to establish names for the
 logical variables to be use in the lemma application. With that in place,
 verification can be attempted again:
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -785,13 +763,12 @@ There were failures: 0.874831
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{WISL list length - list / list segment error}
-\end{listing}
+\captionof{listing}{{WISL list length - list / list segment error}}
+\vspace{0.5cm}
 
 Failure once more. Referring to the logs once again reveals a problem at the
 final hurdle, when returning from \texttt{llen\_iter()}:
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -807,13 +784,12 @@ PREDICATES:
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{WISL list length - list / list segment error, Gillian log file}
-\end{listing}
+\captionof{listing}{{WISL list length - list / list segment error, Gillian log file}}
+\vspace{0.5cm}
 
 Gillian knows about a list segment, but the post-condition requires a list;
 perfect timing for the \texttt{lseg\_to\_list} lemma:
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -824,12 +800,11 @@ perfect timing for the \texttt{lseg\_to\_list} lemma:
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Applying \texttt{lseg\_to\_list}}
-\end{listing}
+\captionof{listing}{{Applying \texttt{lseg\_to\_list}}}
+\vspace{0.5cm}
 
 Verification is attempted a final time. Success at last!
 
-\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -846,8 +821,8 @@ All specs succeeded: 0.601923
 \vspace{-0.4cm}
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
-\caption{Verification: WISL list length success}
-\end{listing}
+\captionof{listing}{{Verification: WISL list length success}}
+\vspace{0.5cm}
 
 Working through this process shows that, while Gillian is very capable at its
 purpose of proving correctness of programs, the roundabout debugging process is
