@@ -101,7 +101,41 @@ more ideal debugging process has been presented---even those with a deep
 understanding of Gillian, who are well acclimated to debugging via the file log,
 intend to use this as their primary method of debugging moving forwards.
 
-\todo{Add a specific example --- reference background?}
+Now, consider the debugging example provided in \autoref{sec:debug-example-old};
+let us attempt this process again, but this time leveraging the new debugging
+interface. The initial error, about a missing invariant, stays the same; before
+the debugger has a chance, Gillian's compiler complains about the lack of loop
+invariant. Upon insertion of the invariant (\autoref{lst:debug-old-inv}),
+debugging can occur. In this case, the postcondition unification fails
+(\autoref{fig:debug-example-execmap}), as \texttt{list(\#x, \#vx)} is not in the
+predicate state (\autoref{fig:debug-example-unifymap}), and cannot be folded
+from the rest of the state (\autoref{fig:debug-example-fold}). Even from this
+first step to fixing the program, the debugger has already proven to be a far
+more intuitive and streamlined experience than reading the log file.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/debug-example-execmap.png}
+  \caption{
+    Failure during postcondition unification of \texttt{list\_length\_iter}
+  }\label{fig:debug-example-execmap}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/debug-example-unifymap.png}
+  \caption{
+    Failure to find the required \texttt{list} predicate in state
+  }\label{fig:debug-example-unifymap}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/debug-example-fold.png}
+  \caption{
+    Failure to fold on the \texttt{list} predicate
+  }\label{fig:debug-example-fold}
+\end{figure}
 
 The new debugger also brings substantial improvement when compared to the
 previous iterations: aside from not having any unification information
