@@ -72,5 +72,24 @@ The decision to use the DAP instead of a custom solution was made, quite
 reasonably so, due to `the short timeframe of a Master's project'. Standing on
 the shoulders of previous work to this end, this project takes Gillian's
 debugging tools beyond the limitations of the DAP, and provides an experience
-befitting real users, rather than experimental scenarios. In particular, the contributions of this project are as follows:
-\todo{Give them contributions and link to appropriate parts of thesis as you go.}
+befitting real users, rather than experimental scenarios. In particular, the
+contributions of this project are as follows:
+\begin{itemize}
+  \item Completely restructuring Gillian's database logging to more strongly
+        resemble an intuitive understanding of symbolic execution and
+        unification, without affecting the existing file log
+        (\autoref{sec:log-structure})
+  \item Overhauling Gillian's symbolic interpreter to support executing commands
+        at any branch path, rather than executing each branch one after the
+        other in a depth-first fashion, while still supporting the original
+        behaviour (\autoref{sec:interpreter-branching})
+  \item Creating and populating navigable data structures to aid in the
+        traversal of both symbolic execution and the unification process
+        (\autoref{sec:navigating-symex}, \autoref{sec:debug-unify})
+  \item Extending the existing set of Debug Adapter Protocol commands to allow
+        for an expansive set of debugging capabilities not limited by rigid
+        adherence to the DAP (\autoref{sec:dap-custom})
+  \item Creating a beautiful and feature-rich debugging UI, allowing selective
+        step-by-step symbolic execution and a deep inspection of the unification
+        process (\autoref{sec:debug-interface})
+\end{itemize}
