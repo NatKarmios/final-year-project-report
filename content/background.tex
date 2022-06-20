@@ -80,8 +80,9 @@ also using an intermediate representation to do so.
 how VeriFast handles a small Java program that deliberately dereferences a null
 pointer.
 
-\begin{listing}[!ht]
+\begin{listing}[H]
   \noindent\rule{\textwidth}{0.5pt}
+  \vspace{-0.6cm}
   \begin{minted}{java}
 class VerifastTest {
     int nullDeref()
@@ -93,24 +94,30 @@ class VerifastTest {
     }
 }
   \end{minted}
+  \vspace{-0.4cm}
   \noindent\rule{\textwidth}{0.5pt}
+  \vspace{-0.6cm}
   \caption{\texttt{VerifastTest.java}}
   \label{fig:verifast-example}
 \end{listing}
 
-\begin{listing}[!ht]
+\begin{listing}[H]
   \noindent\rule{\textwidth}{0.5pt}
+  \vspace{-0.6cm}
   \begin{minted}{text}
 > verifast ./VerifastTest.java
 ./VerifastTest.java
 ./VerifastTest.java(7,20-26): Target of method call might be null.
   \end{minted}
+  \vspace{-0.4cm}
   \noindent\rule{\textwidth}{0.5pt}
+  \vspace{-0.6cm}
   \caption{Output from analysing \texttt{VerifastTest.java}}
   \label{fig:verifast-example-output}
 \end{listing}
 
-In industry, probably the most prominent use of a tool built on separation logic is Facebook's \textbf{Infer}~\cite{infer, infer-site}; it's a static analysis
+In industry, probably the most prominent use of a tool built on separation logic
+is Facebook's \textbf{Infer}~\cite{infer, infer-site}; it's a static analysis
 tool for Java and C/C++/Objective-C, designed to use bi-abduction to provide
 users with a list of potential bugs, crashes, and sources of poor performance.
 Similarly to Gillian, Infer is written in OCaml, and works by compiling source
@@ -130,8 +137,9 @@ file in CSV, whilst directly outputting the most severe.
 \autoref{fig:infer-example} and \autoref{fig:infer-example-output} show a short
 example of running Infer on a similar function to what was tested with VeriFast.
 
-\begin{listing}[!ht]
+\begin{listing}[H]
   \noindent\rule{\textwidth}{0.5pt}
+  \vspace{-0.6cm}
   \begin{minted}{java}
 class InferTest {
     // Deliberately call a method on a null pointer
@@ -141,13 +149,16 @@ class InferTest {
     }
 }
   \end{minted}
+  \vspace{-0.6cm}
   \noindent\rule{\textwidth}{0.5pt}
+  \vspace{-0.6cm}
   \caption{\texttt{InferTest.java}}
   \label{fig:infer-example}
 \end{listing}
 
-\begin{listing}[!ht]
+\begin{listing}[H]
   \noindent\rule{\textwidth}{0.5pt}
+  \vspace{-0.6cm}
   \begin{minted}{text}
 > infer -- javac ./InferTest.java
 Starting analysis (Infer v0.5.0)
@@ -162,9 +173,10 @@ InferTest.java:5: error: NULL_DEREFERENCE
   4.           String str = null;
   5. >         return str.length();
   6.       }
-  7.   }
   \end{minted}
+  \vspace{-0.4cm}
   \noindent\rule{\textwidth}{0.5pt}
+  \vspace{-0.6cm}
   \caption{Output from analysing \texttt{InferTest.java}}
   \label{fig:infer-example-output}
 \end{listing}
@@ -220,9 +232,6 @@ is absent from both Gillian and VeriFast.
 
 \section{Gillian}\label{sec:background:gillian}
 
-\todo{Check and rewrite if necessary}
-\polish{Some of this section has been wholly copied from a previous report; identify and replace this!}
-
 Gillian is a platform for program analysis based on separation logic, whose
 goal is to be extendable to as many programming languages as possible --- this
 shines through in Gillian's core ideology, which is to remove the burden of
@@ -263,7 +272,7 @@ current~state.
 
 The following C programs outline some nuances of working with symbolic values.
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{c}
@@ -291,7 +300,7 @@ whereas for the `false' branch, it is \texttt{$\lnot (x < 0)$}. The former will
 successfully execute, but the latter branch will fail due to the unsatisfiable
 assertion; this indicates that the code fails when $x$ is non-negative.
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{c}
@@ -322,7 +331,7 @@ conjunction with assume statements to prove correctness properties of code.
 Assume statements extend the path condition with a given constraint. Take, for
 example, the following program:
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{c}
@@ -344,10 +353,10 @@ int main(void) {
 This example shows how assert statements are most commonly used --- in tandem
 with assume statements, to prove properties of the code to be correct; the
 constraints on symbolic variables can be extended manually using these assume
-statements. Here, we make the assertion that the sum of two positive numbers is
-also positive, which passes symbolic execution.
+statements. Here, the assertion that the sum of two positive numbers is also
+positive is made, which passes symbolic execution.
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{c}
@@ -379,7 +388,7 @@ missed failure paths is small enough to make the performance gain worthwhile.
 Of course, the more interesting (or useful) cases are where the test fails;
 consider this example:
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{c}
@@ -411,7 +420,7 @@ This program can fail in the `true' branch of either if-statement; the only
 succeeding path occurs when both $x$ and $y$ are negative. This is the output
 given by Gillian:
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -451,11 +460,11 @@ program would be cumbersome at best.
 Gillian's full verification is based upon principles of separation logic. When
 moving from simple program state to more complex ideas such as data structures,
 it becomes helpful to define predicates as shorthand for certain conditions.
-For example, we can define the predicate \texttt{list(x, $\alpha$)}, expressing
-a linked list whose address is stored in program variable \texttt{x},
-containing the same elements as the mathematical list $\alpha$. This predicate
-is described recursively, as either the empty list $\epsilon$, or a binary cell
-containing the head of the list and a pointer to the remainder of the list. The
+For example, consider the predicate \texttt{list(x, $\alpha$)}, expressing a
+linked list whose address is stored in program variable \texttt{x}, containing
+the same elements as the mathematical list $\alpha$. This predicate is described
+recursively, as either the empty list $\epsilon$, or a binary cell containing
+the head of the list and a pointer to the remainder of the list. The
 \texttt{list} predicate is as follows:
 \begin{align*}
   \llist{\pvar{x}, \alpha} =\; &(\alpha \doteq \epsilon \ast \pvar{x} \doteq \nil)~\lor\\
@@ -478,7 +487,7 @@ of the scope of the predicate:
 To test Gillian's verification, consider this iterative list length function,
 written in WISL:\@
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -507,7 +516,7 @@ returns the length of \texttt{\#alpha}.
 
 Note that the list / list segment predicates must be defined in order to be used:
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -528,7 +537,7 @@ predicate lseg(+x, +y, alpha) {
 \label{lst:list-predicate}
 \end{listing}
 
-We must also define the following lemma, stating that if a list segment
+The following lemma must also be defined, stating that if a list segment
 terminates with $\nil$, then it is equivalent to a full list:
 \begin{align*}
   \lseg{\pvar{x}}{\nil}{\alpha} \iff \llist{\pvar{x}, \alpha}
@@ -538,7 +547,7 @@ Note that Gillian allows the user to prove specified lemmas using a series of
 logical commands, making use of unfolding, folding, auxiliary assertions, and
 application of lemmas.
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -564,9 +573,9 @@ lemma lseg_to_list {
 \caption{List lemma in WISL}
 \end{listing}
 
-\ldots and we can see that Gillian approves:
+\ldots and Gillian approves:
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -578,12 +587,12 @@ Verifying lemma lseg_to_list... Success
 \caption{List lemma in WISL - Gillian output}
 \end{listing}
 
-We also require a lemma to describe appending to a list segment:
+A lemma to describe appending to a list segment is also required:
 \begin{align*}
     \lseg{\pvar{x}}{\pvar{y}}{\alpha} \lstar \twocell{\pvar{y}}{a}{\pvar{z}} \iff \lseg{\pvar{x}}{\pvar{z}}{(\alpha \dot [a])}
 \end{align*}
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -599,8 +608,9 @@ lemma lseg_append {
 \caption{List segment lemma in WISL}
 \end{listing}
 
-At last, the program is ready for verification. Upon first attempt, we are met with an error:
-\begin{listing}[!ht]
+At last, the program is ready for verification. Upon first attempt, an error is
+produced:
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -613,8 +623,8 @@ wisl.exe: internal error, uncaught exception:
 \caption{Attempted verification - no loop invariant}
 \end{listing}
 
-When verifying, Gillian requires the user to provide a loop invariant, rather
-than settling for unrolling, in order to provide a full guarantee. The correct
+When verifying, Gillian requires the user to provide a loop invariant in order
+to provide a full guarantee, as opposed to settling for unrolling. The correct
 invariant captures progress through the function by tracking the segment of the
 list that's already been counted and the remaining portion of the list that has
 yet to be counted:
@@ -622,7 +632,7 @@ yet to be counted:
     \exists \alpha_1, \alpha_2 \ldotp (\alpha \doteq (\alpha_1 \dot \alpha_2)) \lstar \lseg{\pvar{x}}{\pvar{y}}{\alpha_1} \lstar (\pvar{n} \doteq | \alpha_1 |) \lstar \llist{\pvar{y}, \alpha_2}
 \end{align*}
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -640,8 +650,8 @@ yet to be counted:
 \caption{WISL list length - loop invariant}
 \end{listing}
 
-Upon attempting verification again, Gillian presents us with this:
-\begin{listing}[!ht]
+Upon attempting verification again, Gillian presents this:
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -674,8 +684,9 @@ The error message provided is vague, referencing some imaginary function
 unfit for human understanding. The key to deciphering this is the knowledge that
 Gillian internally compiles while loops to functions, and this unification
 failure indicates that the loop invariant could not be re-established. To
-understand why, we must peruse the logs, at the last executed command:
-\begin{listing}[!ht]
+understand why, the text file log must be investigated, at the last executed
+command:
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -728,13 +739,13 @@ PREDICATES:
 
 This shows that the last executed command was at the end of the loop's internal
 function, calling itself to move to the next iteration; this further confirms
-that the problem was with re-establishing the loop invariant. From
-\texttt{lseg(\#x, \{\{\_\$l\_6, \_lvar\_32\}\}, \#alpha1)}, we can see that Gillian
-is aware of a list containing $\alpha_1$, but if we inspect our loop invariant,
-we need to establish a list segment containing $(\alpha_1 \dot [b])$. This is
-where our lemma, \texttt{lseg\_append}, comes into play; we insert the lemma
-into our loop:
-\begin{listing}[!ht]
+that the problem was with re-establishing the loop invariant.
+\texttt{lseg(\#x, \{\{\_\$l\_6, \_lvar\_32\}\}, \#alpha1)} indicates that
+Gillian is aware of a list containing $\alpha_1$, but inspecting the loop
+invariant shows no sign of a list segment containing $(\alpha_1 \dot [b])$. This
+is where the lemma \texttt{lseg\_append} comes into play, once inserted into
+the loop:
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -754,10 +765,10 @@ into our loop:
 \end{listing}
 
 Notice the inclusion of an assertion; this is used to establish names for the
-logical variables that we wish to use in the lemma application. With that in
-place, we return to attempt verification again:
+logical variables to be use in the lemma application. With that in place,
+verification can be attempted again:
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -780,7 +791,7 @@ There were failures: 0.874831
 Failure once more. Referring to the logs once again reveals a problem at the
 final hurdle, when returning from \texttt{llen\_iter()}:
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -799,10 +810,10 @@ PREDICATES:
 \caption{WISL list length - list / list segment error, Gillian log file}
 \end{listing}
 
-Gillian knows about a list segment, but our post-condition requires a list;
+Gillian knows about a list segment, but the post-condition requires a list;
 perfect timing for the \texttt{lseg\_to\_list} lemma:
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
@@ -818,7 +829,7 @@ perfect timing for the \texttt{lseg\_to\_list} lemma:
 
 Verification is attempted a final time. Success at last!
 
-\begin{listing}[!ht]
+\begin{listing}[H]
 \noindent\rule{\textwidth}{0.5pt}
 \vspace{-0.6cm}
 \begin{minted}{text}
