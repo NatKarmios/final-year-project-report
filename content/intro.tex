@@ -75,21 +75,21 @@ debugging tools beyond the limitations of the DAP, and provides an experience
 befitting real users, rather than experimental scenarios. In particular, the
 contributions of this project are as follows:
 \begin{itemize}
-  \item Completely restructuring Gillian's database logging to more strongly
+  \item completely restructuring Gillian's database logging to more strongly
         resemble an intuitive understanding of symbolic execution and
-        unification, without affecting the existing file log
-        (\autoref{sec:log-structure})
-  \item Overhauling Gillian's symbolic interpreter to support executing commands
+        unification, without affecting the existing file logging mechanism
+        (\autoref{sec:log-structure});
+  \item overhauling Gillian's symbolic interpreter to support executing commands
         at any branch path, rather than executing each branch one after the
         other in a depth-first fashion, while still supporting the original
-        behaviour (\autoref{sec:interpreter-branching})
-  \item Creating and populating navigable data structures to aid in the
+        behaviour (\autoref{sec:interpreter-branching});
+  \item creating and populating navigable data structures to aid in the
         traversal of both symbolic execution and the unification process
-        (\autoref{sec:navigating-symex}, \autoref{sec:debug-unify})
-  \item Extending the existing set of Debug Adapter Protocol commands to allow
+        (\autoref{sec:navigating-symex}, \autoref{sec:debug-unify});
+  \item extending the existing set of Debug Adapter Protocol commands to allow
         for an expansive set of debugging capabilities not limited by rigid
-        adherence to the DAP (\autoref{sec:dap-custom})
-  \item Creating a beautiful and feature-rich debugging UI, allowing selective
+        adherence to the DAP (\autoref{sec:dap-custom}); and
+  \item creating a visual, feature-rich debugging UI, allowing selective
         step-by-step symbolic execution and a deep inspection of the unification
-        process (\autoref{sec:debug-interface})
+        process (\autoref{sec:debug-interface}).
 \end{itemize}
