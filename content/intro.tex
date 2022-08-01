@@ -2,112 +2,60 @@
 
 \chapter{Introduction}\label{sec:intro}
 
-% Setting the question - what is the goal? Give broad strokes on the setting -
-% analysis tools, bi- vs verification, accessibility for code developers
 As programs become larger and more complex, how do we guarantee the correctness
 of code? Symbolic analysis tools are becoming increasingly promising as research
-and development continues. These generally come in the form of {\bf a)}
+and development continues. These generally come in the form of {\bf (a)}
 automated testing via bi-abduction, where code is submitted as-is for symbolic
 executed, with potential errors (such as divide-by-zero and null dereferences)
-reported as a result, and {\bf b)} full program verification, where code is
+reported as a result, and {\bf (b)} full program verification, where code is
 annotated with logical conditions (pre-conditions, post-conditions, loop
-invariants, etc.); 
+invariants, etc.); while bi-abductive techniques are far more developer-friendly
+(and thus have seen more industry use, such as with Facebook's Infer
+~\cite{infer}), full verification guarantees correct behaviour rather than
+merely pointing out specific kinds of bugs. Particularly in the case of full
+verification, the lack of user-friendly tooling remains a prohibitive factor for
+wider adoption.
 
-% State of the art; VeriFast, but it only does this; previous MEng,
-% but they only do this; Julian Dolby (ask Sacha)?
+Full verification tools do exist, albeit with limitations. The most accessible
+tool currently available is VeriFast~\cite{verifast-paper, verifast-repo},
+allowing users to verify C and Java code. VeriFast's limitations lie in its
+static nature; verification is performed in one fell swoop, and the user is
+only given information at a single point of execution, should an error or a
+breakpoint be encountered; if one wanted to explore the symbolic execution
+of the program, verification must be re-run for each step, moving the breakpoint
+along between each execution. Another big player in this space --- the focus of
+this project --- is Gillian, a platform for symbolic analysis parametric on the
+target language and its memory model. Until recently, Gillian was only usable
+by specialists who understood its internals, as the only way to debug
+verification was to sift through an overly verbose log file. Some previous MEng
+projects have gone some way to improve user-friendliness, though the majority of
+this work was on Gillian's internals, with a user-facing debugger first being
+attempted last year (albeit with limited results due to strict adherence to
+Microsoft's Debug Adapter Protocol).
 
-% What I've done, and how; either break this down, or talk about most interesting
+This project focuses on delivering a rich debugging experience, with user
+accessibility as a priority. Gillian was not entirely ready for this, so some
+reconfiguration of its internals was required, in particular: {\bf (a)}
+restructuring Gillian's internal log database to closer represent an intuitive
+understanding of the symbolic execution and unification processes
+(\autoref{sec:log-structure}); {\bf (b)} overhauling Gillian's symbolic
+interpreter to support switching between branches of execution at will, while
+still supporting the original sequential behaviour
+(\autoref{sec:interpreter-branching}); {\bf (c)} creating and populating
+navigable data structures to help traverse symbolic execution and unification
+(\autoref{sec:navigating-symex}, \autoref{sec:debug-unify}); {\bf (d)} creating
+custom events and commands alongside those provided by the Debug Adapter
+Protocol to make the debugger fit for symbolic execution
+(\autoref{sec:dap-custom}). These changes allowed the desired debugging
+interface to come to fruition; Visual Studio Code's built-in debugger interface
+was extended with an interface to navigate both symbolic execution and
+unification through the use of webviews and bidirectional communication with
+the debugger.
 
-% Ending; a bigger goal; undergrads, then code developers 
-
-% It is an inevitable truth that the complexity of programs and their codebase
-% will continuously grow. As this happens, how can one guarantee code does what
-% it needs to?
-
-% Symbolic analysis tools are becoming an increasingly promising choice as
-% research and development into a plethora of projects continue (some of which
-% are discussed in \autoref{sec:background:sl-and-tools}). The benefit of using
-% symbolic methods over ones dependent on concrete execution (i.e.\ unit tests) is
-% that they cover all possible states of execution without needing to specify each
-% scenario by hand.
-
-% Enter
-% Gillian~\cite{gillian-santos,gillian-part1,gillian-part2,gillian-techrep}.
-% Created by Imperial College London's Verified Software group, it
-% is a platform for the development of symbolic analysis tools. Compared to
-% related projects, Gillian has two advantages.
-% Firstly, it is \textit{parametric} on the target language's (TL) memory model;
-% if provided with a compiler from a TL to GIL (a simple, Gillian-specific
-% GOTO language) and an implementation of the TL's memory model (in OCaml),
-% then Gillian can do all the heavy lifting and perform symbolic analysis on programs written in that
-% TL in various ways~\cite{gillian-part1}. This brings to front Gillian's second advantage; it supports three methods of symbolic
-% analysis:
-% \begin{itemize}
-%   \item \emph{Whole program symbolic testing}, in which developers write a
-%   number of unit tests with symbolic inputs and outputs, as well as constraints
-%   on the outputs in first-order logic. Gillian then attempts to find a symbolic
-%   state that invalidates those assertions.
-
-%   \item \emph{Full verification}: developers annotate functions with pre- and
-%   post-conditions, loop invariants, and proof tactics, in the style of
-%   separation logic; Gillian then symbolically executes the functions with
-%   pre-conditions intact to see if the post-conditions hold.
-
-%   \item \emph{Automatic compositional testing}. Similarly to Facebook's
-%   Infer~\cite{infer, infer-site}, developers submit a program without any
-%   pre-conditions, post-conditions, or any other logical annotations, and,
-%   through bi-abduction\cite{bi-abduction}, Gillian will respond with
-%   separation logic-style specifications for that programs behaviour, up
-%   to a specified bound.
-% \end{itemize}
-
-% Whilst symbolic analysis tools have clear benefits when proving program
-% correctness, the adoption of symbolic methods in industry remains limited; a
-% strong factor to this end is the lack of IDE support for
-% developers~\cite{magpiebridge}.
-% In addition, in the specific case of Gillian, upon failure of any analyses, a
-% user has to sift through a multi-megabyte log file to find the offending piece
-% of GIL code; deducing both the cause of the error and the location of the
-% problems in the original TL code would take an unreasonable amount of work and
-% understanding~\cite{gillian-debugging-2021}.
-
-% To assuage these issues, significant work has gone into developing a debugger
-% for Gillian's verification process, as well as improving its error reporting.
-% This undertaking, in its state before this project, made use of the DAP (debug adapter
-% protocol) with the goal of providing a debugger than can be dropped into any IDE that supports
-% it, with little-to-no integration required with any specific IDE.\@ Whilst this
-% debugger did improve the user experience of Gillian, the DAP only
-% provided a limited amount of functionality, primarily designed for debugging
-% concrete execution.\@ The decision had been taken to work within these
-% limitations, producing a debugger that can successfully step over, into and out
-% of (GIL, WISL, or JavaScript) code. An unfortunate consequence of this decision
-% is that a number of much desired features could not be provided, such as `the
-% ability to choose which branch to go down on a conditional statement' and
-% `better visualisations of the current execution tree'
-% ~\cite[p.~49]{gillian-debugging-2021}.
-
-% The decision to use the DAP instead of a custom solution was made, quite
-% reasonably so, due to `the short timeframe of a Master's project'. Standing on
-% the shoulders of previous work to this end, this project takes Gillian's
-% debugging tools beyond the limitations of the DAP, and provides an experience
-% befitting real users, rather than experimental scenarios. In particular, the
-% contributions of this project are as follows:
-% \begin{itemize}
-%   \item completely restructuring Gillian's database logging to more strongly
-%         resemble an intuitive understanding of symbolic execution and
-%         unification, without affecting the existing file logging mechanism
-%         (\autoref{sec:log-structure});
-%   \item overhauling Gillian's symbolic interpreter to support executing commands
-%         at any branch path, rather than executing each branch one after the
-%         other in a depth-first fashion, while still supporting the original
-%         behaviour (\autoref{sec:interpreter-branching});
-%   \item creating and populating navigable data structures to aid in the
-%         traversal of both symbolic execution and the unification process
-%         (\autoref{sec:navigating-symex}, \autoref{sec:debug-unify});
-%   \item extending the existing set of Debug Adapter Protocol commands to allow
-%         for an expansive set of debugging capabilities not limited by rigid
-%         adherence to the DAP (\autoref{sec:dap-custom}); and
-%   \item creating a visual, feature-rich debugging UI, allowing selective
-%         step-by-step symbolic execution and a deep inspection of the unification
-%         process (\autoref{sec:debug-interface}).
-% \end{itemize}
+The completion of this project leads to even bigger goals; there exists a very
+real possibility of using Gillian's new debugging capabilities for coursework in
+the next iteration of the separation logic course taught to undergrads at
+Imperial. From there, we look to industry; with better target language lifting
+and some more niceties in the interface, the future of Gillian may see the
+barrier to entry for developers to employ full verification reduced to only a
+working knowledge of separation logic.
