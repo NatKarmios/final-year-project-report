@@ -17,5 +17,6 @@
     },
   ],
   "ltex.language": "en-GB",
-  "ltex.additionalRules.motherTongue": "en-GB"
+  "ltex.additionalRules.motherTongue": "en-GB",
+  "editor.wordWrap": "wordWrapColumn"
 }

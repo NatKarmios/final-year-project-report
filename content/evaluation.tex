@@ -3,6 +3,28 @@
 
 \chapter{Evaluation}\label{sec:eval}
 
+% === Where is the gap? Have I filled the gap? ===
+% (p1)
+
+% p2: how have i filled it?
+% keep in context of previous state and other tools
+
+% in 3-5 sentences in the first paragraph, what have I done?
+% elevator pitch - i did this and that's why i'm good
+% "crescendo" is bad, it overhypes previous work and belittles mine
+
+% talk about AWS code; going to real world code from small examples
+% needs to be done in consistent evaluation on lots of real world code
+% but first step is to give it to undergrads
+
+% the point of the project was overcoming technical hurdles rather than lots of
+% examples
+
+% there's a lot to explore, given that this is systems work on a research tool
+
+% there's not much work on verifying C; show VeriFast gap
+% look up verifast industry code?
+
 There is some difficulty in describing this project's merit, stemming somewhat
 from its novelty, with it being the crescendo of several years of MEng/MSc
 projects with the goal of making semi-automatic program verification accessible
@@ -18,6 +40,8 @@ any effect on the logged file. Implementing this ad-hoc would not have posed
 much challenge, but it would have involved numerous special cases and
 duplicate logging code; the challenge came from taking care to coalesce
 instances of logger calls that would affect both the file and database log.
+% Code footprint of logging - not greatly increasing call locations of logging
+% Compare with previous projects
 
 \myparagraph{Facilitating communication between the debugger and the UI.}
 An immediate consideration when beginning work on the VSCode extension and
@@ -326,3 +350,5 @@ like the aforementioned are the next best thing to consider improving.
 If this project were repeated with the gift of foresight, my impression is that the research into the inner workings on Gillian should be performed earlier into the project;
 it was not entirely apparent ahead of time how much of the project's difficulty
 would come from the various areas of required understanding (as outlined at the start of this section) required to begin substantial development work.
+% learning curve about a research tool
+% being able to hop between parts of the internals comfortably
