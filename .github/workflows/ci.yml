@@ -17,4 +17,4 @@ jobs:
           args: -pdf -file-line-error -interaction=nonstopmode -f
         continue-on-error: true
       - run: |
-          curl -F file=@main.pdf -F "initial_comment=$(git log -1 --pretty="%an: %B")" -F channels=${{ secrets.SLACK_CHANNEL_ID }} -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" https://slack.com/api/files.upload
+          curl -F "payload_json={\"username\": \"TeXy\", \"content\": \"New LaTeX document at \`$GITHUB_REPOSITORY:$GITHUB_REF_NAME\`\"}" -F "file1=@main.pdf" ${{ secrets.DISCORD_WEBHOOK_URL }}
